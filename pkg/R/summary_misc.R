@@ -223,13 +223,6 @@ if(at == dat$param$n_steps){
 
 #-----------------------------------------------------------------
 #8
-if(at == dat$param$n_steps){
-  #note: working directory needs to be versioned,
-  aa<-try(system("svnversion"),silent=TRUE)
-  if(aa==0)
-  dat$evonet_version <-  system("svnversion")
-}
-
 #-----------------------------------------------------------------
 #9
  if(dat$param$fast_edgelist & dat$param$save_partner_list){
