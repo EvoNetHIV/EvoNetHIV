@@ -13,7 +13,7 @@
 
 
 #' @export
-input_parameters_cd4_data_deprecated  <- function()
+input_parameters_cd4_data <- function()
 {
   #Description:
   # List of CD4 data tables from Pickles, Cori, et al.

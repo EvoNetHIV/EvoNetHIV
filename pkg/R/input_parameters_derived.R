@@ -28,7 +28,6 @@ input_parameters_derived  <- function(initial_param)
   
   if(initial_param$VL_Function=="aim2"){
     initial_param$Max_Allowable_Loci <- 0
-    cat("Coercing Max_Allowable_Loci to 0 (since this is an aim 2 run)\n")
   }
   
   # This line requires some thinking

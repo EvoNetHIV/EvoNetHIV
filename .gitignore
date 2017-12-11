@@ -9,3 +9,11 @@ evonet.dll
 .dll
 .Rproj
 EvoNet.Rproj
+evomodel.RData
+.RData
+*.RData
+*.dll
+*.o
+evoplots.pdf
+.pdf
+*.pdf

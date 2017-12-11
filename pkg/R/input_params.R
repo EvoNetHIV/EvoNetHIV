@@ -41,6 +41,7 @@ input_params<-function(
     estimate_new_nw =  TRUE, #for "master_script_loop", if false, only 1 nw estimated
     ncores =1, #16 if running on hyak using EpiModelHPC
     save_partner_list = FALSE,    
+    vital=FALSE, #epimodel requires this parameter, should be False
   #--QA/QC terms ----------------------------#
     QA_QC_pause_time = 3,  # Time delay in seconds that the computer waits so that users can view QA/QC stats 
   
@@ -395,7 +396,7 @@ input_params<-function(
     generic_nodal_att_values_props  = NA,   # proportions of each att in initial pop
     generic_nodal_att_values_props_births = NA, #how new values distributed with addtns to pop
     generic_nodal_att_no_categories = NA,   # how many generic att categories
-    generic_nodal_att_trans_mat     = NA,
+    generic_nodal_att_trans_mat     = NA,    # matrix of per timestep transition probs, each row sums to one
     cd4_init_probs =  structure(list(cd4_500     = c(0.88, 0.87, 0.85, 0.78, 0.73, 0.71, 0.64, 0, 0),
                       cd4_500_350 = c(.12,  0.12, 0.12, 0.19, 0.21, 0.25, 0.27, 0, 0),
                       cd4_350_200 = c(0.0,  0.01, 0.03, 0.03, 0.05, 0.04, 0.09, 1, 1)),
@@ -415,7 +416,7 @@ input_params<-function(
                           "spvl_5.0_5.5", "spvl_5.5_6.0", "spvl_6.0_6.5", "spvl>6.5"))
 
 
-){  # matrix of per timestep transition probs, each row sums to one
+){
     
   evo_args <- as.list(environment())
   return(evo_args)
