@@ -68,26 +68,45 @@ estimated_nw <- nw_setup(evoparams)
 #---  Create list of modules to run for input into epimodel_control_fxn() below
 # "initialize_module" and "resim.nets" modules automatically added, no need to specify
 
-module_list<- list(
-  "plot_nw.FUN"        = plot_network_fxn,  
-  "aging.FUN"          = vital_aging_module,
-  "testing.FUN"        = social_testing_diagnosis_module,
-  "treatment.FUN"      = social_treatment_module,
-  "update_vl.FUN"      = viral_update_gamma,
-  "update_cd4.FUN"     = viral_update_cd4_daily, #viral_update_cd4_diff_eqn
-  "coital_acts.FUN"    = social_coital_acts_module,
-  "trans.FUN"          = transmission_main_module,
-  "trans_book.FUN"     = transmission_bookkeeping_module,
-  "trans_cd4.FUN"      = transmission_cd4_module,
-  "deaths.FUN"         = vital_deaths_module,
-  "births.FUN"         = vital_births_module,
-  "social_trans.FUN"   = social_attribute_transition_module,
-  "summary.FUN"        = summary_module)
+
+modules <- c(
+"plot_network_fxn",  
+"vital_aging_module",
+"social_testing_diagnosis_module",
+"social_treatment_module",
+"viral_update_gamma",
+"viral_update_cd4_daily",
+"social_coital_acts_module",
+"transmission_main_module",
+"transmission_bookkeeping_module",
+"transmission_cd4_module",
+"vital_deaths_module",
+"vital_births_module",
+"social_attribute_transition_module",
+"summary_module")
+
+
+
+# module_list<- list(
+#   "plot_nw.FUN"        = plot_network_fxn,  
+#   "aging.FUN"          = vital_aging_module,
+#   "testing.FUN"        = social_testing_diagnosis_module,
+#   "treatment.FUN"      = social_treatment_module,
+#   "update_vl.FUN"      = viral_update_gamma,
+#   "update_cd4.FUN"     = viral_update_cd4_daily, #viral_update_cd4_diff_eqn
+#   "coital_acts.FUN"    = social_coital_acts_module,
+#   "trans.FUN"          = transmission_main_module,
+#   "trans_book.FUN"     = transmission_bookkeeping_module,
+#   "trans_cd4.FUN"      = transmission_cd4_module,
+#   "deaths.FUN"         = vital_deaths_module,
+#   "births.FUN"         = vital_births_module,
+#   "social_trans.FUN"   = social_attribute_transition_module,
+#   "summary.FUN"        = summary_module)
 
 
 #--------------------------------------------------------------
 
-evomodel <- evorun(module_list,evoparams,estimated_nw)
+evomodel <- evorun(modules,evoparams,estimated_nw)
 
 #--------------------------------------------------------------
 

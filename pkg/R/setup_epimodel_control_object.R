@@ -40,7 +40,7 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
                                        fast.edgelist = evonet_params$fast_edgelist,
                                        module.order  = names(module_list)[-c(1,length(names(module_list)))],
                                        save.other    = c("attr","pop","param","nw","coital_acts_list",
-                                                         "popsumm","popsumm2","vl_list","InfMat","age_list","el",
+                                                         "popsumm","vl_list","InfMat","age_list","el",
                                                          "sessionInfo","partner_list"))
 
   control <- do.call(EpiModel::control.net,  

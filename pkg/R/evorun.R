@@ -1,12 +1,13 @@
 #' @export
 
-evorun <- function(module_list,params,nw){
+evorun <- function(modules,params,nw){
 
   
-  
+names(modules) <- paste(modules,".FUN",sep="")
+module_list <- as.list(modules)
+
 evo_module_list<- c(
-  list("initialize.FUN"= initialize_module,
-  "plot_nw.FUN" = plot_network_fxn),  
+  list("initialize.FUN"= initialize_module),  
   module_list,
   list("resim_nets.FUN" = EpiModel::resim_nets,
   "verbose.FUN"= NULL))
