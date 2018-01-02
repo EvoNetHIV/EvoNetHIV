@@ -10,7 +10,7 @@
 #' @examples
 #' example function call here
 #' @export
-social_treatment_module <- function(dat, at)
+ treatment <- function(dat, at)
 {
   
   #Description:

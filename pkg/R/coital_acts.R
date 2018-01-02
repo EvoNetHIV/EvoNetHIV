@@ -10,7 +10,7 @@
 #' dat <- social_coital_acts_module(dat,at)
 
 #' @export
-social_coital_acts_module <- function(dat,at)
+coital_acts <- function(dat,at)
 {  
   #Description:
   # Calls in following order: social_discord_edgelist_df, 

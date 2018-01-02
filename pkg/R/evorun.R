@@ -7,7 +7,8 @@ names(modules) <- paste(modules,".FUN",sep="")
 module_list <- as.list(modules)
 
 evo_module_list<- c(
-  list("initialize.FUN"= initialize_module),  
+  list("initialize.FUN"= initialize_module,
+       "plot_network.FUN"=plot_network_fxn),  
   module_list,
   list("resim_nets.FUN" = EpiModel::resim_nets,
   "verbose.FUN"= NULL))

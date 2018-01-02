@@ -11,7 +11,7 @@
 #' example function call here
 
 #' @export
-vital_births_module <- function(dat, at) {
+births <- function(dat, at) {
   
   #Description:
   #Calculates number of births (additions) to population for timestep

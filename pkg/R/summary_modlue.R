@@ -9,6 +9,7 @@
 #' Additional details here
 #' @examples
 #' example function call here
+#' 
 #' @export
 summary_module <- function(dat,at)
 {

@@ -10,7 +10,7 @@
 #' @examples
 #' example function call here
 #' @export
-vital_deaths_module <- function(dat,at){
+deaths <- function(dat,at){
   
   #Description:
   #Calls vital_death_aged_out, vital_death_aids, vital_death_non_aids

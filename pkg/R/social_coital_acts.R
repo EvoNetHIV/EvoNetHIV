@@ -4,7 +4,6 @@
 #' @param at timestep
 #' @return 'dat' object with number of coital acts per couple added to 'social_discord_edgelist_df' table
 #' @details
-#' Subfunction in 'social_coital_acts_module.
 #' Takes the data.frame, discord_edgelist_df, returned from social_discord_edgelist_df and calculates the number of acts per partnership for timestep then expands data.frame so each row represents single sex act if couples have more than one act per timestep; eliminates couples with zero acts for timestep.
 #' @examples
 #' dat <- social_coital_acts(dat,at)

@@ -11,7 +11,7 @@
 #' example function call here
 #' 
 #' @export
-social_testing_diagnosis_module <- function(dat, at){   
+testing <- function(dat, at){   
  
   #Description:
   #Determines whether infected agent is tested (if so diagnosis_status changes  

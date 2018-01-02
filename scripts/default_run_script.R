@@ -60,7 +60,7 @@ evoparams <- do.call(evonet_setup,param_list)
 #--------------------------------------------------------------
 
 #network setup
-estimated_nw <- nw_setup(evoparams)
+nw <- nw_setup(evoparams)
 
 #--------------------------------------------------------------
 
@@ -70,24 +70,19 @@ estimated_nw <- nw_setup(evoparams)
 
 
 modules <- c(
-"plot_network_fxn",  
-"vital_aging_module",
-"social_testing_diagnosis_module",
-"social_treatment_module",
-"viral_update_gamma",
-"viral_update_cd4_daily",
-"social_coital_acts_module",
-"transmission_main_module",
-"transmission_bookkeeping_module",
-"transmission_cd4_module",
-"vital_deaths_module",
-"vital_births_module",
-"social_attribute_transition_module",
+"aging",
+"testing",
+"treatment",
+"viral_update",
+"coital_acts",
+"transmission",
+"deaths",
+"births",
 "summary_module")
 
 #--------------------------------------------------------------
 
-evomodel <- evorun(modules,evoparams,estimated_nw)
+evomodel <- evorun(modules,evoparams,nw)
 
 #--------------------------------------------------------------
 
