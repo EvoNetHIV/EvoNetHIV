@@ -156,7 +156,7 @@ summary_popsumm<-function(dat,at){
     #prep
     prop_on_prep <- length(which(alive_index & dat$pop$prep_list == 1))/total_alive
     
-    #browser()
+    
     #network statistics
     # some of these can't be computed if we are in edgelist mode
     # so need to create a network from the edgelist

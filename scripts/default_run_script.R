@@ -1,4 +1,5 @@
-#NOTE: when working on CSDE Windows Server and R updates remove
+#NOTE: 
+#when working on CSDE Windows Server, R updates remove
 #installed libraries and evonet doesn't build, here is 
 #code to quickly re-install everythng. Uncomment code below
 # to run. Also might have to rebuild evonet (Build tab)
@@ -28,22 +29,16 @@ options(error=browser) # go into debug mode on error
 
 
 #Need to set initial pop value as other parameters are dependent on its value
-initial_pop=100
+initial_pop=200
 
 param_list=list(
-nsims = 1,
+nsims = 3,
 initial_pop = initial_pop,
-initial_infected = 20,
-n_steps = 365*5,
-target_stats= .35*initial_pop,
-age_dist_new_adds="mixed",
-VL_Function="aim2",
+initial_infected = 40,
+n_steps = 365*20,
 popsumm_frequency=30,
-fast_edgelist=TRUE,
-initial_agedata_male = "linear_decrease",
-initial_agedata_female= "linear_decrease",
-plot_nw=T,
-save_network=F)
+fast_edgelist=F,
+plot_nw=T)
 
 evoparams <- do.call(evonet_setup,param_list)
 

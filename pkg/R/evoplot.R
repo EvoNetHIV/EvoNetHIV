@@ -106,7 +106,10 @@ par(mfrow=c(3,2),mgp=c(2.5,1,0))
 }
 
 for(ii in 1:length(vars)){
-
+#temporary qaqc
+  #print(ii)
+  #if(ii==23){browser()}
+###    
     if(vars[ii]=="timestep"){next()}
   if(vars[ii] %in% not_plotted){next()}
     
@@ -137,7 +140,7 @@ for(ii in 1:length(vars)){
     ylim1=popsumm_mats[[vars[ii]]]$min_max
     ix=which(names(overlay_vars)==vars[ii])
     ylim2=popsumm_mats[[overlay_vars[ix]]]$min_max
-    ylim=c(min(c(ylim1[1],ylim2[1])),max(c(ylim1[2],ylim2[2])))
+    ylim=c(min(c(ylim1[1],ylim2[1]),na.rm=T),max(c(ylim1[2],ylim2[2]),na.rm=T))
   }
 
   

@@ -10,14 +10,14 @@ summary_popsumm_vars <- function(dat){
   "total_infections_not_treated",
   "mean_age_infecteds", "mean_age_susceptibles", "mean_trans_prob", 
   "no_edges", "mean_degree", "mean_degree_inf_untreated", "prop_nodes_degree_0", 
-  "prop_nodes_degree_1", "prop_nodes_concurrent", "mean_degree_under_30", 
-  "mean_degree_30_50", "mean_degree_over_50")
+  "prop_nodes_degree_1", "prop_nodes_concurrent")
 
   
  hetero_vars <-  c("alive_female", "alive_male", 
   "prev_15to24", "prev_15to49", "prev_f_15to24", "prev_f_15to49", 
   "prev_m_15to24", "prev_m_15to49", "inf_men", "inf_women", "inf_under30", 
-  "inf_30to50", "inf_over50") 
+  "inf_30to50", "inf_over50", "mean_degree_under_30", 
+  "mean_degree_30_50", "mean_degree_over_50") 
 
   treatment_vars <- c( "no_treated", 
   "percent_suppressed") 
