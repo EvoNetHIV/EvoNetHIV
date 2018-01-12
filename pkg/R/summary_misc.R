@@ -59,29 +59,11 @@ if(dat$param$save_coital_acts)
   dat$coital_acts_list[[at-1]] <- dat$discord_coital_df  
 
 #-----------------------------------------------------------------
-#4
-
-#EpiModel's edges correct fxn here, just for MSM!, need to put hetero/bipartite part in
-if(dat$param$popsumm_frequency==1)
-{
-old.num <- dat$popsumm$alive[at-1]
-new.num <- dat$popsumm$alive[at]
-dat$nwparam[[1]]$coef.form[1] <- ( dat$nwparam[[1]]$coef.form[1] + 
-                                     log(old.num) - log(new.num) )
-}else{
-  if(at%%dat$param$popsumm_frequency==0 & at>2){
-    index1=(at/dat$param$popsumm_frequency)+1
-    index2=(at/dat$param$popsumm_frequency)
-    old.num <- dat$popsumm$alive[index2]
-    new.num <- dat$popsumm$alive[index1]
-    dat$nwparam[[1]]$coef.form[1] <- ( dat$nwparam[[1]]$coef.form[1] + 
-                                         log(old.num) - log(new.num) )
-  }
-}
 
 #4
 
-#EpiModel's edges correct fxn here, just for MSM!, need to put hetero/bipartite part in
+#EpiModel's edges correct fxn here, 
+#msm
 if(dat$param$model_sex=="msm"){
   if(dat$param$popsumm_frequency==1)
   {
@@ -98,7 +80,7 @@ if(dat$param$model_sex=="msm"){
       dat$nwparam[[1]]$coef.form[1] <- ( dat$nwparam[[1]]$coef.form[1] + 
                                            log(old.num) - log(new.num) )
     }} #end of msm, popsumm_frequency !=1
-}#end of msm
+}#end of msm, start of hetero
 else{
 mode <- dat$attr$sex
 if(dat$param$popsumm_frequency==1){
