@@ -52,14 +52,29 @@ not_plotted=c(
 "Perc_3_drug_muts_total_pop",
 "Perc_4_drug_muts_total_pop")
 
-overlay_vars=c(
-"susceptibles"="total_infections_alive",
-"no_treated"="no_treated_undetectable",
+
+#
+
+overlay_vars1=c(
+"susceptibles"="total_infections_alive")
+
+overlay_vars2=NULL
+if(model$param[[1]]$start_treatment_campaign<5e5){
+overlay_vars2=c(
 "inf_men"="inf_women",
 "treated_inf_men"="treated_inf_women",
-"inf_under30"="inf_30to50",
+"inf_under30"="inf_30to50")
+}
+
+overlay_vars3=NULL
+if(model$param[[1]]$model_sex=="hetero"){
+  overlay_vars3=c("treated_inf_men"="treated_inf_women","inf_men"="inf_women")
+  
+}
 #aim3
-"Perc_1+_drug_muts"="Perc_1_drug_muts",
+overlay_vars4=NULL
+if(model$param[[1]]$VL_Function=="aim3"){
+  overlay_vars4=c("Perc_1+_drug_muts"="Perc_1_drug_muts",
 "Perc_2+_drug_muts"="Perc_2_drug_muts",
 "Perc_3+_drug_muts"="Perc_3_drug_muts",
 "Perc_4+_drug_muts"="Perc_4_drug_muts",
@@ -67,6 +82,14 @@ overlay_vars=c(
 "Perc_2+_drug_muts_total_pop"="Perc_2_drug_muts_total_pop",
 "Perc_3+_drug_muts_total_pop"="Perc_3_drug_muts_total_pop",
 "Perc_4+_drug_muts_total_pop"="Perc_4_drug_muts_total_pop" )
+}
+
+overlay_vars5=NULL
+if(model$param[[1]]$model_sex=="hetero" & model$param[[1]]$start_treatment_campaign<5e5){
+ overlay_vars5=c("no_treated"="no_treated_undetectable")
+}
+overlay_vars=c(overlay_vars1,overlay_vars2,overlay_vars3,overlay_vars4,overlay_vars5)
+
 
 
 loess_vars <- c("percent_donor_acute","mean_time_donor_infected_incident",
@@ -107,8 +130,8 @@ par(mfrow=c(3,2),mgp=c(2.5,1,0))
 
 for(ii in 1:length(vars)){
 #temporary qaqc
-  #print(ii)
-  #if(ii==23){browser()}
+#  print(ii)
+#  if(ii==36){browser()}
 ###    
     if(vars[ii]=="timestep"){next()}
   if(vars[ii] %in% not_plotted){next()}
