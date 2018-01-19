@@ -1,7 +1,7 @@
 ---
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 title: "EvoNetHIV User's Guide"
-output: html_document
+output: rmarkdown::github_document
 ---
 
 ****
