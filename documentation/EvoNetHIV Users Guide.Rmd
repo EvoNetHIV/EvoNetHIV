@@ -1,0 +1,96 @@
+---
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+title: "EvoNetHIV User's Guide"
+output: html_document
+---
+
+****
+
+A software package for modeling HIV epidemics and viral evolution in sexual networks 
+
+****
+
+### Preface
+
+This document describes an R package (EvoNetHIV) that allows users to model the interactions between social networks, within-host dynamics, viral evolution, and HIV-1 spread.
+
+The package assumes familiarity with basic R commands. It is built using the API (application programming interface) of the R package **EpiModel** (http://www.epimodel.org/), so familiarity with that API and package is helpful. We provide an introduction below, as well as links to more information for advanced users. Users who wish to model new network structures will also need to be familiar with the methods and syntax from the **statnet** suite of R packages (http://www.statnet.org/). We also provide a brief overview, and links for more information, within this guide.
+
+This project is supported by grants from the National Institutes of Health (NIAD R01AI108490 and NIGMS R01GM125440 (via [MIDAS](https://www.nigms.nih.gov/Research/specificareas/MIDAS/Pages/default.aspx))) and the Center for Demography and Ecology at the University of Washington (https://csde.washington.edu/). 
+
+For updates and further information about this package, please visit https://github.com/EvoNetHIV.
+
+### Authors of EvoNetHIV
+
+* James Murphy <jtm6@uw.edu> 
+* John Mittler <jmittler@uw.edu>
+* Steve Goodreau <goodreau@uw.edu>
+* Josh Herbeck <herbeck@uw.edu>
+* Kathryn Peebles <kpeebles@uw.edu>
+* Sarah Stanfield <sestan@uw.edu>
+
+With contributions from Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb.
+
+****
+
+### Table of Contents
+
+Might go here
+
+
+### Introduction
+
+EvoNetHIV is an HIV epidemic simulation model that incorporates within-host dynamics, sexual network structure, viral load variation, treatment, condom use, circumcision, demography, and HIV evolution. EvoNetHIV is written as a series of interchangeable modules and user-specified parameters (written in the R programming language) that control different components of the system (e.g. HIV and CD4 progression, treatment initiation, coital acts). Network  characteristics (e.g., age-related homophily, presence of risk groups) can be specified using standard statnet network commands. Advanced users have the option of writing additional modules (e.g., allowing circumcision probabilities to vary with risk membership). 
+
+### Stochastic, agent-based framework
+
+EvoNetHIV is an agent-based simulation model. Each agent (i.e., individual) is a discrete entity that has over 30 attributes. Important agent attributes include sex, age, HIV infection status, time of HIV infection, HIV viral load, HIV set-point viral load, antiretroviral treatment status, and vaccination statud. Some attributes are regularly updated, such as age or viral load (for infected agents) while others (e.g. sex, set-point viral load), do not change once assigned to the agent. Agents are “born” (added to the model as uninfected individuals), age, and depart from the model, either through death from AIDS, death from background mortality, or aging out.  Agents can become infected and infect other agents. Agents cannot be infected twice (experience dual or super-infection).
+
+EvoNetHIV is a stochastic model, such that identical parameter values or starting conditions for different model runs will produce different results.  Many input parameters are mean or variance values of probability distributions used to draw random numbers from the specified probability distribution. For example, the parameter for mean sex acts per ongoing relationship per time step is the mean value for a draw from a Poisson distribution.
+
+EvoNetHIV uses a modular framework from the [EpiModel](http://www.epimodel.org/) API. The network module is built using exponential random graph models in the [statnet](http://www.statnet.org/) framework, which provides a language for specifying arbitrarily complex network models. 
+
+### Components of the EvoNetHIV model
+
+EvoNetHIV models have four main inter-connected components that result in epidemiological and evolutionary dynamics: network structure, sexual behavior, clinical phenomena, and SPVL and disease progression. All four components operate at the scale of the agent. The aggregate dynamics or values across agents give epidemiological and population level dynamics.
+
+**Network structure**  
+Agents can be either isolates or have one or more concurrent relationships with other agents. This network structure is dynamic and changes according to the specified network statistics.  
+
+**Behavior**  
+Important behavioral dynamics include sex roles (for MSM), frequency of sex, condom use, HIV testing frequency, and adherence to treatment. Behavioral dynamics can be specified by the user. 
+
+* MSM model. Each agent is assigned either an “insertive”, “receptive”, or “versatile” role. Insertive agents can form relationships with versatile or receptive agents; receptive agents can form relationships with versatile or insertive agents; and versatile agents can form relationships with all three agent types. Under our default parameters, receptive agents have a higher per-act probability of getting infected.
+
+* Heterosexual model. Only relationships between opposite sexes are allowed. Under our default parameters, the population tends to a 50-50 sex ratio. Although our default parameters assume that men and women are equally susceptible, parameters governing the relative suspectibility of men and women can be changed.
+
+**Clinical**  
+CD4+ T cell decline; Antiretroviral treatment; vaccination 
+
+**SPVL and viral progression**  
+The model divides infection into three phases: an acute phase when viral load rises and declines rapidly; a chronic phase when viral load increases slowly over a periodc of years; and AIDS phase when viral load increases rapidly to a high AIDS-specific viral load.  The viral load at the beginning of the chronic phase of infection is referred to as set-point viral load (SPVL).  SPVL is partially heritable across transmission pairs: SPVL for newly infected agents is determined by a combination of the donor’s SPVL and by environmental (random) variation. The contribution of the donor’s SPVL to the recipient’s SPVL is determined by the assumed (user-defined) heritability of HIV SPVL.
+
+### Use of the model 
+
+Users may interact with EvoNetHIV in one of four principal ways to conduct their own experiments: (1) they may keep the model structure exactly as is, but vary some of the many dozen input parameters; (2) they may use some of the alternative functional forms included with the model through the use of flag arguments; (2) they may keep the model structure as is, but vary the network model and associated parameters through the use of _ergm_ terms; (3) they may change the structure of the model through the writing of substitute modules. Each of these features requires understanding the current model, and being familiar with the default parameter values; these are described below.  Option (3) requires familiarity with the mathematics and terminology of exponential random graph models, and option (4) requires familiarity with the EpiModel API; an introduction to each of these can be found here: http://statnet.github.io/nme/
+
+Advanced users have the option of creating new functions or variants of existing functions (described in more detail below). e.g. Someone wanting to specify that “versatile” men are more likely to use condoms, for example, could write a variant of our condom usage function that does this.
+
+### Daily timesteps
+
+Model dynamics occur on a daily timestep; thus fine-scale epidemiological and behavioral processes can be simulated.
+
+
+
+### Virological, Epidemiological, and Demographic Processes
+
+In this section we give an overview of the assumptions made by our default modules. Additional details and descriptions of alternative (nondefault) modules are given in the programming guide in Section 2. 
+
+#### Viral Load and Setpoint Viral Load 
+
+* At infection, agents are assigned a set-point viral load (SPVL), using a function that incorporates infector SPVL, assumed heritability of SPVL, and a randomly determined host-specific factor (stochastic white noise), and heritability. The maximum possible viral load (all viral dynamics on log10 scale) is 7.0 and the minimum is 2.0.
+
+* Initial VL starts out at -4.0  rises exponentially to a peak acute phase level, and then has a biphasic decay to SPVL. The acute phase last 50 days. Default value for peak acute phase VL is constant for all agents but can be set to be a function of an agent’s SPVL. After the end of the acute phase, VL increases linearly, starting at SPVL, at a pre-specified chronic phase rate of increase. At the onset of AIDS, VL increases linearly at a  pre-specified rate of increase for the AIDS phase until it reaches the assumed maximum VL value for AIDS at which it remains until agent’s death. (The onset of AIDS is triggered by CD4 values described below.) 
+
+* With commencement of ART, VL will decrease linearly over 30 days to a “undetectable” level of 1.7 and remain there for the duration of treatment. If treatment stops, VL will then increase linearly over 30 days to the VL level at the start of treatment and then progress as if treatment did not occur. 
+
