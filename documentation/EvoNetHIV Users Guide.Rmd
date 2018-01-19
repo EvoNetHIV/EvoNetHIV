@@ -22,12 +22,12 @@ For updates and further information about this package, please visit https://git
 
 ### Authors of EvoNetHIV
 
-* James Murphy <jtm6@uw.edu> 
-* John Mittler <jmittler@uw.edu>
-* Steve Goodreau <goodreau@uw.edu>
-* Josh Herbeck <herbeck@uw.edu>
-* Kathryn Peebles <kpeebles@uw.edu>
-* Sarah Stanfield <sestan@uw.edu>
+* James T. Murphy <jtm6@uw.edu> 
+* John E. Mittler <jmittler@uw.edu>
+* Steven M. Goodreau <goodreau@uw.edu>
+* Joshua T. Herbeck <herbeck@uw.edu>
+* Kathryn ?. Peebles <kpeebles@uw.edu>
+* Sarah E. Stansfield <sestan@uw.edu>
 
 With contributions from Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb.
 
