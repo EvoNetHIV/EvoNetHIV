@@ -16,9 +16,11 @@ This document describes an R package (EvoNetHIV) that allows users to model the 
 
 The package assumes familiarity with basic R commands. It is built using the API (application programming interface) of the R package **EpiModel** (http://www.epimodel.org/), so familiarity with that API and package is helpful. We provide an introduction below, as well as links to more information for advanced users. Users who wish to model new network structures will also need to be familiar with the methods and syntax from the **statnet** suite of R packages (http://www.statnet.org/). We also provide a brief overview, and links for more information, within this guide.
 
-This project is supported by grants from the National Institutes of Health (NIAD R01AI108490 and NIGMS R01GM125440 (via [MIDAS](https://www.nigms.nih.gov/Research/specificareas/MIDAS/Pages/default.aspx))) and the Center for Demography and Ecology at the University of Washington (https://csde.washington.edu/). 
-
 For updates and further information about this package, please visit https://github.com/EvoNetHIV.
+
+### Funding
+
+This project is supported by grants from the National Institutes of Health (NIAD R01AI108490 and NIGMS R01GM125440 (via [MIDAS](https://www.nigms.nih.gov/Research/specificareas/MIDAS/Pages/default.aspx))) and the Center for Demography and Ecology at the University of Washington (https://csde.washington.edu/). 
 
 ### Authors of EvoNetHIV
 
@@ -33,26 +35,26 @@ With contributions from Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb.
 
 ****
 
-### Table of Contents
+### Table of contents
 
-Might go here
-
-[Introduction](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#Introduction)  
-[Stochastic, agent-based model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#Stochastic)  
-[Components of the model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#Components)  
+[Introduction](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#introduction)  
+[Stochastic, agent-based model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#stochastic-agent-based-model)  
+[Components of the model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#components-of-the-evonethiv-model)  
 [Use of the model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#use-of-the-model)  
 
 ### Introduction
 
-EvoNetHIV is an HIV epidemic simulation model that incorporates within-host dynamics, sexual network structure, viral load variation, treatment, condom use, circumcision, demography, and HIV evolution. 
+EvoNetHIV is an HIV epidemic simulation model that incorporates sexual network structure, within-host viral and immune system dynamics, antiretroviral therapy, vaccination, condom use, circumcision, demography, and viral evolution. 
 
 EvoNetHIV is written in the R programming language as a series of interchangeable modules and user-specified parameters that control different components of the system (e.g. HIV and CD4 progression, treatment initiation, coital acts). Network characteristics (e.g., age-related homophily, presence of particular risk groups) can be specified using standard statnet network commands. Advanced users have the option of writing additional modules (e.g., allowing circumcision probabilities to vary with risk group membership). 
 
-### Stochastic, agent-based model
+### Stochastic agent-based model
 
 EvoNetHIV is an agent-based simulation model. Each agent (i.e., individual) is a discrete entity that has over 30 attributes. Important agent attributes include sex, age, HIV infection status, time of HIV infection, HIV viral load, HIV set-point viral load, antiretroviral treatment status, and vaccination statud. Some attributes are regularly updated, such as age or viral load (for infected agents) while others (e.g. sex, set-point viral load), do not change once assigned to the agent. Agents are “born” (added to the model as uninfected individuals), age, and depart from the model, either through death from AIDS, death from background mortality, or aging out.  Agents can become infected and infect other agents. Agents cannot be infected twice (experience dual or super-infection).
 
-EvoNetHIV is a stochastic model, such that identical parameter values or starting conditions for different model runs will produce different results.  Many input parameters are mean or variance values of probability distributions used to draw random numbers from the specified probability distribution. For example, the parameter for mean sex acts per ongoing relationship per time step is the mean value for a draw from a Poisson distribution.
+EvoNetHIV is a stochastic model, such that identical parameter values or starting conditions for different model runs will produce different results.  Many input parameters are mean or variance values of probability distributions used to draw random numbers from the specified probability distribution. For example, the parameter for mean sex acts per ongoing relationship per time step is the mean value for a draw from a Poisson distribution. 
+
+Model dynamics occur on a daily timestep; thus fine-scale epidemiological and behavioral processes can be simulated.  
 
 ### Components of the EvoNetHIV model
 
@@ -68,11 +70,17 @@ Important behavioral dynamics include sex roles (for MSM), frequency of sex, con
 
 * Heterosexual model. Only relationships between opposite sexes are allowed. Under our default parameters, the population tends to a 50-50 sex ratio. Although our default parameters assume that men and women are equally susceptible, parameters governing the relative suspectibility of men and women can be changed.
 
-**Clinical**  
-CD4+ T cell decline; Antiretroviral treatment; vaccination 
+**Public health actions**  
+Antiretroviral treatment; vaccination 
 
 **SPVL and viral progression**  
 The model divides infection into three phases: an acute phase when viral load rises and declines rapidly; a chronic phase when viral load increases slowly over a periodc of years; and AIDS phase when viral load increases rapidly to a high AIDS-specific viral load. The viral load at the beginning of the chronic phase of infection is referred to as set-point viral load (SPVL). SPVL is partially heritable across transmission pairs: SPVL for newly infected agents is determined by a combination of the donor’s SPVL and by environmental (random) variation. The contribution of the donor’s SPVL to the recipient’s SPVL is determined by the assumed (user-defined) heritability of HIV SPVL.
+
+**CD4+ T cell dynamics**  
+EvoNetHIV follows Cori et al (2015) to describe the dynamics of CD4 cells during HIV infection. In the absence of antiretroviral treatment, CD4 counts decrease as a function of individual SPVL.
+
+**Transmission**  
+Transmission is a function of viral load, circumcision status, condom usage, sexual role (e.g., insertive vs receptive), and age (younger people being more susceptible than older people). 
 
 ### Use of the model 
 
@@ -80,19 +88,48 @@ Users may interact with EvoNetHIV in one of four principal ways to conduct their
 
 Advanced users have the option of creating new functions or variants of existing functions (described in more detail below). e.g. Someone wanting to specify that “versatile” men are more likely to use condoms, for example, could write a variant of our condom usage function that does this.
 
-### Daily timesteps
-
-Model dynamics occur on a daily timestep; thus fine-scale epidemiological and behavioral processes can be simulated.
-
-### Virological, Epidemiological, and Demographic Processes
+### Virological, epidemiological, and demographic processes
 
 In this section we give an overview of the assumptions made by our default modules. Additional details and descriptions of alternative (nondefault) modules are given in the programming guide in Section 2. 
 
-#### Viral Load and Setpoint Viral Load 
+#### Network structure and dynamics  
 
-* At infection, agents are assigned a set-point viral load (SPVL), using a function that incorporates infector SPVL, assumed heritability of SPVL, and a randomly determined host-specific factor (stochastic white noise), and heritability. The maximum possible viral load (all viral dynamics on log10 scale) is 7.0 and the minimum is 2.0.
+* Structure: user specified network structure based on the statnet and EpiModel packages can be implemented (e.g., mean degree, age and other subgroup structure). The default structure is random mixing of agents with a network mean degree of 0.7.
+* Partnerships: each agent can exist as an isolate (no partners) or have one or more sexual partners per timestep. The default mean partnership duration is 100 days.
+* Risk groups: various risk group substructures can be imposed.  
 
-* Initial VL starts out at -4.0 rises exponentially to a peak acute phase level, and then has a biphasic decay to SPVL. The acute phase last 50 days. Default value for peak acute phase VL is constant for all agents but can be set to be a function of an agent’s SPVL. After the end of the acute phase, VL increases linearly, starting at SPVL, at a pre-specified chronic phase rate of increase. At the onset of AIDS, VL increases linearly at a  pre-specified rate of increase for the AIDS phase until it reaches the assumed maximum VL value for AIDS at which it remains until agent’s death. (The onset of AIDS is triggered by CD4 values described below.) 
+#### Sex  
+
+Sexual acts (coital acts) are determined among agents in a serodiscordant relationship at each daily time step. Among these partnerships, the number of sexual acts per partnership per daily time step is assigned according to a Poisson draw (mean = 0.43).  Probability of sex can also be a declining function of age. Default condom use is determined for each sexual act with probability of 50% and default circumcision status is assigned to agents at model entry with 85% probability. When the infected partner is 47% past their expected time in AIDS, no sex occurs.  
+
+* For MSM models, agents are assigned one of three sexual roles: versatile, insertive, and receptive. Insertive agents only have sex with receptive agents and vice-versa. Versatile agents can have sex with any other agents. Intra-event versatility (when men switch roles and each engage in insertive and receptive anal intercourse (AI) during the same sexual contact) occurs with 40% probability when both partners are role versatile.
+
+#### Viral load 
+
+* At infection, agents are assigned a setpoint viral load (SPVL), using a function that incorporates infector SPVL, assumed heritability of SPVL, and a randomly determined host-specific factor (stochastic white noise), and heritability. The maximum possible viral load (all viral dynamics on log10 scale) is 7.0 and the minimum is 2.0.
+
+* Initial VL starts out at -4.0 rises exponentially to a peak acute phase level, and then has a biphasic decay to SPVL. The acute phase last 50 days. Default value for peak acute phase VL is constant for all agents but can be set to be a function of an agent’s SPVL. After the end of the acute phase, VL increases linearly, starting at SPVL, at a pre-specified chronic phase rate of increase. At the onset of AIDS, VL increases linearly at a  pre-specified rate of increase for the AIDS phase until it reaches the assumed maximum VL value for AIDS at which it remains until agent’s death. (The onset of AIDS is triggered by CD4 values.) 
 
 * With commencement of ART, VL will decrease linearly over 30 days to a “undetectable” level of 1.7 and remain there for the duration of treatment. If treatment stops, VL will then increase linearly over 30 days to the VL level at the start of treatment and then progress as if treatment did not occur. 
 
+#### HIV transmission  
+
+HIV transmission probabilities are calculated as a function of relevant risk factors for each sex act according to characteristics of the sexual act and characteristics of the agents engaged in the sexual act. Following Hughes et al (2012), the probability of transmission is calculated for each sexual act that occurs in a serodiscordant relationship, as:  
+
+$$P(transmission)=1-(1-λ)^(eXβ^)$$
+
+where λ is the baseline per-act infectivity (0.000247).  
+
+We have different transmission probabilities for heterosexual and MSM partners. For heterosexual partners,  
+
+$$Xβ=ln(2.89* (viral load-4.0)+lna(RRcircumcised} )*circumcised+lna(RR_condom )*condom+ ln(RR_age )* age_base+lna(RR_sti )*sti_status_sus$$
+where circumcised is an indicator variable for the circumcision status of the male, condom is an indicator variable for condom use for the male, viral load is the log10 viral load of infected agent, and age_base is the number of decades over 35 the susceptible agent is: (age-35)/10; and RR_x is the risk factor. 
+
+For MSM partners,
+
+$$Xβ=lna〖(RR_VL )*〗 (viral load-4.0)+lna(RR_insertive )*insertive+lna(RR_receptive )*receptive+lna((RR_circumcised ))*circumcised+lna(RR_condom )*condom+
+lna(RR_sti )*sti_status_su$$s
+
+where insertive and receptive are indicator variables for role of susceptible agent and other variables are as for heterosexual partners.
+
+Once the probability of transmission is calculated, a random uniform draw determines whether infection occurred.  
