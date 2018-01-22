@@ -42,19 +42,19 @@ Might go here
 [Components of the model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#Components)  
 [Use of the model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#use-of-the-model)  
 
-### Introduction{Introduction}
+### Introduction
 
 EvoNetHIV is an HIV epidemic simulation model that incorporates within-host dynamics, sexual network structure, viral load variation, treatment, condom use, circumcision, demography, and HIV evolution. 
 
 EvoNetHIV is written in the R programming language as a series of interchangeable modules and user-specified parameters that control different components of the system (e.g. HIV and CD4 progression, treatment initiation, coital acts). Network characteristics (e.g., age-related homophily, presence of particular risk groups) can be specified using standard statnet network commands. Advanced users have the option of writing additional modules (e.g., allowing circumcision probabilities to vary with risk group membership). 
 
-### Stochastic, agent-based model{Stochastic}
+### Stochastic, agent-based model
 
 EvoNetHIV is an agent-based simulation model. Each agent (i.e., individual) is a discrete entity that has over 30 attributes. Important agent attributes include sex, age, HIV infection status, time of HIV infection, HIV viral load, HIV set-point viral load, antiretroviral treatment status, and vaccination statud. Some attributes are regularly updated, such as age or viral load (for infected agents) while others (e.g. sex, set-point viral load), do not change once assigned to the agent. Agents are “born” (added to the model as uninfected individuals), age, and depart from the model, either through death from AIDS, death from background mortality, or aging out.  Agents can become infected and infect other agents. Agents cannot be infected twice (experience dual or super-infection).
 
 EvoNetHIV is a stochastic model, such that identical parameter values or starting conditions for different model runs will produce different results.  Many input parameters are mean or variance values of probability distributions used to draw random numbers from the specified probability distribution. For example, the parameter for mean sex acts per ongoing relationship per time step is the mean value for a draw from a Poisson distribution.
 
-### Components of the EvoNetHIV model{Components}
+### Components of the EvoNetHIV model
 
 EvoNetHIV uses a modular framework from the [EpiModel](http://www.epimodel.org/) API. EvoNetHIV has four main inter-connected components that result in epidemiological and evolutionary dynamics: network structure; sexual behavior; clinical phenomena; and SPVL and disease progression. All four components operate at the scale of the agent. The aggregate dynamics or values across agents give epidemiological and population level dynamics.
 
