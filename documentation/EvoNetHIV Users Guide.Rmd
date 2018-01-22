@@ -116,19 +116,20 @@ Sexual acts (coital acts) are determined among agents in a serodiscordant relati
 
 HIV transmission probabilities are calculated as a function of relevant risk factors for each sex act according to characteristics of the sexual act and characteristics of the agents engaged in the sexual act. Following Hughes et al (2012), the probability of transmission is calculated for each sexual act that occurs in a serodiscordant relationship, as:  
 
-$$P(transmission)=1-(1-λ)^(eXβ^)$$
+$$P(transmission)=1-(1-λ)^{eXβ}$$  
 
 where λ is the baseline per-act infectivity (0.000247).  
 
 We have different transmission probabilities for heterosexual and MSM partners. For heterosexual partners,  
 
-$$Xβ=ln(2.89* (viral load-4.0)+lna(RRcircumcised} )*circumcised+lna(RR_condom )*condom+ ln(RR_age )* age_base+lna(RR_sti )*sti_status_sus$$
-where circumcised is an indicator variable for the circumcision status of the male, condom is an indicator variable for condom use for the male, viral load is the log10 viral load of infected agent, and age_base is the number of decades over 35 the susceptible agent is: (age-35)/10; and RR_x is the risk factor. 
+$$Xβ=ln(2.89*(VL-4.0)+ln(RR_{circumcised})*circumcised+ln(RR_{condom})*condom+ln(RR_{age})*age_{base}+ln(RR_{STI})*STI.status.sus$$  
+
+where circumcised is an indicator variable for the circumcision status of the male, STI (sexually transmitted infection) is an indicator variable for any STI, condom is an indicator variable for condom use for the male, VL is the log10 viral load of infected agent, and age_base is the number of decades over 35 the susceptible agent is: (age-35)/10; and RR_x is the risk factor. 
 
 For MSM partners,
 
-$$Xβ=lna〖(RR_VL )*〗 (viral load-4.0)+lna(RR_insertive )*insertive+lna(RR_receptive )*receptive+lna((RR_circumcised ))*circumcised+lna(RR_condom )*condom+
-lna(RR_sti )*sti_status_su$$s
+$$Xβ=ln(RR_VL )*(VL-4.0)+ln(RR_{insertive})*insertive+ln(RR_{receptive})*receptive+ln(RR_{circumcised}))*circumcised+ln(RR_{condom})*condom+
+ln(RR_{sti})*sti.status.sus$$
 
 where insertive and receptive are indicator variables for role of susceptible agent and other variables are as for heterosexual partners.
 
