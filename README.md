@@ -2,7 +2,7 @@
 
 This is the current development version of EvoNetHIV, an R package for modeling HIV epidemics and viral evolution in sexual networks. 
 
-The package uses the API (application programming interface) of the R package **EpiModel** (http://www.epimodel.org/), so familiarity with that API and package is helpful. We provide an introduction below, as well as links to more information for advanced users. Users who wish to model new network structures will also need to be familiar with the methods and syntax from the **statnet** suite of R packages (http://www.statnet.org/). We also provide a brief overview, and links for more information, within this guide. For updates and further information about this package, please visit https://github.com/EvoNetHIV.
+The package uses the API (application programming interface) of the R package **EpiModel** (http://www.epimodel.org/), and the methods and syntax from the **statnet** suite of R packages (http://www.statnet.org/).
 
 ## Funding  
 
