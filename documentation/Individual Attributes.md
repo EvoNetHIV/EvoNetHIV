@@ -2,9 +2,9 @@
 Overview
 --------
 
-Each agent has suite of attributes that defines his/her demographic/infection/behavior status and dynamics.
+Each individual has a set of attributes that defines his/her demographic/infection/behavior status and dynamics.
 
-### Key CD4 agent attributes
+### Key CD4 attributes
 
 | Attribute         | Description                                                                                  |
 |:------------------|:---------------------------------------------------------------------------------------------|
@@ -13,15 +13,15 @@ Each agent has suite of attributes that defines his/her demographic/infection/be
 | CD4 initial value | Initial categorical CD4 value of agent (1, 2, or 3)                                          |
 | Start AIDS CD4    | Time (days) since model start when agent enters AIDS (CD4 category changes to 4)             |
 
-### Key Viral Load agent attributes
+### Viral load attributes
 
 | Attribute      | Description                                    |
 |:---------------|:-----------------------------------------------|
 | SPVL           | SPVL                                           |
-| Infection Time | Time of infection in days since start of model |
-| Viral Load     | Current viral load                             |
+| Infection time | Time of infection in days since start of model |
+| Viral load     | Current viral load                             |
 
-### Key Demographic agent attributes
+### Demographic attributes
 
 | Attribute | Description    |
 |:----------|:---------------|
