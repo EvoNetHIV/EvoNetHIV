@@ -10,8 +10,7 @@ Users may interact with EvoNetHIV in one of four principal ways to conduct their
 
 Option *c* requires familiarity with the mathematics and terminology of exponential random graph models, and option *d* requires familiarity with the EpiModel API; an introduction to each of these can be found here: http://statnet.github.io/nme/
 
-Advanced users have the option of creating new functions or variants of existing functions (described in more detail below). e.g. Someone wanting to specify that “versatile” men are more likely to use condoms, for example, could write a variant of our condom usage function that does this.
-
+Advanced users have the option of creating new functions or variants of existing functions (described in more detail below). e.g. Someone wanting to specify that “versatile” men are more likely to use condoms, for example, could write a variant of our condom usage function that does this.  
 
 ### Model processes
 
@@ -47,21 +46,17 @@ In this section we give an overview of the assumptions made by our default modul
 
 HIV transmission probabilities are calculated as a function of relevant risk factors for each sex act according to characteristics of the sexual act and characteristics of the agents engaged in the sexual act. Following Hughes et al (2012), the probability of transmission is calculated for each sexual act that occurs in a serodiscordant relationship, as:  
 
-$$P(transmission)=1-(1-λ)^{eXβ}$$  
-
+$$P(transmission)=1-(1-λ)^{eXβ}$$
 where λ is the baseline per-act infectivity (0.000247).  
 
 We have different transmission probabilities for heterosexual and MSM partners. For heterosexual partners,  
 
-$$Xβ=ln(2.89*(VL-4.0)+ln(RR_{circumcised})*circumcised+ln(RR_{condom})*condom+ln(RR_{age})*age_{base}+ln(RR_{STI})*STI.status.sus$$  
-
-where circumcised is an indicator variable for the circumcision status of the male, STI (sexually transmitted infection) is an indicator variable for any STI, condom is an indicator variable for condom use for the male, VL is the log10 viral load of infected agent, and age_base is the number of decades over 35 the susceptible agent is: (age-35)/10; and RR_x is the risk factor. 
+$$Xβ=ln(2.89*(VL-4.0)+ln(RR_{circumcised})*circumcised+ln(RR_{condom})*condom+ln(RR_{age})*age_{base}+ln(RR_{STI})*STI.status.sus$$
+where *circumcised* is an indicator variable for the circumcision status of the male, *STI* (sexually transmitted infection) is an indicator variable for any STI, *condom* is an indicator variable for condom use for the male, *VL* is the log10 viral load of infected agent, and *age_base* is the number of decades over 35 the susceptible agent is: (age-35)/10; and *RR_x* is the risk factor. 
 
 For MSM partners,
 
-$$Xβ=ln(RR_VL )*(VL-4.0)+ln(RR_{insertive})*insertive+ln(RR_{receptive})*receptive+ln(RR_{circumcised}))*circumcised+ln(RR_{condom})*condom+
-ln(RR_{sti})*sti.status.sus$$
-
+$$Xβ=ln(RR_VL )*(VL-4.0)+ln(RR_{insertive})*insertive+ln(RR_{receptive})*receptive+ln(RR_{circumcised}))*circumcised+ln(RR_{condom})*condom+ln(RR_{sti})*sti.status.sus$$
 where insertive and receptive are indicator variables for role of susceptible agent and other variables are as for heterosexual partners.
 
 Once the probability of transmission is calculated, a random uniform draw determines whether infection occurred.  
