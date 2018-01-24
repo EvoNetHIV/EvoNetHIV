@@ -14,6 +14,8 @@ A software package for modeling HIV epidemics and viral evolution in sexual netw
 
 This document describes an R package, EvoNetHIV, that allows users to model the interactions between social networks and the evolution and epidemiology of HIV. The package is being developed and used by a research team at the University of Washington (Seattle, WA, USA).
 
+## Interaction with other packages  
+
 The package uses the API (application programming interface) of the R package **EpiModel** (http://www.epimodel.org/), so familiarity with that API and package is helpful. We provide an introduction below, as well as links to more information for advanced users. Users who wish to model new network structures will also need to be familiar with the methods and syntax from the **statnet** suite of R packages (http://www.statnet.org/). We also provide a brief overview, and links for more information, within this guide. For updates and further information about this package, please visit https://github.com/EvoNetHIV.
 
 ## Funding
@@ -35,23 +37,19 @@ Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb have also made contributions
 
 ## Table of contents
 
-[Model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#Model-overview)  
-
+[General model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#General-model-overview)
+[Structure](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#Structure) 
 [How to use](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#How-to-use-the-model)  
 
-## Model overview
+## General model overview
 
-EvoNetHIV is an HIV epidemic simulation model that incorporates sexual network structure, within-host viral and immune system dynamics, antiretroviral therapy, vaccination, condom use, circumcision, demography, and viral evolution. 
-
-EvoNetHIV is an agent-based simulation model. Each agent (i.e., individual) is a discrete entity that has over 30 attributes. Important agent attributes include sex, age, HIV infection status, time of infection, viral load, set-point viral load, antiretroviral treatment status, and vaccination status. Some attributes are regularly updated, such as age or viral load (for infected agents) while others (e.g. sex, set-point viral load), do not change once assigned to the agent. Agents are “born” (added to the model as uninfected individuals), age, and depart from the model, either through death from AIDS, death from background mortality, or aging out.  Agents can become infected and infect other agents. Agents cannot be infected twice (experience dual or super-infection).
+EvoNetHIV is an stochastic agent-based model for simulating HIV epidemics. The model incorporates sexual network structure, within-host viral and immune system dynamics, antiretroviral therapy, vaccination, condom use, circumcision, demography, and viral evolution. Each agent (i.e., individual) is a discrete entity that has over 30 [attributes](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Individual%20attributes.md). Important agent attributes include sex, age, HIV infection status, time of infection, viral load, set-point viral load, antiretroviral treatment status, and vaccination status. Some attributes are regularly updated, such as age or viral load (for infected agents) while others (e.g. sex, set-point viral load), do not change once assigned to the agent. Agents are “born” (added to the model as uninfected individuals), age, and depart from the model, either through death from AIDS, death from background mortality, or aging out.  Agents can become infected and infect other agents. Agents cannot be infected twice (experience dual or super-infection).
 
 EvoNetHIV is a stochastic model, such that identical parameter values or starting conditions for different model runs will produce different results.  Many input parameters are mean or variance values of probability distributions used to draw random numbers from the specified probability distribution. For example, the parameter for mean sex acts per ongoing relationship per time step is the mean value for a draw from a Poisson distribution. Model dynamics occur on a daily timestep; thus fine-scale epidemiological and behavioral processes can be simulated.  
 
-### Components
+### Structure
 
-EvoNetHIV is written in the R programming language as a series of interchangeable modules and user-specified parameters that control different components of the system (e.g. HIV and CD4 progression, treatment initiation, coital acts). Network characteristics (e.g., age-related homophily, presence of particular risk groups) can be specified using standard statnet network commands. Advanced users have the option of writing additional modules (e.g., allowing circumcision probabilities to vary with risk group membership). 
-
-EvoNetHIV uses a modular framework from the [EpiModel](http://www.epimodel.org/) API. EvoNetHIV has inter-connected components that result in epidemiological and evolutionary dynamics:  network structure; sexual behavior; within-host dynamics (viral load, disease progression), and treatment or other public health interventions. All components operate at the scale of the agent. The aggregate dynamics or values across agents give epidemiological and population level dynamics.
+EvoNetHIV is written in the R programming language as a series of interchangeable modules and user-specified parameter values that control different components of the system (e.g. network structure; sexual behavior; within-host dynamics (viral load, disease progression), and treatment or other public health interventions). As noted, above, EvoNetHIV uses a modular framework from the [EpiModel](http://www.epimodel.org/) API.
 
 **Network structure**  
 Agents can be either isolates or have one or more concurrent relationships with other agents. This network structure is dynamic and changes according to the specified network statistics. The network module is built using exponential random graph models in the [statnet](http://www.statnet.org/) framework, which provides a language for specifying arbitrarily complex network models. 
@@ -83,7 +81,7 @@ In this section we give an overview of the assumptions made by our default modul
 
 #### Behavior
 
-* *Network structure and dynamics*. Structure: user-specified network parameters can be implemented (e.g., mean degree, age and other subgroup structure) based on the statnet and EpiModel packages. The default structure is random mixing of agents with a network mean degree of 0.7. Each agent can exist as an isolate (no partners) or have one or more sexual partners per timestep. The default mean partnership duration is 100 days. Various risk group substructures can be defined.  
+* *Network structure and dynamics*. User-defined network parameters can be implemented (e.g., mean degree, age and other subgroup structure) based on the statnet and EpiModel packages. The default structure is random mixing of agents with a network mean degree of 0.7. Each agent can exist as an isolate (no partners) or have one or more sexual partners per timestep. The default mean partnership duration is 100 days. 
 
 * *Sex*. Sexual acts (coital acts) are determined among agents in a serodiscordant relationship at each daily time step. Among these partnerships, the number of sexual acts per partnership per daily time step is assigned according to a Poisson draw (mean = 0.43). Probability of sex can also be a declining function of age. Default condom use is determined for each sexual act with probability of 50% and default circumcision status is assigned to agents at model entry with 85% probability. When the infected partner is 47% past their expected time in AIDS, no sex occurs. For MSM models, agents are assigned one of three sexual roles: versatile, insertive, and receptive. Insertive agents only have sex with receptive agents and vice-versa. Versatile agents can have sex with any other agents. Intra-event versatility (when men switch roles and each engage in insertive and receptive anal intercourse (AI) during the same sexual contact) occurs with 40% probability when both partners are role versatile.
 
