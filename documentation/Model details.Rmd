@@ -31,9 +31,13 @@ In this section we give an overview of the assumptions made by our default modul
 
 * *Daily viral load*. Initial VL starts out at -4.0 rises exponentially to a peak acute phase level, and then has a biphasic decay to SPVL. The acute phase last 50 days. Default value for peak acute phase VL is constant for all agents but can be set to be a function of an agent’s SPVL. After the end of the acute phase, VL increases linearly, starting at SPVL, at a pre-specified chronic phase rate of increase. At the onset of AIDS, VL increases linearly at a  pre-specified rate of increase for the AIDS phase until it reaches the assumed maximum VL value for AIDS at which it remains until agent’s death. (The onset of AIDS is triggered by CD4 values.) With commencement of ART, VL will decrease linearly over 30 days to a “undetectable” level of 1.7 and remain there for the duration of treatment. If treatment stops, VL will then increase linearly over 30 days to the VL level at the start of treatment and then progress as if treatment did not occur. 
 
+![](https://github.com/EvoNetHIV/EvoNetHIV-Overview/blob/master/img/vlfig1b.png)
+
 #### CD4 dynamics
 
 * CD4 counts for individuals are recorded as ordinal variables with four categories; categories 1, 2, 3, and 4 represent CD4>500, 500>CD4>350, 350>CD4>200, 200>CD4>0, respectively. Category 4 also represents the AIDS stage.  
+
+![](https://github.com/EvoNetHIV/EvoNetHIV-Overview/blob/master/img/cd41b.png)
 
 * At infection, an individual is probabilistically assigned an initial CD4 category (1, 2, or 3) where higher SPVL values increases the probability of assignment to categories 2 or 3. (Table 1). For each daily timestep, an infected agent in categories 1, 2, or 3 can move to the following CD4 category (representing lower CD4 counts) or remain in the current category based on the outcome of a Bernoulli trial with the probability of success (moving to the next category) equal to the inverse of the mean passage time (in days) for a given SPVL and CD4 category (Table 2). Duration in CD4 category 4 is fixed for each SPVL category; at the end of time in category 4, an individuals is categorized as having died of AIDS.  
 
