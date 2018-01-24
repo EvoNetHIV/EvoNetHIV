@@ -35,12 +35,6 @@ Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb have also made contributions
 
 ****
 
-## Table of contents
-
-[General model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#General-model-overview)   
-[Structure](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#Structure)   
-[How to use](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/EvoNetHIV%20Users%20Guide.Rmd#How-to-use-the-model)   
-
 ## General model overview  
 
 EvoNetHIV is a stochastic agent-based model for simulating HIV epidemics. The model incorporates sexual network structure, within-host viral and immune system dynamics, antiretroviral therapy, vaccination, condom use, circumcision, demography, and viral evolution. Each agent (i.e., individual) is a discrete entity that has over 30 [attributes](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Agent%20attributes.md). Important agent attributes include sex, age, HIV infection status, time of infection, viral load, set-point viral load, antiretroviral treatment status, and vaccination status. Some attributes are regularly updated, such as age or viral load (for infected individuals) while others (e.g. sex, set-point viral load), do not change once assigned to the agent. Agents are “born” (added to the model as uninfected individuals), age, and depart from the model, either through death from AIDS, death from background mortality, or aging out. Agents can become infected and infect other agents. Agents cannot be infected twice (experience dual or super-infection).
