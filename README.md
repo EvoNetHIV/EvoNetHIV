@@ -20,5 +20,5 @@ This project is supported by grants from the National Institutes of Health (NIAD
 Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb have also made contributions to model development.  
 
 [User guide](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_overview.md)  
-[Quick start](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)
+[Quick start](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)  
 [Model details](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_details.html)
