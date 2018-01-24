@@ -1,20 +1,22 @@
 ---
 date: 'January 2018'
 title: "Model details"
-output: rmarkdown::github_document
+output: html_document
 ---
 
 ## How to use the model  
 
-Users may interact with EvoNetHIV in one of four principal ways to conduct their own experiments:  a) they may keep the model structure exactly as is, but vary some of the many dozen input parameters; b) they may use some of the alternative functional forms included with the model through the use of flag arguments; c) they may keep the model structure as is, but vary the network model and associated parameters through the use of _ergm_ terms; d) they may change the structure of the model through the writing of substitute modules. Each of these features requires understanding the current model, and being familiar with the default parameter values; these are described below.  
+For details on steps to start, see the [Quick start guide](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/Quick%20start.md).
 
-Option *c* requires familiarity with the mathematics and terminology of exponential random graph models, and option *d* requires familiarity with the EpiModel API; an introduction to each of these can be found here: http://statnet.github.io/nme/
+Users may interact with EvoNetHIV in one of four principal ways to conduct their own experiments:  **a)** they may keep the model structure exactly as is, but vary some of the input parameters; **b)** they may use some of the alternative functional forms included with the model through the use of flag arguments; **c)** they may keep the model structure as is, but vary the network model and associated parameters through the use of _ergm_ terms; **d)** they may change the structure of the model through the writing of substitute modules. Each of these features requires understanding the current model, and being familiar with the default parameter values; these are described below.  
+
+Option **c** requires familiarity with the mathematics and terminology of exponential random graph models, and option **d** requires familiarity with the EpiModel API; an introduction to each of these can be found here: http://statnet.github.io/nme/
 
 Advanced users have the option of creating new functions or variants of existing functions (described in more detail below). e.g. Someone wanting to specify that “versatile” men are more likely to use condoms, for example, could write a variant of our condom usage function that does this.  
 
 ### Model processes
 
-In this section we give an overview of the assumptions made by our default modules.
+In this section we describe the assumptions and actions of the default modules.
 
 #### Behavior
 
@@ -26,7 +28,24 @@ In this section we give an overview of the assumptions made by our default modul
 
 #### Viral load
 
-* *Set point viral load*. At infection, agents are assigned a set point viral load (SPVL), using a function that incorporates infector SPVL, assumed heritability of SPVL, and a randomly determined host-specific factor (stochastic white noise), and heritability. The maximum possible viral load (all viral dynamics on log10 scale) is 7.0 and the minimum is 2.0.
+* *Set point viral load*. At infection, agents are assigned a set point viral load (SPVL), using a function that incorporates infector SPVL, assumed heritability of SPVL, and a randomly determined host-specific factor (stochastic white noise), and heritability. For infected agent i, with *t0* denoting initial conditions and *h^2* the heritability coefficient, the viral contribution to SPVL is drawn from a normal distribution with mean 4.5 log10 copies/mL and standard deviation of 
+
+$$√(h^2*variance of log_{10}SPVL)$$
+
+$$viral_{spvl,i}  N(μ_{spvl,t_0},σ_(viral,t_0)^2 )$$
+
+$$μ_{spvl,t_0}=4.5$$
+$$σ_{viral,t_0}^2=h^2  σ_{spvl,t_0}^2$$
+The environmental contribution is drawn from a normal distribution with mean of 0 and standard deviation of 
+
+$$√((1-h^2)×variance of log_{10}SPVL)$$
+$$σ_{env}^2=(1-h^2)*σ_{spvl,t_0}^2$$
+$$env_{spvl,i}~N(0,σ_{env}^2)$$
+SPVL is then the sum of the viral and environmental contributions, constrained to a minimum value of 2 log10 copies/mL and a maximum value of 7 log10 copies/mL.
+$$spvl_i = env_{spvl,i} + viral_{spvl,i}$$
+Upon transmission, the SPVL of a newly infected agent is determined by the SPVL of the donor virus, viral mutational variance, and an environmental contribution. The viral mutational variance (ϵ) is drawn from a normal distribution with mean 0 and standard deviation 0.01. The environmental contribution to the SPVL of newly infected agents is drawn from the same distribution as that of infected agents at model initialization. The SPVL of newly infected agents is then the sum of the inherited SPVL of the donor agent, mutational variance, and an environmental contribution.
+
+Note that this while the value of *h^2* is a model input and modulates the influence of viral genotype on the similarity in SPVL between transmission pairs, heritability is a population-level measure that can change over time and across populations.
 
 * *Daily viral load*. Initial VL starts out at -4.0 rises exponentially to a peak acute phase level, and then has a biphasic decay to SPVL. The acute phase last 50 days. Default value for peak acute phase VL is constant for all agents but can be set to be a function of an agent’s SPVL. After the end of the acute phase, VL increases linearly, starting at SPVL, at a pre-specified chronic phase rate of increase. At the onset of AIDS, VL increases linearly at a  pre-specified rate of increase for the AIDS phase until it reaches the assumed maximum VL value for AIDS at which it remains until agent’s death. (The onset of AIDS is triggered by CD4 values.) With commencement of ART, VL will decrease linearly over 30 days to a “undetectable” level of 1.7 and remain there for the duration of treatment. If treatment stops, VL will then increase linearly over 30 days to the VL level at the start of treatment and then progress as if treatment did not occur. 
 
@@ -44,7 +63,7 @@ In this section we give an overview of the assumptions made by our default modul
 
 #### HIV transmission  
 
-HIV transmission probabilities are calculated as a function of relevant risk factors for each sex act according to characteristics of the sexual act and characteristics of the agents engaged in the sexual act. Following Hughes et al (2012), the probability of transmission is calculated for each sexual act that occurs in a serodiscordant relationship, as:  
+HIV per-act transmission probabilities are calculated as a function of relevant risk factors according to characteristics of the sexual act and characteristics of the agents engaged in the sexual act. Following Hughes et al (2012), the probability of transmission is calculated for each sexual act that occurs in a serodiscordant relationship, as:  
 
 $$P(transmission)=1-(1-λ)^{eXβ}$$
 where λ is the baseline per-act infectivity (0.000247).  
