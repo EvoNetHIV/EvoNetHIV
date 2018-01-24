@@ -1,6 +1,6 @@
-# Quick start guide to running EvoNet 
+# Quick start guide to running EvoNetHIV 
 
-Download/install/load EvoNet
+Download/install/load EvoNetHIV
 ```{r chunk1, eval=FALSE}
 if (!require("devtools")) install.packages("devtools")
 install_github("EvoNetHIV/TestRepo",subdir="pkg")
@@ -89,7 +89,7 @@ Create an EpiModel "control" object which contains both the input parameters and
 evocontrol <- setup_epimodel_control_object(evonet_params = evoparams,
                                             module_list   = evo_module_list)
 ```
-Run the simulation using EpiMode's 'netsim' function
+Run the simulation using EpiModel's 'netsim' function
 
 ```{r chunk14, eval=FALSE}
   evomodel  <- EpiModel::netsim(x = estimated_nw,
