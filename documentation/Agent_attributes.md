@@ -18,8 +18,8 @@ Each agent has suite of attributes that defines his/her demographic/infection/be
 | Attribute      | Description                                    |
 |:---------------|:-----------------------------------------------|
 | SPVL           | SPVL                                           |
-| Infection Time | Time of infection in days since start of model |
-| Viral Load     | Current viral load                             |
+| Infection time | Time of infection in days since start of model |
+| Viral load     | Current viral load                             |
 
 ### Key Demographic agent attributes
 
