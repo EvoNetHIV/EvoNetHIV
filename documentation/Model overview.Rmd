@@ -1,6 +1,6 @@
 ---
 date: 'January 2018'
-title: "EvoNetHIV User Guide"
+title: "EvoNetHIV Model Overview"
 output: rmarkdown::github_document
 ---
 
