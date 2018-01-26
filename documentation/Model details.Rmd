@@ -1,7 +1,7 @@
 ---
 date: 'January 2018'
 title: "Model details"
-output: html_document
+output: pdf_document
 ---
 
 ## How to use the model  
