@@ -15,7 +15,7 @@ This project is supported by grants from the National Institutes of Health (NIAD
 * Steven M. Goodreau <goodreau@uw.edu>
 * Joshua T. Herbeck <herbeck@uw.edu>
 * Kathryn Peebles <kpeebles@uw.edu>
-* Sarah E. Stansfield <sestan@uw.edu>  
+* Sarah E. Stansfield <sestans@uw.edu>  
 
 Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb have also made contributions to model development.  
 
