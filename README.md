@@ -6,7 +6,7 @@ The package uses the API (application programming interface) of the R package **
 
 ## Funding  
 
-This project is supported by grants from the National Institutes of Health (NIAD R01AI108490 and NIGMS R01GM125440 (via [MIDAS](https://www.nigms.nih.gov/Research/specificareas/MIDAS/Pages/default.aspx))) and the Center for Demography and Ecology at the University of Washington (https://csde.washington.edu/). 
+This project is supported by grants from the National Institutes of Health (NIAD R01AI108490 and NIGMS R01GM125440 (via [MIDAS](https://www.nigms.nih.gov/Research/specificareas/MIDAS/Pages/default.aspx))) and the Center for Studies in Demography and Ecology at the University of Washington (https://csde.washington.edu/). 
 
 ## Authors  
 
@@ -19,6 +19,6 @@ This project is supported by grants from the National Institutes of Health (NIAD
 
 Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb have also made contributions to model development.  
 
-[User guide](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_overview.md)  
+[Model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_overview.md)  
 [Quick start](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)  
 [Model details](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_details.html)
