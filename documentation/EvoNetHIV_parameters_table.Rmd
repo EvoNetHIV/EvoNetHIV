@@ -1,0 +1,69 @@
+---
+title: "Table of parameters used in EvoNetHIV"
+output:
+  html_document:
+    df_print: paged
+    theme: cosmo
+    css: tablestyle.css
+  pdf_document: default
+  word_document: default
+---
+
+All parameters below are passed in as arguments to the function `input_params.R`
+
+
+Category | Name |  Description | Default value | Unit | Derivation
+----------------- | ----------- | ------------------------------- | ---- | ---- | ------------------ |
+Basic model setup parameters and flags | model_name | name of model | "evomodel" |  |  N/A
+Basic model setup parameters and flags | hpc | whether to use EpiModel.hpc (for high-performance clusters) | FALSE |  |  N/A
+Basic model setup parameters and flags | output_path | output path | value of `getwd()`, i.e. the current working directory |  |  N/A
+Basic model setup parameters and flags | nsims  | number of simulations to run | 1 |  |  N/A
+Basic model setup parameters and flags | initial_pop | size of the initial population | 100 |  agents | N/A
+Basic model setup parameters and flags | n_steps | number of time steps per simulation | 730 |  time steps | N/A
+Basic model setup parameters and flags | initial_infected | Initial # of infected agents | 20 |  agents | N/A
+Basic model setup parameters and flags | **model_sex** | model sex (MSM or heterosexual) | "msm" |  |  N/A
+Basic model setup parameters and flags | scrolling_output | whether output should scroll | TRUE |  |  N/A
+Basic model setup parameters and flags | print_frequency | **frequency of printing to the screen** | 10 |  time steps | N/A
+Basic model setup parameters and flags | plot_nw | **whether to plot the network during the simulation** | TRUE |  |  N/A
+Basic model setup parameters and flags | network_print_frequency | **frequency at which network is plotted** | 100 |  time steps | N/A
+Basic model setup parameters and flags | save_network | **whether to save the full dynamic network** | FALSE |  |  N/A
+Basic model setup parameters and flags | save_coital_acts | **whether to save the full history of coital acts** | FALSE |  |  N/A
+Basic model setup parameters and flags | save_vl_list | **whether to save individual agents' viral load histories** | FALSE |  |  N/A
+Basic model setup parameters and flags | save_infection_matrix | **whether to save the matrix of infection events** | FALSE |  |  N/A
+Basic model setup parameters and flags | popsumm_frequency | **frequency at which to record summary statistics into "popsumm"** | 1 |  time steps | N/A
+Network estimation terms (1) | **modes** | **Modes** | **1** |  | **From EpiModel**
+Network estimation terms (1) | nw_form_terms | terms to include in the relational formation model. Must be in the form of a right-hand formula in quotes. | "~edges" |  | N/A
+Network estimation terms (1) | nw_coef_form  | values of the coefficients associated with any offset terms in the relational formation model | NULL |  | N/A
+Network estimation terms (1) | target_stats | value of the statistics associated with any terms in the relational formation model (other than offset terms) | **initial_pop$*0.7/2$** |  | **MARDHAM?**
+Network estimation terms (1) | relation_dur | **mean relational duration** | 50 | time steps | **MARDHAM?**
+Network estimation terms (1) | nw_constraints | structural constraints on the space of allowable network configurations | "~." |  | N/A
+Network estimation terms (1) | dissolution | terms to include in the relational dissolution model. Must be in the form of a right-hand formula, with each term as offset, and in quotes. | "~offset(edges)" |  | 
+Viral load trajectory (in absence of treatment) | V0 | viral load on first day of infection | 1.E-04 | copies/ml | Set to be functionally equivalent to 0; note that this corresponds to 1 virion in the entire body, assuming 10 liters of blood and lymph
+Viral load trajectory (in absence of treatment) | t_acute | time in acute infection | 90 | days | range of data sources suggesting numbers on this order; 90 is commonly used in models (Fiebig 2003, McMichael 2010)
+Viral load trajectory (in absence of treatment) | t_peak | time to peak VL during acute Infection | 21.0 | days | Lindback et al. (2000)
+Viral load trajectory (in absence of treatment) | t_acute_phase2 | time until the beginning of acute decline phase 2 | 55 | days | estimates vary widely in the literature; this number is approximated from data presented in Lindback et al. (2000) and Stafford et al. (2000)
+Viral load trajectory (in absence of treatment) | acute_decline_phase2_rate | slope (on ln scale) during acute decline phase 2 | -0.03 | per day | Lindback et al. (2000)
+Viral load trajectory (in absence of treatment) | VL_Function | **shape of the viral load function** | **"Existing"** |  | **Other option is "ModifiedLogistic"**
+Viral load trajectory (in absence of treatment) | vl_increase_AIDS | daily slope in VL increase after AIDS onset (CD4 <200) | 1.0041122 | per day | Correpsonds to a 400-fold increase over 4 years, i.e. 1.0041122^(4*365) = 400. This is drawn from common schematics of HIV progression; e.g. O’Brien and Hendrickson 2013, Fauci et al. 1996
+Viral load trajectory (in presence of treatment) | vl_exp_decline_tx | rate of exponential decline in viral load with treatment | -0.6 | per day | Ho 1995, Wei 1995, Perelson 1996, Perelson 1997. **(Largely reflects the first-phase decay rate for PI-containing regimens)**
+Viral load trajectory (in presence of treatment) | vl_full_supp | viral load when fully suppressed | 13 | copies/ml | Palmer et al 2003
+Viral load trajectory (in presence of treatment) | vl_undetectable | VL Undetectable Level | 50 | copies/ml | standard 
+Transmission flag | transmission_model  | Transmission Model | "hughes" |  | N/A. Other options are "hill" and "exponential"
+Transmission parameters **(when transmission_model = "hughes" or "hill" or "exponential")** | | **WHAT ABOUT AN INTERCEPT?** |  |  |  |
+Transmission parameters **(when transmission_model = "hughes" or "hill" or "exponential")** | trans_RR_uses_condoms | rel. risk of transmission if condoms are used | 0.22 |  | Hughes et al. 2012
+Transmission parameters **(when transmission_model = "hughes" or "hill" or "exponential")** | trans_RR_LogV    | rel. risk of transmission per unit increase in log10 viral load | 2.89 |  | Hughes et al. 2012
+Transmission parameters **(when transmission_model = "hughes" or "hill" or "exponential")** | trans_VLbase | base viral load for calcuating relative risk of transmission | 4 | log10 copies/ml | Hughes et al. 2012
+Transmission parameters **(when transmission_model = "hughes" or "hill" or "exponential")** | trans_RR_circumcised | rel. risk of transmission to male engaging in insertive penile-vaginal or insertive penile-anal sex if circumsized  | 0.53 |  | Hughes et al. 2012
+Transmission parameters **(when transmission_model = "hughes" or "hill" or "exponential")** | trans_RR_age | rel. risk of transmission per 10-year increase in age of **(transmitting partner? negative partner?)** | 0.67 | 10-year difference | Hughes et al. 2012
+Transmission parameters **(when transmission_model = "hughes" or "hill" or "exponential")** | trans_base_age | base age for calcuating relative risk of transmission | 35 | years | Hughes et al. 2012
+Transmission parameters **(when transmission_model = "hughes" or "hill" or "exponential")** | trans_RR_STI | **rel. risk of HIV acquisition for someone with an STI** | 2.7 |  | Hughes et al. 2012
+
+
+Notes:
+(1) purposefully minimal; users should consult statnet and EpiModel tutorials for more information
+
+
+
+
+
+

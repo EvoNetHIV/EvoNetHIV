@@ -1,0 +1,33 @@
+body .main-container {
+  max-width: 1400px;
+}
+
+
+/* Table formatting */
+table {
+  width:100%  ;
+  min-width:100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+td {
+   font-family: Helvetica, Arial, sans-serif;
+   padding: 5px 30px 15px 30px;
+   color: #282828;
+   font-weight: 300;
+   font-size: 0.9em;
+   
+}
+th {
+  background-color: #00AA00;
+  color: white;
+}
+tr:hover {
+  background-color: #C6DEFF;
+}
+tr:first-child th {
+  font-weight: 300;
+  font-size: 1em;
+}
+tr:nth-child(even) {background-color: #f2f2f2;}
+
