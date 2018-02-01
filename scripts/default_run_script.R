@@ -37,7 +37,7 @@ initial_pop = initial_pop,
 initial_infected = 40,
 n_steps = 365*20,
 popsumm_frequency=30,
-fast_edgelist=F,
+fast_edgelist=T,
 plot_nw=T)
 
 evoparams <- do.call(evonet_setup,param_list)
