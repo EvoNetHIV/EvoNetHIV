@@ -8,7 +8,7 @@ output: html_document
 
 For details on steps to start, see the [Quick start guide](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/Quick%20start.md).
 
-This is an evolving document; more details are to be added. For specific questions, please see the function descriptions [here](https://github.com/EvoNetHIV/EvoNetHIV/tree/master/pkg/R), the parameter table [here](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/EvoNetHIV_parameters_table.Rmd), or email the authors.
+This is an evolving document; more details are to be added. For specific questions, please see the .R function descriptions [here](https://github.com/EvoNetHIV/EvoNetHIV/tree/master/pkg/R), the parameter table [here](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/EvoNetHIV_parameters_table.Rmd), or email the authors.
 
 Users may interact with EvoNetHIV in one of four principal ways to conduct their own experiments:  **a)** they may keep the model structure exactly as is, but vary some of the input parameters; **b)** they may use some of the alternative functional forms included with the model through the use of flag arguments; **c)** they may keep the model structure as is, but vary the network model and associated parameters through the use of _ergm_ terms; **d)** they may change the structure of the model through the writing of substitute modules. Each of these features requires understanding the current model, and being familiar with the default parameter values; these are described below.  
 
