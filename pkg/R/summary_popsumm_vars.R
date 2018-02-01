@@ -3,16 +3,15 @@ summary_popsumm_vars <- function(dat){
   default_vars <- c("timestep", "prevalence", "new_infections", "susceptibles",
   "total_infections_alive", "births", "aids_deaths", "natural_deaths",
   "aged_out", "natural_deaths_infecteds", "natural_deaths_susceptibles",
-  "alive", "no_in_aids_gamma", "no_in_aids_cd4", "natural_deaths_infecteds",
-  "natural_deaths_susceptibles", "new_diagnoses", "percent_donor_acute",
+  "alive", "no_in_aids_gamma", "no_in_aids_cd4", "natural_deaths_infecteds", 
+  "new_diagnoses", "percent_donor_acute",
   "mean_time_donor_infected_incident", "mean_age_incident", "mean_age_died_AIDS",
   "mean_spvl_pop_all", "mean_vl_pop_all", "mean_spvl_incident", "mean_spvl_pop_untreated",
   "total_infections_not_treated",
   "mean_age_infecteds", "mean_age_susceptibles", "mean_trans_prob",
   "no_edges", "mean_degree", "mean_degree_inf_untreated", "prop_nodes_degree_0",
   "prop_nodes_degree_1", "prop_nodes_concurrent",
-  "cd4_gt_350", "cd4_200_350","cd4_0_200"
-  )
+  "cd4_gt_350", "cd4_200_350","cd4_0_200")
 
 
  hetero_vars <-  c("alive_female", "alive_male",
@@ -49,8 +48,23 @@ summary_popsumm_vars <- function(dat){
   "Perc_2+_drug_muts_total_pop", "Perc_3+_drug_muts_total_pop",
   "Perc_4+_drug_muts_total_pop", "Perc_All_5_drug_muts_total_pop",
   "Perc_3+_drug_muts_long", "Perc_4+_drug_muts_long", "Perc_5_drug_muts_long")
-
-  popsumm_vars <- default_vars
+  
+  genatt_vars <- NULL
+  temp_length <- length(dat$param$generic_nodal_att_values)
+  if(temp_length>1){
+    genatt_var1 <- paste("generic_att_percent_cat_",dat$param$generic_nodal_att_values,sep="")
+    genatt_var2 <- paste("generic_att_percent_inf_cat_",dat$param$generic_nodal_att_values,sep="")
+    genatt_var3=NULL
+    if (dat$param$perc_vaccinated != 0.5){
+      genatt_var3 <- paste("generic_att_percent_vacc_cat_",dat$param$generic_nodal_att_values,sep="")
+    }
+    genatt_vars <- c(genatt_var1,genatt_var2,genatt_var3)
+  }  
+  
+  
+  
+  popsumm_vars <- c(default_vars,genatt_vars)
+  
   #hetero models
   if(dat$param$model_sex=="hetero"){popsumm_vars <- c(popsumm_vars,hetero_vars)}
   #models with treatment
