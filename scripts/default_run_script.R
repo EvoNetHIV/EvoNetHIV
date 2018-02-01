@@ -12,9 +12,6 @@
   #devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")
 #--------------------------------------------------------------
 
-#users can ignore these lines
-#devtools::document("~/evonetGitHub/EvoNet/pkg")
-
 #--------------------------------------------------------------
 
 library(evonet)
