@@ -21,4 +21,4 @@ Neil Abernethy, Juandalyn Burke, and Geoff Gottlieb have also made contributions
 
 [Model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_overview.md)  
 [Quick start](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)  
-[Model details](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_details.html)
+[Model details](https://evonethiv.github.io/EvoNetHIV/documentation/Model_details.html)
