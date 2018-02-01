@@ -24,22 +24,20 @@ library(evonet)
 options(error=browser) # go into debug mode on error
 #--------------------------------------------------------------
 
-#Read in / set parameter values
+#Read in / set parameter values as list object
 #For alphabetical list of input parameter names: sort(names(evonet_setup()))
 
 
-#Need to set initial pop value as other parameters are dependent on its value
-initial_pop=200
-
 param_list=list(
 nsims = 3,
-initial_pop = initial_pop,
+initial_pop = 200,
 initial_infected = 40,
 n_steps = 365*20,
 popsumm_frequency=30,
 fast_edgelist=T,
 plot_nw=T)
 
+#create parameter list with updated values
 evoparams <- do.call(evonet_setup,param_list)
 
 #Alternative 1, without argument list:
