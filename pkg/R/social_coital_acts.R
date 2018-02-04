@@ -53,7 +53,7 @@ social_coital_acts <-function(dat,at)
    inf_age_vec   <- dat$pop$age[infector_id]
    mean_age_vec  <- rowMeans(cbind(recip_age_vec,inf_age_vec))
    #these calculations come from john
-   prob_sex <- max ( dat$param$prob_sex_age_19 * 
+   prob_sex <- pmax ( dat$param$prob_sex_age_19 * 
                     (1 - (mean_age_vec - 19) / 
                     (dat$param$max_age_sex - 19) ), 0 )
    mean_no_acts <- prob_sex* reduction_vec
