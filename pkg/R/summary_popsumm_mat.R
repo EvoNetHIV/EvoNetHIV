@@ -1,3 +1,17 @@
+#' @title Title
+#'
+#' @description Description
+#'
+#' @param x A number.
+#' @param y A number.
+#' @return return value here.
+#' @details
+#' Additional details here
+#' @examples
+#' example function call here
+
+#' @export
+
 summary_popsumm_mat <- function(model){
   popsumm=model$popsumm
   nsims=length(popsumm)

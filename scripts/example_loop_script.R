@@ -1,3 +1,7 @@
+library(evonet)
+
+#Read in default parameters
+evoparams <- evonet_setup()
 # Override default values
 evoparams$initial_pop      = 200
 evoparams$initial_infected = 40
