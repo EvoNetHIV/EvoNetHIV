@@ -123,10 +123,8 @@ $(document).ready(function () {
 </div>
 
 
-<div id="how-to-use-the-model" class="section level2">
-<h2>How to use the model</h2>
 <p>For details on steps to start, see the <a href="https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/Quick%20start.md">Quick start guide</a>.</p>
-<p>This is an evolving document; more details are to be added. For specific questions, please see the function descriptions <a href="https://github.com/EvoNetHIV/EvoNetHIV/tree/master/pkg/R">here</a>, the parameter table <a href="https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/EvoNetHIV_parameters_table.Rmd">here</a>, or email the authors.</p>
+<p>This is an evolving document; more details are to be added. For specific questions, please see the .R function descriptions <a href="https://github.com/EvoNetHIV/EvoNetHIV/tree/master/pkg/R">here</a>, the parameter table <a href="https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/EvoNetHIV_parameters_table.Rmd">here</a>, or email the authors.</p>
 <p>Users may interact with EvoNetHIV in one of four principal ways to conduct their own experiments: <strong>a)</strong> they may keep the model structure exactly as is, but vary some of the input parameters; <strong>b)</strong> they may use some of the alternative functional forms included with the model through the use of flag arguments; <strong>c)</strong> they may keep the model structure as is, but vary the network model and associated parameters through the use of <em>ergm</em> terms; <strong>d)</strong> they may change the structure of the model through the writing of substitute modules. Each of these features requires understanding the current model, and being familiar with the default parameter values; these are described below.</p>
 <p>Option <strong>c</strong> requires familiarity with the mathematics and terminology of exponential random graph models, and option <strong>d</strong> requires familiarity with the EpiModel API; an introduction to each of these can be found here: <a href="http://statnet.github.io/nme/" class="uri">http://statnet.github.io/nme/</a></p>
 <p>Advanced users have the option of creating new functions or variants of existing functions (described in more detail below). e.g. Someone wanting to specify that “versatile” men are more likely to use condoms, for example, could write a variant of our condom usage function that does this.</p>
@@ -170,7 +168,6 @@ At infection, agents are assigned a set point viral load (SPVL), using a functio
 <div id="demographics" class="section level4">
 <h4>Demographics</h4>
 <p>The model allows users to specific an initial age distribution. The model accounts for births, natural mortality, death due to AIDS, and the potential for agents to age out of the sexually active population. Each agent ages 1/365 of a year each day. Depending on parameter choices, variety of age distributions, including (approximately) stable age distributions, can be achieved.</p>
-</div>
 </div>
 </div>
 

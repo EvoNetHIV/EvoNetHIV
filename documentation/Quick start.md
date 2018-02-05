@@ -12,7 +12,7 @@ Change default parameters. In this example, we change initial population size to
 ``` r
 evoparams$initial_pop      = 200
 evoparams$initial_infected = 40
-evoparams$n_steps = 365*20
+evoparams$n_steps          = 365*20
 ```
 
 Create initial network (as a function of input parameters)
