@@ -11,7 +11,7 @@
 #' example function call here
 
 #' @export
-viral_update_cd4_daily <- function(dat,at)
+cd4_update <- function(dat,at)
 {  
   
   #Description:

@@ -1,6 +1,6 @@
 
 #' @export
-social_treatment_module_multiple_criteria_v2 <- function(dat, at)
+targeted_treatment <- function(dat, at)
 {
   # Description:
   # Assuming some limit on how many people can get treated, this module determines which infected, diagnosed, eligible-for-care agents

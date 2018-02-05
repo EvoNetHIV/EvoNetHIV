@@ -11,7 +11,7 @@
 #' example function call here
 #' 
 #' @export
-vital_deaths_module_john <- function(dat,at){
+deaths_tx_time_adjusted <- function(dat,at){
   
   #Description:
   #Calls vital_death_aged_out, vital_death_aids, vital_death_non_aids

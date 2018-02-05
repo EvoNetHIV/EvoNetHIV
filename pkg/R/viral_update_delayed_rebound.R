@@ -10,7 +10,7 @@
 #' @examples
 #' example function call here
 #' @export
-viral_update_gamma_john <- function(dat, at) {
+viral_update_delayed_rebound <- function(dat, at) {
   ###########################################################################################################
   #  Function to update viral loads of all infected individuals; can have flat VL or peak during acute infection                                       #
   #  Input: dat$V for infected agents, "dat" and "at" data structures from epimodel                   #

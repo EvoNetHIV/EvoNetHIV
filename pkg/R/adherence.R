@@ -12,7 +12,7 @@
 
 #' @export
 
-social_adherence<-function(dat,at){
+adherence<-function(dat,at){
   
   #note: adherence_type==1, is default (random), set in vital_new_additions
   

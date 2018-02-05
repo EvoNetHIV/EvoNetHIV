@@ -70,3 +70,62 @@ vital_births_module <- function(...) {
   #  .Deprecated("births","package="evonet")
   births(...)
 }
+
+#' @export
+
+social_adherence <- function(...) {
+  #  .Deprecated("births","package="evonet")
+  adherence(...)
+}
+
+
+
+#' @export
+
+social_treatment_dropout_john <- function(...) {
+  #  .Deprecated("births","package="evonet")
+  treatment_dropout(...)
+}
+
+#' @export
+
+social_treatment_module_multiple_criteria_v2 <- function(...) {
+  #  .Deprecated("births","package="evonet")
+  targeted_treatment(...)
+}
+
+
+#' @export
+
+viral_update_gamma_john <- function(...) {
+  #  .Deprecated("births","package="evonet")
+  viral_update_delayed_rebound(...)
+}
+
+#' @export
+
+viral_update_cd4_daily  <- function(...) {
+  #  .Deprecated("births","package="evonet")
+  cd4_update(...)
+}
+
+#' @export
+
+vital_deaths_module_john  <- function(...) {
+  #  .Deprecated("births","package="evonet")
+  deaths_tx_time_adjusted(...)
+}
+
+#' @export
+
+social_attribute_transition_module  <- function(...) {
+  #  .Deprecated("births","package="evonet")
+  risk_group_changes(...)
+}
+
+
+
+
+
+
+

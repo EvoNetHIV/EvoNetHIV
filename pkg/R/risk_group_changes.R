@@ -11,7 +11,7 @@
 #' example function call here
 #' @export
 
-social_attribute_transition_module <- function(dat,at){
+risk_group_changes <- function(dat,at){
   #wrapper for various transition functions for social attributes
   
   

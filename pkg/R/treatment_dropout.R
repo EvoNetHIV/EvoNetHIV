@@ -11,7 +11,7 @@
 #' example function call here
 
 #' @export
-social_treatment_dropout_john <- function(dat, at)
+treatment_dropout <- function(dat, at)
 {
   # Description:
   # People on treatment have a small per day probability of halting their therapy
