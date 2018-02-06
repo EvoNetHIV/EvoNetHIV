@@ -61,8 +61,6 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   overlay_vars2=NULL
   if(model$param[[1]]$start_treatment_campaign<5e5){
     overlay_vars2=c(
-      "inf_men"="inf_women",
-      "treated_inf_men"="treated_inf_women",
       "inf_under30"="inf_30to50")
   }
   
@@ -130,8 +128,8 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   
   for(ii in 1:length(vars)){
     #temporary qaqc
-    #  print(ii)
-    #  if(ii==36){browser()}
+      #print(ii)
+      #if(ii==62){browser()}
     ###    
     if(vars[ii]=="timestep"){next()}
     if(vars[ii] %in% not_plotted){next()}
