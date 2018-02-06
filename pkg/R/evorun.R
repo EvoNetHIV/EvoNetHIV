@@ -24,18 +24,27 @@ evocontrol <- setup_epimodel_control_object(evonet_params = params,
 infected_list <- EpiModel::init.net(i.num=params$initial_infected,
                                     status.rand = FALSE)
 
-runtime <- system.time({
+if(!params$hyak_par){
   
-  evomodel  <- EpiModel::netsim(x = nw,
-                                param = evoparams,
-                                init = infected_list,
-                                control = evocontrol)
-  
-})
-
-cat("Model runtime (minutes)\n")
-cat(runtime[3]/60,"\n")
-
+  runtime <- system.time({
+    
+    evomodel  <- EpiModel::netsim(x = nw,
+                                  param = params,
+                                  init = infected_list,
+                                  control = evocontrol)
+    
+  })
+  cat("Model runtime (minutes)\n")
+  cat(runtime[3]/60,"\n")
+}else{
+  #hyak parallel run
+  evomodel  <- EpiModelHPC::netsim_hpc(x = nw,
+                                       param = params,
+                                       init = infected_list,
+                                       save.min = FALSE,
+                                       save.max = FALSE,
+                                       control = evocontrol)
+}   
 
 
 save(evomodel,

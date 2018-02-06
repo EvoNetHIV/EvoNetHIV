@@ -12,6 +12,7 @@ input_params<-function(
 
     model_name   = "evomodel",
     hpc          = FALSE, #on hyak?
+    hyak_par     = FALSE, #on hyak and parallelized run?
     output_path  =  getwd(),
     start_timestep = 1, #parameter for EpiModel, should be "1" if new simulation
                         #if re-starting simulation,
@@ -41,6 +42,8 @@ input_params<-function(
     estimate_new_nw =  TRUE, #for "master_script_loop", if false, only 1 nw estimated
     ncores =1, #16 if running on hyak using EpiModelHPC
     save_partner_list = FALSE,    
+    save_RData_file= F, # for John's scripts,
+    save_summary_figs = F, # for John's scripts,
     vital=FALSE, #epimodel requires this parameter, should be False
   #--QA/QC terms ----------------------------#
     QA_QC_pause_time = 3,  # Time delay in seconds that the computer waits so that users can view QA/QC stats 
