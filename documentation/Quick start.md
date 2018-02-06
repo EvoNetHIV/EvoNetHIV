@@ -1,5 +1,12 @@
 # Quick start guide to running EvoNetHIV 
 
+Download and install package
+
+``` r
+if (!require("devtools")) install.packages("devtools")
+install_github("EvoNetHIV/EvoNet",subdir="pkg")
+library(evonet)
+```
 
 Load default parameters.
 
