@@ -10,7 +10,7 @@
 #' @examples
 #' example function call here
 #' @export
-plot_time_to_removal<- function(model,type="aids"){
+plot_time_to_removal <- function(model,type="aids"){
   #plots histogram of times to death for infecteds either
   #from aids deaths or non-aids deaths (all sims combined)
   
@@ -45,7 +45,15 @@ plot_time_to_removal<- function(model,type="aids"){
     }  
   }
   if(is.null(histvec)){
-    text(5,5,"no aids deaths")
+    plot(1:10,1:10,type='n',xlab="years",ylab="",axes=F)
+    axis(1)
+    box()
+    
+    if(type=="aids"){title("years to aids death from infection")
+      text(5,5,"no aids deaths")
+    }else{title("years to non-aids death from infection")
+      }
+    
     return(invisible(NULL))
   }
   
