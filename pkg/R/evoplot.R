@@ -89,7 +89,6 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   overlay_vars=c(overlay_vars1,overlay_vars2,overlay_vars3,overlay_vars4,overlay_vars5)
   
   
-  
   loess_vars <- c("percent_donor_acute","mean_time_donor_infected_incident",
                   "mean_age_incident","mean_age_died_AIDS","mean_spvl_incident",
                   "mean_PPP_incident")

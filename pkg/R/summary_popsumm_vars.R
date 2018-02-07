@@ -54,11 +54,13 @@ summary_popsumm_vars <- function(dat){
   if(temp_length>1){
     genatt_var1 <- paste("generic_att_percent_cat_",dat$param$generic_nodal_att_values,sep="")
     genatt_var2 <- paste("generic_att_percent_inf_cat_",dat$param$generic_nodal_att_values,sep="")
+    genatt_var2b <- paste("generic_att_mean_degree_cat_",dat$param$generic_nodal_att_values,sep="")
     genatt_var3=NULL
     if (dat$param$perc_vaccinated != 0.5){
       genatt_var3 <- paste("generic_att_percent_vacc_cat_",dat$param$generic_nodal_att_values,sep="")
     }
-    genatt_vars <- c(genatt_var1,genatt_var2,genatt_var3)
+    
+    genatt_vars <- c(genatt_var1,genatt_var2,genatt_var2b,genatt_var3)
   }  
   
   

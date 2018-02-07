@@ -447,6 +447,73 @@ summary_popsumm<-function(dat,at){
 
     dat$popsumm$Perc_5_drug_muts_long[popsumm_index]<- mutations5_long/total_inf
   }#end of aim3 summary stats
+  
+  ####################################
+  #calculation of generic attribute stats
+  
+  #what percent of alive agents are in each category
+  #stat: generic_att_percent_cat_xx (xx=1,..,total number of attributes)
+  
+  #what percent of alive agents are infected in each category
+  #stat: generic_att_percent_inf_cat_xx
+  
+  #stats for generic attribute values need to be treated separately
+  #as the number of attributes may vary between model scenarios
+  #note: objects below need to be renamed for clarity 
+  temp_length <- length(dat$param$generic_nodal_att_values)
+  if(temp_length>1){  
+    
+    #how many alive agents in each category
+    temp_table=table(dat$pop$att1[alive_index])
+    #how many alive and infected agents in each category
+    temp_table2=table(dat$pop$att1[inf_index])
+    # How many vaccinated in each category
+    temp_table3 = table(dat$pop$att1[dat$pop$vaccinated == 1])
+    #total agents
+    sum_temp_table=sum(temp_table)
+    #this vector makes sure categories from tables above are
+    #arranged in ascending order (necessary if zero agents in a particular 
+    #category, which would mean they are missing in tables above
+    temp_match=match(names(temp_table),1:temp_length)
+    
+    
+    for(zz in 1:length(temp_match)){
+      namevec <- paste("generic_att_percent_cat_",temp_match[zz],sep="")
+      dat$popsumm[[namevec]][popsumm_index]=temp_table[zz]/sum_temp_table
+    }
+    for(zz in 1:temp_length){
+      namevec2 <- paste("generic_att_percent_inf_cat_",zz,sep="")
+      
+      ix1<- which(names(temp_table)==zz)
+      ix2<- which(names(temp_table2)==zz)
+      if(length(ix2)>0){
+        val<- temp_table2[ix2]/temp_table[ix1]  
+      }else{val<-0}
+      dat$popsumm[[namevec2]][popsumm_index] <- val
+    }
+    for(zz in 1:temp_length) {
+      namevec3 <- paste("generic_att_percent_vacc_cat_", zz, sep = "")
+      ix1 <- which(names(temp_table) == zz)
+      ix2 <- which(names(temp_table3) == zz)
+      if(length(ix2) > 0) {
+        val <- temp_table3[ix2]/temp_table[ix1]
+      } else { val <- 0 }
+      dat$popsumm[[namevec3]][popsumm_index] <- val
+    }
+    for(zz in 1:length(temp_match)){
+      namevec <- paste("generic_att_mean_degree_cat_",temp_match[zz],sep="")
+       risk_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0)
+       edges <-  edges_by_agent[dat$attr$id %in% risk_group]
+       tot_grp <- length(risk_group)
+       if(tot_grp>1){
+       mean_degree_group <- sum(edges)/tot_grp
+       }else{mean_degree_group <- NA}
+       dat$popsumm[[namevec]][popsumm_index]=mean_degree_group
+    }
+    
+  }
+  # end of calculating summary stats for generic attributes    
+  #################################################
   return(dat)
 }
 
