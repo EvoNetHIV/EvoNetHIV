@@ -128,7 +128,8 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   for(ii in 1:length(vars)){
     #temporary qaqc
       #print(ii)
-      #if(ii==62){browser()}
+      #print(vars[ii])
+      #if(ii==55){browser()}
     ###    
     if(vars[ii]=="timestep"){next()}
     if(vars[ii] %in% not_plotted){next()}
@@ -193,7 +194,7 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
       ix=which(names(overlay_vars)==vars[ii])
       var2=unname(overlay_vars[ix])
       values=popsumm_mats[[var2]]$values
-      mean_values =popsumm_mats[[var2[ii]]]$mean_values
+      mean_values =popsumm_mats[[var2]]$mean_values
       apply(values,1,function(xx){do.call(lines,list(x=timesteps,y=xx,col="red"))})
       lines(timesteps,mean_values,col="red",lwd=2)
       mtext(var2,side=3,line=.25,col="red",cex=.75)
