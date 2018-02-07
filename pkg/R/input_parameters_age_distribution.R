@@ -61,6 +61,7 @@ input_parameters_age_distribution <- function(initial_param,mort_per_timestep_fe
       age_index <- age - min_age +1 # Youngest age class (e.g., 16) is represented as 1 in our model
       age_vec[age_index] <- age_vec[age_index-1]*a/(a +r + d_f[age_index])
     }
+    age_vec[1] <- age_vec[1]/2  # Reduce youngest class by 50% to reflect fact that the average age of newly entering agents is min_age + 0.5.  
     final_age_dist <- age_vec/sum(age_vec)
     return(final_age_dist)
   }
