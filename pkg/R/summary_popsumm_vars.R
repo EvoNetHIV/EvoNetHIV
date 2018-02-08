@@ -18,7 +18,7 @@ summary_popsumm_vars <- function(dat){
   "prev_15to24", "prev_15to49", "prev_f_15to24", "prev_f_15to49",
   "prev_m_15to24", "prev_m_15to49", "inf_men", "inf_women", "inf_under30",
   "inf_30to50", "inf_over50", "mean_degree_under_30",
-  "mean_degree_30_50", "mean_degree_over_50")
+  "mean_degree_30_50", "mean_degree_over_50","mean_degree_female","mean_degree_male")
 
   treatment_vars <- c( "no_treated",
   "percent_suppressed")

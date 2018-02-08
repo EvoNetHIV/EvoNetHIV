@@ -326,6 +326,22 @@ summary_popsumm<-function(dat,at){
     dat$popsumm$inf_under30[popsumm_index]<-length(which(inf_under30_index))/length(which(under30_index))
     dat$popsumm$inf_30to50[popsumm_index]<-length(which(inf_agents30to50_index))/length(which(agents30to50_index))
     dat$popsumm$inf_over50[popsumm_index]<-length(which(inf_over50_index))/length(which(over50_index))
+  
+    female_edges <-  edges_by_agent[dat$attr$sex == 'f']
+    tot_grp <- length(female_edges)
+    if(tot_grp>1){
+      mean_degree_female <- sum(female_edges)/tot_grp
+    }else{mean_degree_female <- NA}
+    dat$popsumm$mean_degree_female[popsumm_index]=mean_degree_female
+    
+    male_edges <-  edges_by_agent[dat$attr$sex == 'm']
+    tot_grp <- length(male_edges)
+    if(tot_grp>1){
+      mean_degree_male <- sum(male_edges)/tot_grp
+    }else{mean_degree_male <- NA}
+    dat$popsumm$mean_degree_male[popsumm_index]=mean_degree_male
+    
+    
   }
 
   #--------------------------------------------
