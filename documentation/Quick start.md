@@ -3,7 +3,9 @@
 Download and install package
 
 ``` r
-if (!require("devtools")) install.packages("devtools")
+if (!require("devtools")) {
+install.packages("devtools")
+library(devtools)}
 install_github("EvoNetHIV/EvoNet",subdir="pkg")
 library(evonet)
 ```
@@ -40,7 +42,7 @@ modules <- c(
 "transmission",
 "deaths",
 "births",
-"summary") 
+"summary_module") 
 ```
 
 Run the simulation
