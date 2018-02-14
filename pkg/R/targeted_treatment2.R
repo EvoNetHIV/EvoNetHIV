@@ -7,7 +7,7 @@ targeted_treatment2 <- function(dat, at)
   # get treatment given that a treatment campaign was in effect.  Choices are based on a user-specified list (e.g., "AIDS", "highrisk", "random")
   # If included, "random" needs to be the last element of the tx_type.,
   # -- This version differs from previous versions in that it can apply mulitiple criteria; e.g., first priority to AIDS, second priority to high risk people
-  # This version (v3) differs from v2 in that we assume a linear increase in the number of people being treated between the start of the "spontaneous"
+  # targeted_treatment2 differs from targeted_treatment in that we assume a linear increase in the number of people being treated between the start of the "spontaneous"
   # treatment campaign and the targeted TasP campaign.
 
   # Inputs:
@@ -61,9 +61,12 @@ targeted_treatment2 <- function(dat, at)
       dat$pop$treated[initial_treated] <- 1
       dat$pop$tx_init_time[initial_treated] <- at
     }
+    if (at == 500 + dat$param$start_treat_before_big_campaign) {
+      cat("Pause at 500 for error checking\n")
+    }
     # Allow for gradual increases in number treated in early spontaneous campaign to levels at the start of the TasP campaign
     time_elapsed <- (at - dat$param$start_treat_before_big_campaign) / (dat$param$start_treatment_campaign - dat$param$start_treat_before_big_campaign)
-    dat$param$proportion_treated_begin <-  dat$param$proportion_treated_begin + time_elapsed * (dat$param$proportion_treated -dat$param$proportion_treated_begin)
+    dat$param$proportion_treated_begin <-  time_elapsed * dat$param$proportion_treated
     if (dat$param$proportion_treated_begin > 1) dat$param$proportion_treated_begin <- 1
     if (dat$param$proportion_treated_begin < 0) dat$param$proportion_treated_begin <- 0
     dat$param$max_num_treated_begin <- dat$param$proportion_treated_begin*dat$param$total_infected_begin
