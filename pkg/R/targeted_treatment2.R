@@ -66,7 +66,7 @@ targeted_treatment2 <- function(dat, at)
     }
     # Allow for gradual increases in number treated in early spontaneous campaign to levels at the start of the TasP campaign
     time_elapsed <- (at - dat$param$start_treat_before_big_campaign) / (dat$param$start_treatment_campaign - dat$param$start_treat_before_big_campaign)
-    dat$param$proportion_treated_begin <-  time_elapsed * dat$param$proportion_treated
+    dat$param$proportion_treated_begin <-  time_elapsed * dat$param$proportion_treated / 2.0 # Model assumes TasP campaign doubles # suppressed.
     if (dat$param$proportion_treated_begin > 1) dat$param$proportion_treated_begin <- 1
     if (dat$param$proportion_treated_begin < 0) dat$param$proportion_treated_begin <- 0
     dat$param$max_num_treated_begin <- dat$param$proportion_treated_begin*dat$param$total_infected_begin
@@ -233,7 +233,7 @@ targeted_treatment2 <- function(dat, at)
       if (num_eligible_tx >= 1) {
         current_tx <- length(which(dat$pop$treated==1 & dat$pop$Status >= 0))
         if (dat$param$tx_limit == "absolute_num")  {
-          if (at == dat$param$start_treatment_campaign) {
+          if (at <= dat$param$start_treatment_campaign + 0.99999) {
             total_infected <- length(which(dat$pop$Status ==1))
             dat$param$max_num_treated <- dat$param$proportion_treated*total_infected
           }
