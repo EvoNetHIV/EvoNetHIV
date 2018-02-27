@@ -26,14 +26,25 @@ if(at==1){
 if (dat$param$PrEP_Model==TRUE) {  
   vl_ix <- which(dat$pop$Status>=0 | (dat$pop$Status==-2 & dat$pop$Time_Death==at))
 } else {
-  vl_ix <- which(dat$pop$Status>=1 | (dat$pop$Status==-2 & dat$pop$Time_Death==at))
+  vl_ix <- which(dat$pop$Status==1 | (dat$pop$Status==-2 & dat$pop$Time_Death==at) )
 }
 if(length(vl_ix)==0){return(dat)}
   
-namesvec<-c("id","vl","cd4","cd4c","time","muts0","muts1","muts2","muts3","muts4","muts5","drug1","drug2",
-            "drug3","I","M","L","Mut1","Mut2","Mut3","Muts35","Muts12","Mut4","Mut5","drug4")
 
-namesvec2 <- c("id","vl","cd4","cd4c","time")
+#non-aim3 runs
+if(dat$param$Max_Allowable_Loci==0){
+  #if(at> 16*365){browser()}
+  # which(!is.na(dat$pop$tx_stop_time) & dat$pop$Status==1)
+  
+  dat$vl_list[[at]] <- cbind(dat$pop$id[vl_ix], #Agent
+                             dat$pop$V[vl_ix], #VL
+                             dat$pop$CD4[vl_ix],#CD4
+                             dat$pop$CD4count[vl_ix]/200, # CD4c
+                             at) 
+  #aa=dat$vl_list[[at]]
+  
+  colnames(dat$vl_list[[at]]) <- c("id","vl","cd4","cd4c","time")
+}
 
 # Define new sequences to identify viruses with 0, 1, 2, 3, or 4 mutations  
   seq0 <- c(1) #0  mutations
@@ -50,16 +61,10 @@ K103N_gEFV <- c(13,14,15,16, 13+16,14+16,15+16,16+16) # EFV-high
 M184V_K65R <-  c(4,8,12,16, 4+16,8+16,12+16,16+16)# 3TC high / TDF high
 GenericTDF <- c(17:32)
 
-if(dat$param$Max_Allowable_Loci==0){
-  dat$vl_list[[at]] <- cbind(dat$pop$id[vl_ix], #Agent
-                             dat$pop$V[vl_ix], #VL
-                             dat$pop$CD4[vl_ix],#CD4
-                             dat$pop$CD4count[vl_ix]/200, # CD4c
-                             at) 
-  
-  colnames(dat$vl_list[[at]]) <- namesvec2
-  
-}
+
+namesvec<-c("id","vl","cd4","cd4c","time","muts0","muts1","muts2","muts3","muts4","muts5","drug1","drug2",
+            "drug3","I","M","L","Mut1","Mut2","Mut3","Muts35","Muts12","Mut4","Mut5","drug4")
+
 
 if(dat$param$Max_Allowable_Loci==5){
   
