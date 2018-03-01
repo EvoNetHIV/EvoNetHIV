@@ -62,10 +62,13 @@ age_vec[index_male] <- vital_initial_age_dist(
 if(any(is.na(age_vec))){browser()}
 
 network::set.vertex.attribute(x=nw, attr="age", value=age_vec)
+network::set.vertex.attribute(x=nw, attr="age_cat", value=c(1, 2)[findInterval(x = age_vec, vec = c(14, 25))])
 network::set.vertex.attribute(x=nw, attr="sqrt_age", value=sqrt(age_vec))
 
-
-
+## Set vaccination/risk compensation status on network if risk compensation in the form of increased degree is in effect. Initially, all agents are unvaccinated, so nodal attribute is equal to 0 for all agents. During simulation, vaccination/risk compensation status are set in social_treatment_vaccination
+if(params$risk_comp_degree) {
+  network::set.vertex.attribute(x = nw, attr = "vacc_rc", value = rep(0, params$initial_pop))  
+}
 
 #--------------------------------
 #set generic atts on nw if in use

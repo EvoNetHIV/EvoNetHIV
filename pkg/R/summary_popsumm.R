@@ -58,6 +58,9 @@ summary_popsumm<-function(dat,at){
     agents_under30 <- which(under30_index)
     agents_30to50 <- which(agents30to50_index)
     agents_over50 <- which(over50_index)
+    
+    # Vectors to identify agents engaging in risk compensation in response to vaccination.
+    vacc_rc <- (inf_index & dat$pop$vaccinated == 1 & is.na(dat$pop$diag_status)) | (sus_index & dat$pop$vaccinated == 1)
 
      # Age vectors to be used in sex- and age-specific prevalence and treatment
     age_15to24 <- findInterval(dat$pop$age, c(15,25)) == 1
@@ -74,8 +77,12 @@ summary_popsumm<-function(dat,at){
 
     prev_m_15to24 <- length(which(inf_male_index & age_15to24))/length(which(male_index & age_15to24))
     prev_m_15to49 <- length(which(inf_male_index & age_15to49))/length(which(male_index & age_15to49))
+    
+    # CD4 categories to be used in estimation of disability-adjusted life-years
+    cd4_gt_350  <- sum(inf_index & !treated_index & (dat$pop$CD4 == 1 | dat$pop$CD4 == 2))
+    cd4_200_350 <- sum(inf_index & !treated_index & dat$pop$CD4 == 3)
+    cd4_0_200   <- sum(inf_index & !treated_index & dat$pop$CD4 == 4)
 
-    #browser()
     # Sex- and age-specific treatment coverage
     cd4_elig   <- dat$pop$CD4 %in% dat$param$cd4_treatment_threshold | dat$pop$CD4_at_trtmnt %in% dat$param$cd4_treatment_threshold
 
@@ -143,7 +150,8 @@ summary_popsumm<-function(dat,at){
     acute_phase <- !is.na(acute_phase_vec) & acute_phase_vec==T
     percent_virus_sensitive <- round(100*(length(which(dat$pop$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
     percentVaccinated <- round(100*(length(which(dat$pop$vaccinated == 1 & alive_index))/total_alive))
-
+    new_vaccinations <- sum(dat$pop$vacc_init_time %in% time_index)
+    
     #deaths
     just_died <- is.element(dat$pop$Time_Death,time_index)
     died_aids <- dat$pop$Status == -2 & just_died
@@ -193,7 +201,11 @@ summary_popsumm<-function(dat,at){
     edges_under30 <- edges_by_agent[dat$attr$id %in% agents_under30]
     edges_30to50 <- edges_by_agent[dat$attr$id %in% agents_30to50]
     edges_over50 <- edges_by_agent[dat$attr$id %in% agents_over50]
-
+    
+    if(dat$param$risk_comp_degree) {
+      edges_vacc_rc <- edges_by_agent[dat$attr$id %in% which(vacc_rc)]
+      edges_no_rc   <- edges_by_agent[dat$attr$id %in% which(!vacc_rc)]
+    }
 
     #aim3 mutations
     inf_undetect_ix <- (dat$pop$Status==1 & dat$pop$V> dat$param$vl_undetectable)

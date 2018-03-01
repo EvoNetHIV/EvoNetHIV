@@ -10,12 +10,12 @@
 #' @examples
 #' example function call here
 #' @export
-transmission_hughes_and_exp<-function(dat, acute_phase_status, sti_status_sus, condom_use,
+transmission_hughes_and_exp<-function(dat, at, acute_phase_status, sti_status_sus, condom_use,
                                       msm_sus_receptive_status, msm_sus_insert_status,
                                       msm_circum_status_insert_sus, age_vec_sus,
                                       hetero_sus_female_vi, hetero_sus_female_ai,
                                       hetero_sus_male_ai, hetero_sus_male_circum_status,
-                                      logV_inf, vacc_sens_sus){
+                                      logV_inf, vacc_sens_sus, vacc_rr){
   # Hughes or exponetial
   # Effect of viral load on infection 
   if(dat$param$transmission_model=="hughes"){
@@ -56,7 +56,11 @@ transmission_hughes_and_exp<-function(dat, acute_phase_status, sti_status_sus, c
   # Age effect
   temp_age_xb <-  (age_vec_sus - dat$param$trans_base_age) * log(dat$param$trans_RR_age)/10
   xB <- xB + temp_age_xb
-  xB <- xB + vacc_sens_sus * log(dat$param$trans_RR_vaccine)
+  if(dat$param$vacc_wane) {
+    xB <- xB + vacc_sens_sus * log(vacc_rr)
+  } else {
+    xB <- xB + vacc_sens_sus * log(dat$param$trans_RR_vaccine)
+  }
   exp_xB = exp(xB)
   result <- 1 - ((1-dat$param$trans_lambda)^(1*exp_xB))
   return(result)

@@ -142,6 +142,18 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
     }
   }
   
+  popsumm_fxns$"cd4_gt_350" <- list(model_value_fxn = function(...) { cd4_gt_350 },
+                                    plot_type = "line_cumul",
+                                    description = "HIV+ agents w/ CD4 > 350")
+  
+  popsumm_fxns$"cd4_200_350" <- list(model_value_fxn = function(...) { cd4_200_350 },
+                                     plot_type = "line_cumul",
+                                     description = "HIV+ agents w/ CD4 200-350")
+  
+  popsumm_fxns$"cd4_lt_200" <- list(model_value_fxn = function(...) { cd4_0_200 },
+                                    plot_type = "line_cumul",
+                                    description = "HIV+ agents w/ CD4 < 200")
+  
   if (params$start_treatment_campaign < 5e5) {  #only plot if treatment is available in model 
     popsumm_fxns$"no_treated"<-
       list(model_value_fxn   = function(...){length(which(inf_index & treated_index))},
@@ -299,6 +311,10 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
            plot_type="line_raw",description="")
   }
   
+  popsumm_fxns$"total_vaccines_administered" <-
+    list(model_value_fxn   = function(...) { sum(c(0, dat$popsumm$total_vaccines_administered[popsumm_index - 1], new_vaccinations), na.rm = T)},
+         plot_type = "line_raw", description = "")
+  
   if (params$start_treatment_campaign < 5e5) {  #only plot if treatment is available in model 
     #default value is NA, so need append zero to get a zero when at==1
     #eg, sum(0,NA,na.rm=T)=0 sum(NA,na.rm=T)=NA
@@ -382,6 +398,17 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
       else NA
     },
     plot_type="line_raw",ymin="data",description="")
+  
+  if(params$risk_comp_degree) {
+    popsumm_fxns$"mean_degree_risk_comp" <-
+      list(model_value_fxn = function(...) { sum(edges_vacc_rc)/length(edges_vacc_rc) },
+           plot_type = "line_raw", overlay = "mean_degree_no_risk_comp", description = "")
+    
+    # Overlay function
+    popsumm_fxns$"mean_degree_no_risk_comp"<-
+      list(model_value_fxn = function(...) { sum(edges_no_rc)/length(edges_no_rc) },
+           plot_type = "line_raw", description = "", description2 = "")
+  }
   
   num_generic_attrs <- length(generic_nodal_att_values)
   if (num_generic_attrs >= 2) {

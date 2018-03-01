@@ -56,7 +56,6 @@ initialize_evonet_misc <- function(dat)
   #                                     aim3=aim3,fast_el=fast_el,params=dat$param)
  # dat$popsumm_fxns <- lapply(1:length(popsumm_fxns),function(x) popsumm_fxns[[x]]$model_value_fxn)
   #names(dat$popsumm_fxns)<- names(popsumm_fxns)
-  
   popsumm2_vars  <- summary_popsumm_vars(dat)
   popsumm2_initial       <- vector('list',length(popsumm2_vars) )
   popsumm2        <- lapply(popsumm2_initial, function(x){ rep( NA_real_,
