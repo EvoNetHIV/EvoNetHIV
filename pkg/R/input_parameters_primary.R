@@ -69,7 +69,6 @@ input_parameters_primary<-function(){
     relation_dur  = 50,
     nw_constraints = " ~.",
     dissolution="~offset(edges)",
-    rm_offset_rel = F, # temporary solution to remove same-role (MSM simulations) and same-sex (heterosexual simulations) relationships. If = T, function remove_offset_relationships will be called in initialize_module.
 
 #-- virulence/vl/transmission model  parameters -------------#
 
@@ -377,6 +376,7 @@ input_parameters_primary<-function(){
     perc_vaccinated          = 0.5,
     target_vacc_att          = FALSE,
     vacc_eff_duration        =  365*3,
+    vacc_wane                = F,
     risk_comp_cond           = F,    # Set to T to induce reduction in condom use among vaccinated susceptibles and vaccinated, infected, undiagnosed individuals.
     risk_comp_cond_rr        = 0.70,
     risk_comp_degree         = F,    # Set to T to induce increase in degree among vaccinated susceptible and vaccinated, infected, undiagnosed individuals

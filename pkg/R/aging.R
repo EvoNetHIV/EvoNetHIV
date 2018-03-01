@@ -26,6 +26,7 @@
   
   dat$attr$age[mm]=dat$pop$age[ix]
   dat$attr$sqrt_age[mm]=sqrt(dat$pop$age[ix])
+  dat$attr$age_cat[mm] = c(1, 2)[findInterval(x = dat$pop$age[ix], vec = c(14, 25))]
   
   if(!is.null(dat[['nw']])){
     network::set.vertex.attribute(x = dat$nw, attr = "age",

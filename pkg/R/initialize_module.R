@@ -27,11 +27,6 @@ initialize_module <- function(x, param, init, control, s)
   
   #sets up basic EpiModel structure
   dat  <-  EpiModel::initialize.net(x, param, init, control,s)
-
-  ## Remove relationships specified as prohibited in network formation terms
-  if(dat$param$rm_offset_rel) {
-    dat <- remove_offset_relationships(dat)
-  }
   
   # need to ensure that sex attribute as been copied to dat$attr from the network.
   #  ideally for consistency we'd like to have all of the attributes 
@@ -45,6 +40,7 @@ initialize_module <- function(x, param, init, control, s)
     dat$attr$sex <- get.vertex.attribute(dat$nw,'sex')
     dat$attr$age <- get.vertex.attribute(dat$nw,'age')
     dat$attr$sqrt_age <- sqrt(dat$attr$age)
+    dat$attr$age_cat <- get.vertex.attribute(dat$nw, 'age_cat')
     dat$attr$id <- get.vertex.attribute(dat$nw,'id')
     if(!is.logical(dat$param$generic_nodal_att_values))
     dat$attr$att1 <- get.vertex.attribute(dat$nw,'att1')

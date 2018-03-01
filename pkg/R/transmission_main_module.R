@@ -92,6 +92,9 @@ transmission_main_module <- function(dat,at)
                    dat$pop$virus_sens_vacc[inf_id]==1)
   if(length(vacc_ix)>0){vacc_sens_sus[vacc_ix] <- 1}  
   
+  # If vaccination protection wanes over time, assign time-specific relative risk to susceptible. Default value for vacc_rr is 1, so unvaccinated susceptible individuals will have value of 1.
+  if(dat$param$vacc_wane) { vacc_rr <- dat$pop$vacc_rr[sus_id] }
+  
   if(dat$param$model_sex=="msm"){
     
     #susceptible and insertive
@@ -136,12 +139,12 @@ transmission_main_module <- function(dat,at)
                                          hetero_sus_male_ai, hetero_sus_male_circum_status,
                                          V_inf, vacc_sens_sus)
   }else{
-    trans_probs <- transmission_hughes_and_exp(dat, acute_phase_status, sti_status_sus, condom_use,
+    trans_probs <- transmission_hughes_and_exp(dat, at, acute_phase_status, sti_status_sus, condom_use,
                                                msm_sus_receptive_status, msm_sus_insert_status,
                                                msm_circum_status_insert_sus, age_vec_sus,
                                                hetero_sus_female_vi, hetero_sus_female_ai,
                                                hetero_sus_male_ai, hetero_sus_male_circum_status,
-                                               logV_inf, vacc_sens_sus)
+                                               logV_inf, vacc_sens_sus, vacc_rr)
   }
   
   ###################################

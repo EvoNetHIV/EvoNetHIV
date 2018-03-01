@@ -54,6 +54,15 @@ social_treatment_vaccination <- function(dat, at) {
     dat$pop$vaccinated[treated_index] <- 1
     dat$pop$vacc_init_time[treated_index] <- at
   }
+  
+  
+  ## Set vaccination/risk compensation status on the network if simulation calls for vaccine-induced increase in degree
+  if(dat$param$risk_comp_degree) {
+    vacc_rc <- which((dat$pop$vaccinated == 1 & dat$pop$Status == 0) |
+                       (dat$pop$vaccinated == 1 & dat$pop$Status == 1 & is.na(dat$pop$diag_status)))
+    m <- match(vacc_rc, dat$attr$id)
+    dat$attr$vacc_rc[m] <- 1 
+  }
 
   return(dat)
 }

@@ -41,6 +41,12 @@ dat$attr$active     <- c(dat$attr$active,   rep(1, nBirths))
 dat$attr$entrTime   <- c(dat$attr$entrTime, rep(at, nBirths ) )
 dat$attr$exitTime   <- c(dat$attr$exitTime, rep(NA_real_, nBirths ) )
 dat$attr$infTime    <- c(dat$attr$infTime,  rep(NA_real_, nBirths ) )
+
+## Set vaccination/risk compensation status for all new entries to 0
+if(dat$param$risk_comp_degree) {
+  dat$attr$vacc_rc <- c(dat$attr$vacc_rc, rep(0, nBirths))
+}
+
 #-----------------------------------------------
 
 # setting nw attributes for "id","role","att1","sex"
@@ -53,8 +59,9 @@ dat$attr$infTime    <- c(dat$attr$infTime,  rep(NA_real_, nBirths ) )
 temp_ix     <- (length(dat$pop$Status)-nBirths+1) : length(dat$pop$Status)
 
 dat$attr$sex  <- c(dat$attr$sex,dat$pop$sex[temp_ix])
-dat$attr$age  <- c(dat$attr$age,dat$pop$age[temp_ix])
-dat$attr$sqrt_age  <- c(dat$attr$sqrt_age,dat$pop$sqrt_age[temp_ix])
+dat$attr$age       <- c(dat$attr$age,      dat$pop$age[temp_ix])
+dat$attr$sqrt_age  <- c(dat$attr$sqrt_age, dat$pop$sqrt_age[temp_ix])
+dat$attr$age_cat   <- c(dat$attr$age_cat,  dat$pop$age_cat[temp_ix])
 
 if(!is.null(dat[['nw']])){
   set.vertex.attribute(x = dat$nw, 

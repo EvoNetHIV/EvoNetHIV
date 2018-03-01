@@ -68,7 +68,7 @@ input_parameters_agent_attributes <-function(){
     
 #--  Vital dynamics /social/treatment ------------------------------ #
     "vaccinated",                      "vacc_init_time",           
-    "age","sqrt_age",                   "arrival_time",
+    "age","sqrt_age","age_cat",        "arrival_time",
     "last_neg_test",                   "diag_status",
     "diag_time",                       "disclosure_status",
     "id",                              "eligible_care",

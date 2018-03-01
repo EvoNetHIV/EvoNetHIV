@@ -38,6 +38,7 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   input_list$treated[index] <-  rep(0,total_new)  
   input_list$treated_2nd_line[index] <- rep(0,total_new)
   input_list$vaccinated[index] <- rep(0, total_new)
+  if(dat$param$vacc_wane) { input_list$vacc_rr[index] <- rep(1, total_new) }
    
   #Assume new entrants (births) and immigrants don't have any drug in their system (follows from not being treated)
   input_list$Drug1[index] <- rep(0,total_new)
@@ -131,6 +132,7 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
     input_list$sex[index] <- dat$attr$sex
     input_list$age[index] <- dat$attr$age
     input_list$sqrt_age[index] <- sqrt(dat$attr$age)
+    input_list$age_cat[index] <- c(1, 2)[findInterval(x = dat$attr$age, vec = c(14, 25))]
     
     # Assign generic nodal attribute values
     if(!is.logical(dat$param$generic_nodal_att_values)){
