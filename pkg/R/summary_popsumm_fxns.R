@@ -293,23 +293,27 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
     list(model_value_fxn   = function(...){mean(dat$pop$LogSetPoint[which(new_infections)])},
          plot_type="points",loess=T,description="")
   
-  if (params$perc_vaccinated != 0.5) {    #only plot if vaccine campaign in model
-    popsumm_fxns$"new_infections_vacc_sens_virus"<-
-      list(model_value_fxn   = function(...){ new_infections_virus_vacc_sens_count},
-           plot_type="line_raw",description="")
-    
-    popsumm_fxns$"new_infections_vacc_resist_virus"<-
-      list(model_value_fxn   = function(...){ new_infections_virus_vacc_notsens_count},
-           plot_type="line_cumul",description="")
-    
-    popsumm_fxns$"percent_virus_sensitive_vacc"<-
-      list(model_value_fxn   = function(...){percent_virus_sensitive},
-           plot_type="line_raw",description="")
-    
-    popsumm_fxns$"percentAliveVaccinated"<-
-      list(model_value_fxn   = function(...){percentVaccinated},
-           plot_type="line_raw",description="")
-  }
+  popsumm_fxns$"new_infections_vacc_sens_virus"<-
+    list(model_value_fxn   = function(...){ new_infections_virus_vacc_sens_count},
+         plot_type="line_raw",description="")
+  
+  popsumm_fxns$"new_infections_vacc_resist_virus"<-
+    list(model_value_fxn   = function(...){ new_infections_virus_vacc_notsens_count},
+         plot_type="line_cumul",description="")
+  
+  popsumm_fxns$"new_infections_vaccinated" <-
+    list(model_value_fxn = function(...) { sum(c(0, dat$popsumm$new_infections_vaccinated[popsumm_index - 1], new_inf_vaccinated_count), na.rm = T) }, plot_type = "line_raw", description = "")
+  
+  popsumm_fxns$"new_infections_unvaccinated" <-
+    list(model_value_fxn = function(...) { sum(c(0, dat$popsumm$new_infections_unvaccinated[popsumm_index - 1], new_inf_unvaccinated_count), na.rm = T) }, plot_type = "line_raw", description = "")
+  
+  popsumm_fxns$"percent_virus_sensitive_vacc"<-
+    list(model_value_fxn   = function(...){percent_virus_sensitive},
+         plot_type="line_raw",description="")
+  
+  popsumm_fxns$"percentAliveVaccinated"<-
+    list(model_value_fxn   = function(...){percentVaccinated},
+         plot_type="line_raw",description="")
   
   popsumm_fxns$"total_vaccines_administered" <-
     list(model_value_fxn   = function(...) { sum(c(0, dat$popsumm$total_vaccines_administered[popsumm_index - 1], new_vaccinations), na.rm = T)},

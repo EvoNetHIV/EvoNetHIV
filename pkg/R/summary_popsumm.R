@@ -126,6 +126,8 @@ summary_popsumm<-function(dat,at){
                                                            dat$pop$virus_sens_vacc==1))
     new_infections_virus_vacc_notsens_count <- length(which(is.element(dat$pop$Time_Inf, time_index)&
                                                               dat$pop$virus_sens_vacc==0))
+    new_inf_vaccinated_count   <- length(which(is.element(dat$pop$Time_Inf, time_index) & dat$pop$vaccinated == 1))
+    new_inf_unvaccinated_count <- length(which(is.element(dat$pop$Time_Inf, time_index) & dat$pop$vaccinated == 0))
 
     new_infections_virus_drug_sens_count <- length(which(is.element(dat$pop$Time_Inf, time_index)&
                                                            dat$pop$virus_sens_drug==1))
@@ -397,13 +399,18 @@ summary_popsumm<-function(dat,at){
 
   #--------------------------------------------
   #vaccine
-
-  if (dat$param$perc_vaccinated != 0.5) {    #only plot if vaccine campaign in model
-    dat$popsumm$new_infections_vacc_sens_virus[popsumm_index]<- new_infections_virus_vacc_sens_count
-    dat$popsumm$new_infections_vacc_resist_virus[popsumm_index]<-  new_infections_virus_vacc_notsens_count
-    dat$popsumm$percent_virus_sensitive_vacc[popsumm_index]<- percent_virus_sensitive
-    dat$popsumm$percentAliveVaccinated[popsumm_index]<- percentVaccinated
+  dat$popsumm$new_infections_vacc_sens_virus[popsumm_index]   <- new_infections_virus_vacc_sens_count
+  dat$popsumm$new_infections_vacc_resist_virus[popsumm_index] <- new_infections_virus_vacc_notsens_count
+  dat$popsumm$percent_virus_sensitive_vacc[popsumm_index]     <- percent_virus_sensitive
+  dat$popsumm$percentAliveVaccinated[popsumm_index]           <- percentVaccinated
+  dat$popsumm$total_vaccines_administered[popsumm_index]      <- new_vaccinations
+  dat$popsumm$new_infections_vaccinated[popsumm_index]        <- new_inf_vaccinated_count
+  if(at %in% dat$param$start_vacc_campaign) {
+    dat$popsumm$new_infections_unvaccinated[popsumm_index]    <- new_inf_unvaccinated_count
+  } else {
+    dat$popsumm$new_infections_unvaccinated[popsumm_index]    <- 0
   }
+  
 
   if(dat$param$VL_Function=="aim3"){
 

@@ -205,12 +205,12 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   if(is.null(variables)){
     #non- popsumm / timeseries plots
     incidence_rate_plot(model)
-    plot_heritability_quarters(model)
-    plot_donors_cd4(model)
-    plot_time_to_removal(model,"aids")
-    plot_time_to_removal(model,"nonaids")
-    plot_time_to_removal_by_spvl(model,"aids")
-    plot_time_to_removal_by_spvl(model,"nonaids")
+    # plot_heritability_quarters(model)
+    # plot_donors_cd4(model)
+    # plot_time_to_removal(model,"aids")
+    # plot_time_to_removal(model,"nonaids")
+    # plot_time_to_removal_by_spvl(model,"aids")
+    # plot_time_to_removal_by_spvl(model,"nonaids")
     plot_age_hist(model)
     plot_relationship_duration(model)
   }
