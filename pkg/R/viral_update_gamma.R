@@ -125,22 +125,9 @@ viral_update_gamma <- function(dat, at) {
     dat$pop$start_max_aids[ix] <- at
   }
   
-  
-  #to be deleted 3/6/16
-  #if(length(aids_max_vl_ix)>0){
-  #  dat$pop$V[aids_max_vl_ix] <- dat$param$vl_max_aids
-  #}
-  
-  #update aim3 V_vec matrix (per john's request)
-  #print(dat$pop$V)
-  #print(dat$pop$V_vec[,1])
-  aa=try(dat$pop$V_vec[,1]<-dat$pop$V)
-  if(class(aa)=="try-error"){browser()}
-  
   #for agents on treatment
   treatment_ix <- which(dat$pop$treated==1 & dat$pop$V> dat$param$vl_full_supp)
   dat$pop$V[treatment_ix] <- dat$pop$V[treatment_ix]*exp(dat$param$vl_exp_decline_tx) 
-  
   
   return(dat)
 }

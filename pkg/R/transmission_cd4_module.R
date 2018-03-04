@@ -42,8 +42,7 @@ transmission_cd4_module <- function(dat,at)
   dat$pop$CD4_initial_value[index1] <- dat$pop$CD4[index1]
   dat$pop$CD4_nadir[index1] <- dat$pop$CD4[index1]
   dat$pop$CD4_time[index1] <- 0
-  dat$pop$CD4_treatment_delay_index[index1] <- 0
-  
+
   #should be deleted, test first 3/2/16
   #temp_vec <- c("CD4_time_cat1","CD4_time_cat2",
   #              "CD4_time_cat3","CD4_time_cat4")

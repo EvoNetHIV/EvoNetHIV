@@ -60,7 +60,6 @@ temp_ix     <- (length(dat$pop$Status)-nBirths+1) : length(dat$pop$Status)
 
 dat$attr$sex  <- c(dat$attr$sex,dat$pop$sex[temp_ix])
 dat$attr$age       <- c(dat$attr$age,      dat$pop$age[temp_ix])
-dat$attr$sqrt_age  <- c(dat$attr$sqrt_age, dat$pop$sqrt_age[temp_ix])
 dat$attr$age_cat   <- c(dat$attr$age_cat,  dat$pop$age_cat[temp_ix])
 
 if(!is.null(dat[['nw']])){
@@ -72,11 +71,6 @@ if(!is.null(dat[['nw']])){
                        attr = "age",
                        value = dat$pop$age[temp_ix],
                        v = newNodes)
-  set.vertex.attribute(x = dat$nw, 
-                       attr = "sqrt_age",
-                       value = sqrt(dat$pop$age[temp_ix]),
-                       v = newNodes)
-  
 }
 
 

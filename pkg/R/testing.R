@@ -71,9 +71,6 @@ testing <- function(dat, at){
               
            if(length(testing_positive)>0){    
               dat$pop$diag_status[testing_positive] <- 1
-              dat$pop$diag_time[testing_positive] <- at  
-              dat$pop$vl_at_test[testing_positive] <- dat$pop$V[testing_positive]
-              dat$pop$cd4_at_test[testing_positive] <- dat$pop$CD4[testing_positive]
             }
         }  
     }

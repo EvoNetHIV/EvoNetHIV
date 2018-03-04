@@ -39,7 +39,6 @@ initialize_module <- function(x, param, init, control, s)
   if(!is.null(dat[['nw']])){
     dat$attr$sex <- get.vertex.attribute(dat$nw,'sex')
     dat$attr$age <- get.vertex.attribute(dat$nw,'age')
-    dat$attr$sqrt_age <- sqrt(dat$attr$age)
     dat$attr$age_cat <- get.vertex.attribute(dat$nw, 'age_cat')
     dat$attr$id <- get.vertex.attribute(dat$nw,'id')
     if(!is.logical(dat$param$generic_nodal_att_values))
@@ -66,7 +65,7 @@ initialize_module <- function(x, param, init, control, s)
   #but shouldn't happen for aim3 runs
   if(param$VL_Function != "aim3"){
   dat  <-  viral_update_gamma(dat,1)
-  dat  <-  viral_update_cd4_intial_pop(dat)
+  dat  <-  viral_update_cd4_initial_pop(dat)
   }
   #create list, if "save_vl_list" = TRUE to save
   #individual agent's vl/cd4 values for each timestep

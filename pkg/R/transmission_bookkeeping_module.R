@@ -105,82 +105,26 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   
   theta <- ExpectedDelayTime/dat$param$shape_parameter
   
-  gamma_vec <- rgamma( length(recipient),
-            dat$param$shape_parameter, 1/theta)
+  gamma_vec <- rgamma( length(recipient), dat$param$shape_parameter, 1/theta)
   
   dat$pop$RandomTimeToAIDS[recipient] <- round(dat$param$t_acute + gamma_vec)
   
   dat$pop$Generation[recipient] <- dat$pop$Generation[infector] + 1
   dat$pop$Status[recipient] <- 1
   
-  #switch status of those on prep and became infected to "-1"
-  prep_infected <- which(dat$pop$on_prep[recipient]==1)
-  if(length(prep_infected)>0){dat$pop$on_prep[recipient] <- -1}
-  
-  
-  #aim 3 bookkeeping (ask john)
-  if (dat$param$VL_Function == "aim3") {
-
-    V_vec_length <- 2^dat$param$Max_Allowable_Loci
-    inf_ix <- apply(dat$pop$V_vec[infector,,drop=F],1,function(x) sample(1:V_vec_length,1,prob=x))
-    dat$pop$V_vec[recipient,inf_ix] <- dat$param$V0
-    dat$pop$I_vec[recipient,inf_ix] = (dat$param$c *dat$pop$V_vec[recipient,inf_ix] / 
-                                         dat$param$p_inf_cells)
-    dat$pop$M_vec[recipient,] <- 0
-    dat$pop$L_vec[recipient,] <- 0
-    
-    dat$pop$K[recipient] <- vl_peak
-    dat$pop$CD4tot[recipient] <- 1000
-    dat$pop$CD4count[recipient] <- 1000
-    dat$pop$Imm_Trig[recipient] <- 0
-    dat$pop$ChronPhase[recipient] <- 0
-    #dat$pop$Drug1[recipient] <- 0  # Big assumption here!!! (Only infected patients get drug!)
-    #dat$pop$Drug2[recipient] <- 0  
-    #dat$pop$Drug3[recipient] <- 0 
-    #dat$pop$Drug4[recipient] <- 0 
-    dat$pop$Aim3RoundingErrors[recipient] <- 0
-    ix1<-which(inf_ix==1)
-    v0 <- 1
-    v12 <- c(2,3,4,5,6,7,9,10,11,13, 17, 18, 19, 21, 25) 
-    v15 <-  2:32
-    ix1 <- which(inf_ix %in% v0)
-    ix2 <- which(inf_ix %in% v12)
-    ix3 <- which(!is.element(inf_ix,c(v0,v12)))
-    ix15 <- which(inf_ix %in% v15)
-    
-      dat$pop$virus_1_plus_drug_muts[recipient[ix1]] <- 0
-    
-      dat$pop$virus_sens_drug[recipient[ix1]] <- 1 
-      dat$pop$virus_part_res_drug[recipient[ix1]] <- 0
-      dat$pop$virus_3_plus_drug_muts[recipient[ix1]] <- 0
-  
-      dat$pop$virus_sens_drug[recipient[ix2]] <- 0 
-      dat$pop$virus_part_res_drug[recipient[ix2]] <- 1
-      dat$pop$virus_3_plus_drug_muts[recipient[ix2]] <- 0
-      
-      dat$pop$virus_sens_drug[recipient[ix3]] <- 0 
-      dat$pop$virus_part_res_drug[recipient[ix3]] <- 0
-      dat$pop$virus_3_plus_drug_muts[recipient[ix3]] <- 1
-  }
-  
-  
-  dat$pop$Donors_ViralContribToLogSP0[recipient] <- dat$pop$ViralContribToLogSP0[infector]
-  dat$pop$Donors_EnvirContribToLogSP0[recipient] <- dat$pop$EnvirContribToLogSP0[infector]
-  dat$pop$Donors_d_acute[recipient] <- dat$pop$d_acute[infector]
-  dat$pop$Donors_Total_Time_Inf_At_Trans[recipient] <- timeIndex - dat$pop$Time_Inf[infector]
-  dat$pop$Donors_V[recipient] <- dat$pop$V[infector]
-  dat$pop$Donors_Generation[recipient] <- dat$pop$Generation[infector]
-  dat$pop$Donors_SetPoint[recipient] <- dat$pop$SetPoint[infector]
-  dat$pop$Donors_LogSetPoint[recipient] <- dat$pop$LogSetPoint[infector]
-  dat$pop$Donors_Index[recipient] <-   infector
-  dat$pop$Donors_age[recipient] <-   dat$pop$age[infector]
-  dat$pop$Donors_diag_status[recipient] <-   dat$pop$diag_status[infector]
-  dat$pop$Donors_treated[recipient] <-   dat$pop$treated[infector]
-  dat$pop$Donors_treated_2nd_line[recipient] <-   dat$pop$treated_2nd_line[infector]
-  dat$pop$Donors_CD4[recipient] <- dat$pop$CD4[infector] 
+  # dat$pop$Donors_ViralContribToLogSP0[recipient] <- dat$pop$ViralContribToLogSP0[infector]
+  # dat$pop$Donors_EnvirContribToLogSP0[recipient] <- dat$pop$EnvirContribToLogSP0[infector]
+  # dat$pop$Donors_d_acute[recipient] <- dat$pop$d_acute[infector]
+  # dat$pop$Donors_Total_Time_Inf_At_Trans[recipient] <- timeIndex - dat$pop$Time_Inf[infector]
+  # dat$pop$Donors_V[recipient] <- dat$pop$V[infector]
+  # dat$pop$Donors_Generation[recipient] <- dat$pop$Generation[infector]
+  # dat$pop$Donors_SetPoint[recipient] <- dat$pop$SetPoint[infector]
+  # dat$pop$Donors_LogSetPoint[recipient] <- dat$pop$LogSetPoint[infector]
+  # dat$pop$Donors_Index[recipient] <-   infector
+  # dat$pop$Donors_age[recipient] <-   dat$pop$age[infector]
   dat$pop$NumRecipients[infector] <- dat$pop$NumRecipients[infector] + 1
   dat$pop$virus_sens_vacc[recipient] <- dat$pop$virus_sens_vacc[infector]
-  dat$pop$Donors_age[recipient] <- dat$pop$age[infector]
+  # dat$pop$Donors_age[recipient] <- dat$pop$age[infector]
   dat$pop$age_infection[recipient] <- dat$pop$age[recipient]
   
   
@@ -190,9 +134,6 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   if(dat$param$save_infection_matrix){
     dat$InfMat[[timeIndex]] <- cbind(timeIndex,recipient,  infector)
   }
-  
-  #assign disclosure status of newly infected (do they tell partner hiv status)
-  dat$pop$disclosure_status[recipient][which(runif(length(recipient)) < dat$param$disclosure_prob )] <- 1 #default is zero
   
   #fill in EpiModel's "status" vector
   temp_match <- match(dat$attr$id,1:length(dat$pop$Status))

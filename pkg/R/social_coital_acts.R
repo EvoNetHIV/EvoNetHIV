@@ -40,12 +40,6 @@ social_coital_acts <-function(dat,at)
   if(length(temp_index)>0)
     reduction_vec[temp_index] <- 1.0 -dat$param$act_redux_discl 
   
-  #track when sus agent last (knowingly) had sex with hiv+ agent
-  dat$pop$time_hiv_sex[recipient_id][temp_index] <- at
-  #track when inf agent last  had sex 
-  dat$pop$last_disc_sex[infector_id] <- at
-  
-  
   #browser()
    if(dat$param$prob_sex_by_age){
      
@@ -78,10 +72,6 @@ social_coital_acts <-function(dat,at)
                              rep( discord_edgelist_df$sus_id[ disc_inf_ix],
                                   times = discord_edgelist_df$no_acts[disc_inf_ix]) ))
   acts_by_agent_index <- as.numeric(names(acts_by_agent))
-  
-  #discordonant total acts
-  dat$pop$total_acts[acts_by_agent_index] <-  
-    ( dat$pop$total_acts[acts_by_agent_index]+as.numeric(acts_by_agent) ) 
   
   #add couple id
   discord_edgelist_df$couple_id <- 1:nrow(discord_edgelist_df)

@@ -39,13 +39,6 @@ initialize_infecteds_vl <- function(dat,at)
   
   #initial infecteds not treated
   pop$treated[ind] <- 0
-  pop$treated_2nd_line[ind] <- 0
-  
-  pop$Drug1[ind] <- 0
-  pop$Drug2[ind] <- 0
-  pop$Drug3[ind] <- 0
-  pop$Drug4[ind] <- 0
-  pop$Aim3RoundingErrors[ind] <-0
   
   if(length(ind)==0){
     stop("hmmm...no infecteds in initial population.....
@@ -99,9 +92,6 @@ initialize_infecteds_vl <- function(dat,at)
   pop$Status[ind] <- 1
   #Generation=1 means founder
   pop$Generation[ind] <- 1
-  #disclosure status: 0/1 does infected agent tell partnter hiv status,
-  #influences condom usage/sex frequency
-  pop$disclosure_status[ind][runif(length(ind)) < param$disclosure_prob] <- 1 #default is zero
   #age at infection
   pop$age_infection[ind] <- pop$age[ind]
   #calculation of time to aids based on gamma distribution
@@ -147,24 +137,6 @@ initialize_infecteds_vl <- function(dat,at)
   }
   
   ###############################
-  #Aim3 dynamics
-  
-  initial_vec <- rep(0,"^"(2, param$Max_Allowable_Loci))                
-  pop$V_vec[ind,] <- initial_vec
-  pop$I_vec[ind,] <- initial_vec
-  pop$M_vec[ind,] <- initial_vec
-  pop$L_vec[ind,] <- initial_vec
-  
-  pop$V_vec[ind,1] <- pop$V[ind] # Assume 100% WT at time 0. (everything else left at zero)
-  pop$I_vec[ind,1] <- pop$V[ind] * param$c / param$p_inf_cells
-  
-  pop$CD4count[ind] <- param$s_CD4 /param$m_CD4 # Initial concentration of CD4 T-cells
-  pop$CD4tot[ind] <- param$s_CD4 /param$m_CD4 # Initial concentration of CD4 T-cells
-  pop$Imm_Trig[ind] <- 0
-  pop$ChronPhase[ind] <- 0
-  pop$OnDrug[ind] <- 0
-  pop$K[ind] <- pop$SetPoint[ind]
-  pop$CD4count[ind] <- 1000
   
   dat$pop <- pop
   return(dat)

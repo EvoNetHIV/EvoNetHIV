@@ -28,7 +28,6 @@ vital_death_aged_out <- function(dat,at)
   if(length(aged_out_index) > 0){
     #bookkeeping
     dat$pop$treated[active_evo][aged_out_index] <- 0
-    dat$pop$treated_2nd_line[active_evo][aged_out_index] <- 0
     dat$pop$Status[active_evo][aged_out_index] <- (-1.5)
     dat$attr$status_evo[active][aged_out_index] <- (-1)
     dat$attr$active[active][aged_out_index] <- 0

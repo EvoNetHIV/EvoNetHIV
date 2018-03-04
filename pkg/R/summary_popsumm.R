@@ -139,12 +139,12 @@ summary_popsumm<-function(dat,at){
                                                        dat$pop$virus_3_plus_drug_muts==1))
 
 
-    donor_time_inf  <- ifelse(new_infections_count>0,
-                              dat$pop$Donors_Total_Time_Inf_At_Trans[new_infections],
-                              NA)
-    donor_acute_count <- ifelse(!is.na(donor_time_inf),
-                                length(which(donor_time_inf<=dat$param$t_acute)),
-                                NA)
+    # donor_time_inf  <- ifelse(new_infections_count>0,
+    #                           dat$pop$Donors_Total_Time_Inf_At_Trans[new_infections],
+    #                           NA)
+    # donor_acute_count <- ifelse(!is.na(donor_time_inf),
+    #                             length(which(donor_time_inf<=dat$param$t_acute)),
+    #                             NA)
     new_births <- is.element(dat$pop$arrival_time, time_index)
     cd4_aids <- dat$pop$CD4 == 4
     new_diagnoses <- dat$pop$diag_status == 1 &  is.element(dat$pop$diag_time,time_index)
@@ -285,8 +285,8 @@ summary_popsumm<-function(dat,at){
   dat$popsumm$natural_deaths_infecteds[popsumm_index]<-length(which(died_non_aids_inf))
   dat$popsumm$natural_deaths_susceptibles[popsumm_index]<-length(which(died_non_aids_sus ))
   dat$popsumm$new_diagnoses[popsumm_index]<-length(which(new_diagnoses))
-  dat$popsumm$percent_donor_acute[popsumm_index]<- donor_acute_count/length(which(new_infections))
-  dat$popsumm$mean_time_donor_infected_incident[popsumm_index] <- mean(dat$pop$Donors_Total_Time_Inf_At_Trans[which(new_infections)])
+  # dat$popsumm$percent_donor_acute[popsumm_index]<- donor_acute_count/length(which(new_infections))
+  # dat$popsumm$mean_time_donor_infected_incident[popsumm_index] <- mean(dat$pop$Donors_Total_Time_Inf_At_Trans[which(new_infections)])
   dat$popsumm$mean_age_incident[popsumm_index] <- mean(dat$pop$age[which(new_infections)])
   dat$popsumm$mean_age_died_AIDS[popsumm_index]<- mean(dat$pop$age[which(died_aids)])
   dat$popsumm$mean_spvl_pop_all[popsumm_index]<- mean(dat$pop$LogSetPoint[which(inf_index)])

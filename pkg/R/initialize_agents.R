@@ -34,15 +34,6 @@ initialize_agents <- function(dat,at)
                            index = 1 : dat$param$initial_pop,
                            type = "initial", at = at)
   
-  #Aim 3 variables (ask john for clarification); each agent gets a row in matrix
-  #V,I,M,L that tracs number of mutations
-  V_vec_length   <- 2^dat$param$Max_Allowable_Loci 
-  pop$V_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
-  pop$I_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
-  pop$M_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
-  pop$L_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
-  
-   
   #assigns "pop" object to main "dat" epimodel data structure
   dat$pop <- pop  
   

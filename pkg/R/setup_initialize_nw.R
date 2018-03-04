@@ -5,7 +5,7 @@
 #' @param params A list of EvoNet parameters
 #' @return Network object
 #' @details
-#' Creates initial network and sets network attributes “age”,”sqrt_age”, “sex”, “role”, and “att1” for each node (agent) on the network,
+#' Creates initial network and sets network attributes “age”, “sex”, “role”, and “att1” for each node (agent) on the network,
 #' which is required for estimation of networks using these attributes. Wrapper function for "network.initialize" and 
 #' "set.vertex.attribute" functions from "network" package.
 #' If additional attributes are desired, they can be added following the template within the function.
@@ -63,7 +63,6 @@ if(any(is.na(age_vec))){browser()}
 
 network::set.vertex.attribute(x=nw, attr="age", value=age_vec)
 network::set.vertex.attribute(x=nw, attr="age_cat", value=c(1, 2)[findInterval(x = age_vec, vec = c(14, 25))])
-network::set.vertex.attribute(x=nw, attr="sqrt_age", value=sqrt(age_vec))
 
 ## Set vaccination/risk compensation status on network if risk compensation in the form of increased degree is in effect. Initially, all agents are unvaccinated, so nodal attribute is equal to 0 for all agents. During simulation, vaccination/risk compensation status are set in social_treatment_vaccination
 if(params$risk_comp_degree) {

@@ -36,12 +36,9 @@ initialize_infecteds_cd4 <- function(dat,at)
   #assings cd4 value based on spvl category
   pop$CD4[ind] <-  viral_initialCD4(pop$spvl_cat[ind], plist=param );
 
-  pop$CD4count[ind] <- 650 - 120*(pop$CD4[ind]-1) # Rough: 1->530, 2->410, 3-->290, 4->170, 5->50  
-  pop$CD4tot[ind] <- pop$CD4count[ind] 
   pop$CD4_initial_value[ind] <- pop$CD4[ind]
   pop$CD4_nadir[ind] <- pop$CD4[ind]
   pop$CD4_time[ind] <- (-pop$Time_Inf[ind])
-  pop$CD4_treatment_delay_index[ind] <- (-pop$Time_Inf[ind])
 
   dat$pop <- pop
   return(dat)

@@ -36,18 +36,8 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   
   #Assume new entrants (births) and immigrants aren't treated.
   input_list$treated[index] <-  rep(0,total_new)  
-  input_list$treated_2nd_line[index] <- rep(0,total_new)
   input_list$vaccinated[index] <- rep(0, total_new)
   if(dat$param$vacc_wane) { input_list$vacc_rr[index] <- rep(1, total_new) }
-   
-  #Assume new entrants (births) and immigrants don't have any drug in their system (follows from not being treated)
-  input_list$Drug1[index] <- rep(0,total_new)
-  input_list$Drug2[index] <- rep(0,total_new)
-  input_list$Drug3[index] <- rep(0,total_new)
-  input_list$Drug4[index] <- rep(0,total_new)
-  input_list$OnDrug[index] <- rep(0,total_new)
-  
-  input_list$Aim3RoundingErrors[index] <- rep(0,total_new)
   
   input_list$Status[index] <-  rep(0,total_new)   
   
@@ -59,68 +49,16 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
 
   input_list$eligible_care[index] <- rbinom(total_new,1,dat$param$prob_care)
   
-  input_list$enhanced_testing[index] <- rep(0,total_new)
-  
-  input_list$ever_enhanced_testing[index] <- rep(0,total_new)
-  
-  input_list$rand_prob_test[index] <- runif(total_new) # Each agent has a random probability of going in for HIV tests after testing campaign
-  input_list$rand_prob_test_init[index] <- runif(total_new) # Each agent has a random initial probability of going in for HIV tests
-  
-  input_list$time_hiv_sex_act[index] <- rep(1e6,total_new)
-  
   input_list$eligible_ART[index] <- rbinom(total_new,1,dat$param$prob_eligible_ART)
  
-  input_list$eligible_2nd_line_ART[index] <- rbinom(total_new,1,dat$param$prob_eligible_2nd_line_ART)
-  # Later: Make eligibility for 2nd line ART a subset of those eligible for 1st line tx
-  
-  input_list$eligible_vl_test[index] <- rbinom(total_new,1,dat$param$prob_elig_vl_test)
-  
-  # Assign number of consecutive VL tests with VL > 1,000 copies/mL (0 for all new agents)
-  input_list$num_consec_VL_gt1k[index] <- rep(0,total_new)
- 
-  input_list$total_acts[index] <- rep(0,total_new)
-  
-  input_list$Adherence1[index] <- runif(total_new, dat$param$min_adherence1,dat$param$max_adherence1)
-  input_list$Adherence2[index] <- runif(total_new, dat$param$min_adherence2,dat$param$max_adherence2)
-  input_list$Adherence3[index] <- runif(total_new, dat$param$min_adherence3,dat$param$max_adherence3)
-  input_list$Adherence4[index] <- runif(total_new, dat$param$min_adherence4,dat$param$max_adherence4)
-  
-  input_list$adherence_type[index] <- sample(dat$param$adherence_type,
-                                          size=total_new, replace=T,
-                                          prob=dat$param$adherence_type_prob)
-  
-  input_list$adherence_start[index] <-floor((dat$param$adherence_days_high+dat$param$adherence_days_low)*runif(total_new))
-  
-  input_list$tx_schedule[index] <- sample(names(dat$param$tx_schedule_props),
-                                          size=total_new, replace=T,
-                                          prob=dat$param$tx_schedule_props)
-  
-  input_list$condom_user[index] <- rbinom(total_new,1,dat$param$percent_condom_users)
-  
   input_list$CD4_nadir[index] <- 1
   
   input_list$CD4[index] <- 1   # categorical value 1: CD4 > 500,..., 4: CD4: <200
   
-  input_list$CD4tot[index] <- 1000  # CD4 T-cell blood count before redistribution
-  
-  input_list$CD4count[index] <- 1000 # CD4 T-cell blood count w/ redistribution to LN (when V > 0)
-  
   input_list$CD4_at_trtmnt[index] <- NA
    
   input_list$r0[index] <- dat$param$r0
-  
-  input_list$CYP_6_slow[index] = rbinom(total_new,1,dat$param$prob_CYP_6_slow)
-  
-  
-  
-  #prep related (sarah, juandalyn)
-  input_list$pos_partner_duration[index] <- 0
-  input_list$known_pos_partner_duration[index] <- 0
-  input_list$no_partners_past_prep[index] <- 0
-  input_list$no_partners_now_prep[index] <- 0
-  
-  
-  
+
   #-----------------------------
   #these variables need different functions for initial population and births
   if(type=="initial")
@@ -131,7 +69,6 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
  
     input_list$sex[index] <- dat$attr$sex
     input_list$age[index] <- dat$attr$age
-    input_list$sqrt_age[index] <- sqrt(dat$attr$age)
     input_list$age_cat[index] <- c(1, 2)[findInterval(x = dat$attr$age, vec = c(14, 25))]
     
     # Assign generic nodal attribute values
@@ -160,32 +97,13 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
       temp <- index[input_list$role[index]=="V"]
       input_list$insert_quotient[temp] <- runif(length(temp))
       
-    }else{
-      input_list$role[index] <- "V"
-      input_list$insert_quotient[index] <- runif(total_new)
     }
     
     # Assign time since last negative HIV test
     index_male <- index[input_list$sex[index] == 'm'] 
     index_female <- index[input_list$sex[index] == 'f']
     index_under25 <- index[input_list$age[index] <= 25]
-        
-    input_list$last_neg_test[index_male] = sample( - dat$param$mean_test_interval_male:0, 
-                                                  length(index_male),
-                                                  replace = TRUE)
-    
-    input_list$last_neg_test[index_female ] = sample( - dat$param$mean_test_interval_female:0, 
-                                                     length(index_female),
-                                                     replace = TRUE)
-    if(dat$param$under_25_flag){
-    input_list$last_neg_test[index_under25] = sample( - dat$param$mean_test_interval_under25:0, 
-                                                     length(index_under25),
-                                                     replace = TRUE)
-    }
-     # Assign time from last negative resistance test
-    input_list$last_neg_resist_test[index] = sample( - dat$param$mean_resist_test_interval : 0,
-                                                       total_new,
-                                                       replace = TRUE )
+
   }
   
   #initial values of these variables differ between initial population
@@ -231,9 +149,6 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
       temp <- index[input_list$role[index]=="V"]
       input_list$insert_quotient[temp] <- runif(length(temp))
       
-    }else{
-      input_list$role[index] <- "V"
-      input_list$insert_quotient[index] <- runif(total_new)
     }
     
     #ages for new additions -------------------------
@@ -266,34 +181,12 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
           input_list$age[index] <- input_list$age[index]+round(runif(total_new),5)
         }
     
-    input_list$sqrt_age[index] <- sqrt(input_list$age[index])
     # end of ages for new additions --------------------------      
     
     # Assign time from last negative HIV test
     index_male <- index[input_list$sex[index] == 'm'] 
     index_female <- index[input_list$sex[index] == 'f'] 
     index_under25 <- index[input_list$age[index] <= 25] 
-    
-    temp_sample_times_male <- (at - dat$param$mean_test_interval_male):at 
-    input_list$last_neg_test[index_male] <- sample(temp_sample_times_male, 
-                                                   length(index_male), 
-                                                   replace = TRUE) 
-    
-    temp_sample_times_female <- (at - dat$param$mean_test_interval_female):at
-    input_list$last_neg_test[index_female] <- sample(temp_sample_times_female,
-                                                     length(index_female),
-                                                     replace = TRUE)
-    if(dat$param$under_25_flag){
-    temp_sample_times_under25 <- (at - dat$param$mean_test_interval_under25):at
-    input_list$last_neg_test[index_under25] <- sample(temp_sample_times_under25,
-                                                      length(index_under25),
-                                                      replace = TRUE)
-    }
-    
-    # Assign time from last negative resistance test
-    input_list$last_neg_resist_test[index] = sample( at - dat$param$mean_resist_test_interval : at,
-                                                     total_new,
-                                                     replace = TRUE )
     
     input_list$arrival_time[index] <- at
     
