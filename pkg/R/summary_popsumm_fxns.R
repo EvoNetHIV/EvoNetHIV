@@ -316,8 +316,10 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
          plot_type="line_raw",description="")
   
   popsumm_fxns$"total_vaccines_administered" <-
-    list(model_value_fxn   = function(...) { sum(c(0, dat$popsumm$total_vaccines_administered[popsumm_index - 1], new_vaccinations), na.rm = T)},
-         plot_type = "line_raw", description = "")
+    list(model_value_fxn   = function(...) { sum(c(0, dat$popsumm$total_vaccines_administered[popsumm_index - 1], new_vaccinations), na.rm = T) }, plot_type = "line_raw", description = "")
+  
+  popsumm_fxns$"average_vaccine_rr" <-
+    list(model_value_fxn = function(...) { average_vacc_rr }, plot_type = "line_raw", description = "")
   
   if (params$start_treatment_campaign < 5e5) {  #only plot if treatment is available in model 
     #default value is NA, so need append zero to get a zero when at==1

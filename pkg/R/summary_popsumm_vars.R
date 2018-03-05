@@ -88,17 +88,20 @@ summary_popsumm_vars <- function(dat){
   popsumm_vars <- c("timestep", "prevalence", "new_infections", "susceptibles",
                     "total_infections_alive", "births", "aids_deaths", "natural_deaths",
                     "aged_out", "natural_deaths_infecteds", "natural_deaths_susceptibles",
-                    "alive", "no_in_aids_cd4", "mean_age_incident", "mean_age_died_AIDS",
+                    "alive", "mean_age_incident", "mean_age_died_AIDS",
                     "mean_vl_pop_all", "mean_spvl_incident",
                     "mean_age_infecteds", "mean_age_susceptibles", "mean_trans_prob",
                     "no_edges", "mean_degree", "prop_nodes_degree_0",
                     "prop_nodes_degree_1", "prop_nodes_concurrent",
-                    "cd4_gt_350", "cd4_200_350","cd4_0_200", "prev_15to24", "prev_15to49", "prev_f_15to24",
-                    "prev_f_15to49","prev_m_15to24", "prev_m_15to49", "mean_degree_female","mean_degree_male",
-                    "no_treated", "percent_suppressed", "new_infections_vacc_sens_virus",
-                    "new_infections_vacc_resist_virus", "percent_virus_sensitive_vacc",
+                    "cd4_gt_350", "cd4_200_350", "cd4_0_200", 
+                    "prev_15to24", "prev_15to49", "prev_f_15to24",
+                    "prev_f_15to49","prev_m_15to24", "prev_m_15to49",
+                    "mean_degree_female", "mean_degree_male",
+                    "no_treated", "new_infections_vacc_sens_virus",
+                    "new_infections_vacc_resist_virus", "percent_virus_sensitive_vacc", "average_vacc_rr",
                     "percentAliveVaccinated", "total_vaccines_administered", 
-                    "new_infections_vaccinated", "new_infections_unvaccinated", "circum_prev")
+                    "new_infections_vaccinated", "new_infections_unvaccinated", 
+                    "pt_vaccinated", "pt_unvaccinated", "circum_prev")
   
   return(popsumm_vars)
 }
