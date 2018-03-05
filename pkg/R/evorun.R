@@ -1,6 +1,6 @@
 #' @export
 
-evorun <- function(modules,params,nw){
+evorun <- function(modules,params,nw=NULL){
 
   
 names(modules) <- paste(modules,".FUN",sep="")
@@ -38,7 +38,7 @@ if(!params$hyak_par){
   cat(runtime[3]/60,"\n")
 }else{
   #hyak parallel run
-  evomodel  <- EpiModelHPC::netsim_hpc(x = nw,
+  evomodel  <- EpiModelHPC::netsim_hpc(x = "estimated_nw.RData",
                                        param = params,
                                        init = infected_list,
                                        save.min = FALSE,
