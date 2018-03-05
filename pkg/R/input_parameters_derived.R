@@ -26,6 +26,9 @@ input_parameters_derived  <- function(initial_param)
   #change epimodel param 'modes' to 2 if hetero model, default = 1
   if(initial_param$model_sex!="msm"){initial_param$modes=2}   
   
+  if(initial_param$VL_Function=="aim3"){
+    initial_param$Max_Allowable_Loci <- 5
+  }
   if(initial_param$VL_Function=="aim2"){
     initial_param$Max_Allowable_Loci <- 0
   }

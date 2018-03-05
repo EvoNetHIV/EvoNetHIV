@@ -19,5 +19,8 @@ netest_arg_list <- list(
                                       d.rate      =  3e-05) )
 
 estimated_nw <- do.call(EpiModel::netest, netest_arg_list)
+if(params$hyak_par==T){
+  save(estimated_nw,file="estimated_nw.RData")
+}
 return(estimated_nw)
 }

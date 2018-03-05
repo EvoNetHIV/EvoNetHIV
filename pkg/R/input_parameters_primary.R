@@ -1,29 +1,25 @@
-#' @title List of default values of evonet parameter values. 
-#'
-#' @description 
-#' Returns list of default values of evonet parameter values. 
-#' No function arguments.
-#'
-#' @return List object
-#' @details
-#' Returns most but not all of the necessary parameters to run EvoNet. 
-#' CD4 progression parameters are returned with input_parameters_cd4_data().
-#' @examples
-#' primary_params <- input_parameters_primary()
 
 
+#NOTE!
+# This function is now deprecated.
+# When called, fxn "input_params" will be called instead
+# So, put all new parameters in the "input_params" fxn argument list
+#
 
-#' @export
-input_parameters_primary<-function(){
+input_parameters_primary_DEPRECATED <-function(){
 
-  # Description::
-  # List of most parameter values needed to run evonet.
-  # Parameter commonly changed in master_script.R include:
-  #   AverageLogSP0, VarianceLogSP0, condom_prob, sti_prob, circum_prob, start_treatment_campaign,
-  #   and birth_model
+#NOTE!
+# This function is now deprecated.
+# When called, fxn "input_params" will be called instead
+# So, put all new parameters in the "input_params" fxn argument list
+#
 
-   list(
+  
+  
+  
 
+  
+list(
 #-- Basic model setup parameters -------------#
 
     model_name   = "evomodel",
