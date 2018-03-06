@@ -18,6 +18,9 @@ netest_arg_list <- list(
                                       duration    =  params$relation_dur,
                                       d.rate      =  3e-05) )
 
-estimated_nw <- do.call(EpiModel::netest, netest_arg_list)
-return(estimated_nw)
+sim <- do.call(EpiModel::netest, netest_arg_list)
+if(params$hyak_par==T){
+  save(sim,file="estimated_nw.RData")
+}
+return(sim)
 }
