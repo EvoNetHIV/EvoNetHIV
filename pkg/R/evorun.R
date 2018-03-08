@@ -43,7 +43,8 @@ if(!params$hyak_par){
                                        init = infected_list,
                                        save.min = FALSE,
                                        save.max = FALSE,
-                                       control = evocontrol)
+                                       control = evocontrol,
+                                       cp.save.int = params$cp_int)
 }   
 
 
