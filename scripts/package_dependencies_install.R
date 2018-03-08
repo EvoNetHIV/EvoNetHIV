@@ -21,3 +21,6 @@ if (!require("devtools")) {
 install_github("EvoNetHIV/EvoNet",subdir="pkg")
 library(evonet)
 ##########################################
+#install absdiffby branch as package
+
+install_github("EvoNetHIV/EvoNet",subdir="pkg",ref="absdiffby",force=TRUE)
