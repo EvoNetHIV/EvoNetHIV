@@ -13,6 +13,7 @@ input_params<-function(
     model_name   = "evomodel",
     hpc          = FALSE, #on hyak?
     hyak_par     = FALSE, #on hyak and parallelized run?
+    cp_int        = NULL, #checpoint save interval on nestim_hpc hyak runs
     output_path  =  getwd(),
     start_timestep = 1, #parameter for EpiModel, should be "1" if new simulation
                         #if re-starting simulation,
