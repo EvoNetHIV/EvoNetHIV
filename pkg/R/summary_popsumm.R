@@ -132,7 +132,7 @@ summary_popsumm<-function(dat,at){
     percent_virus_sensitive <- round(100*(length(which(dat$pop$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
     percentVaccinated <- round(100*(length(which(dat$pop$vaccinated == 1 & alive_index))/total_alive))
     new_vaccinations  <- sum(dat$pop$vacc_init_time %in% time_index)
-    average_vacc_rr   <- mean(dat$pop$vacc_rr[dat$pop$vacc_rr != 1 & dat$pop$vacc_init_time >= (at - dat$param$vacc_eff_duration)])
+    average_vacc_rr   <- mean(dat$pop$vacc_rr[dat$pop$vaccinated == 1 & dat$pop$Status >= 0], na.rm = T)
     
     new_births <- is.element(dat$pop$arrival_time, time_index)
     cd4_aids <- dat$pop$CD4 == 4

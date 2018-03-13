@@ -98,10 +98,9 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
     list(model_value_fxn   = function(...){length(which(alive_index))},
          plot_type="line_raw",description="")
   
-  if(params$circum_prob != 0.85) {   # plot circumcision prevalence if not at default
-    popsumm_fxns$"circum_prev" <-
-      list(model_value_fxn = function(...) {circum_prev},
-           plot_type = "line_raw", description = "Circumcision prevalence")}
+  popsumm_fxns$"circum_prev" <-
+    list(model_value_fxn = function(...) {circum_prev},
+         plot_type = "line_raw", description = "Circumcision prevalence")
   
   #hetero dynamics here
   if(!is.null(params)){

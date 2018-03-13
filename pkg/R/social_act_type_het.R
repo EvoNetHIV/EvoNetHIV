@@ -23,7 +23,9 @@ social_act_type_het <- function(dat, at) {
   ix <- which(!is.na(dat$discord_coital_df$inf_id))
   dc <- dat$discord_coital_df[ix,]
   fem.ids <- dc$inf_id
-  fem.ids[which(dc$inf_sex != 'f')] <- dc$sus_id[which(dc$sus_sex == 'f')]
+  if(length(dc$sus_id[which(dc$sus_sex == 'f')]) != 0) {
+    fem.ids[which(dc$inf_sex != 'f')] <- dc$sus_id[which(dc$sus_sex == 'f')]
+  }
   
   dc$ai_prob <- sapply(fem.ids, function(x) {
     dat$pop$ai_prob[which(dat$pop$id == x)]
