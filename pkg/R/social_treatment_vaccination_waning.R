@@ -9,8 +9,6 @@ social_treatment_vaccination_waning <- function(dat, at) {
                             (dat$pop$vaccinated == 0 | is.na(dat$pop$vaccinated)) &
                             dat$pop$eligible_care == 1) 
   
-  if(length(eligible_index) == 0) { return(dat) }
-  
   n_vaccinated <- sum(rbinom(length(eligible_index), 1, dat$param$perc_vaccinated)) # Because coverage is achieved by the prob_care parameter, user specifies perc_vaccinated to be 1/time to achieve coverage.
   
   if(n_vaccinated != 0) {
