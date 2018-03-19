@@ -31,7 +31,10 @@ social_treatment_sex_age <- function(dat, at) {
   # Assign coverage level according to time point in simulation
   cov_prob <- dat$param$cov_prob[findInterval(at/365, dat$param$cov_prob_yrs)]
   
-  #if(at > 26*365) { browser() }
+  # If overall treatment coverage is greater than overall target, return
+  if(sum(dat$pop$treated[dat$pop$Status == 1])/sum(dat$pop$Status == 1) > cov_prob) { return(dat) }
+  
+ # if(at > 26*365) { browser() }
   # For each age and sex group, randomly select patients to initiate ART
   elig_sex_age <- list()
   for(i in 1:ncol(dat$param$cov_prob_scal)) {
@@ -44,21 +47,18 @@ social_treatment_sex_age <- function(dat, at) {
       # Assign sex- and age-specific target coverage
       target_cov <- cov_prob * dat$param$cov_prob_scal[j, i]
       
-      # Beyond final year in which observed coverage changes, coverage should plateau. 
-      if(at/365 > max(dat$param$cov_prob_yrs) + 1) {
-        nTreated <- length(which(dat$pop$sex == colnames(dat$param$cov_prob_scal)[i] &
+      nTreated <- length(which(dat$pop$sex == colnames(dat$param$cov_prob_scal)[i] &
                                  findInterval(dat$pop$age, dat$param$cov_prob_ageg[[j]]) == 1 &
                                  dat$pop$Status == 1 & dat$pop$treated == 1))
-        nElig    <- length(which(dat$pop$sex == colnames(dat$param$cov_prob_scal)[i] &
+      nElig    <- length(which(dat$pop$sex == colnames(dat$param$cov_prob_scal)[i] &
                                  findInterval(dat$pop$age, dat$param$cov_prob_ageg[[j]]) == 1 &
                                  dat$pop$Status == 1 &
                                  (is.element(dat$pop$CD4, dat$param$cd4_treatment_threshold) |
-                                  is.element(dat$pop$CD4_at_trtmnt, dat$param$cd4_treatment_threshold))))
-        current_cov <- nTreated/nElig
-        #if(current_cov > target_cov) { browser() }
+                                    is.element(dat$pop$CD4_at_trtmnt, dat$param$cd4_treatment_threshold))))
+      current_cov <- nTreated/nElig
         
-        if(current_cov > target_cov) { next }
-      }
+      #if(current_cov > target_cov) { browser() }
+      if(current_cov > target_cov) { next }
       
       elig_sex_age[[length(elig_sex_age) + 1]] <- elig[which(rbinom(length(elig), 1, target_cov/365) == 1)] # Divide by 365 to make daily probability
     }
@@ -72,9 +72,6 @@ social_treatment_sex_age <- function(dat, at) {
   dat$pop$treated[trt_pat] <- 1
   dat$pop$tx_init_time[trt_pat] <- at
   dat$treatment_index <- trt_pat
-  dat$pop$vl_expected[trt_pat] <- dat$pop$V[trt_pat]
-  
-  # Add code for loss-to-program
 
   return(dat)
 }

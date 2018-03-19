@@ -34,7 +34,7 @@ social_role_msm <- function(dat,at)
   dat$discord_coital_df$inf_role <- inf_role
 
   #temporary qaqc
-  if(any( (sus_role==inf_role) & sus_role!="V")){browser()}
+  #if(any( (sus_role==inf_role) & sus_role!="V")){browser()}
   #was initially getting I-I or R-R couples, want to make sure that's fixed
   #end of temporary qaqc
 
