@@ -46,7 +46,7 @@
   if(length(infected)==0){return(dat)}
   
   #eligible_patients: infected,diagnosed,eligible for care,not treated
-  eligible_patients <- which(dat$pop$Status == 1 & dat$pop$treated == 0 & dat$pop$eligible_care == 1 & dat$pop$eligible_ART == 1) 
+  eligible_patients <- which(dat$pop$Status == 1 & dat$pop$treated == 0 & dat$pop$eligible_ART == 1) 
   
   # If tx_in_acute_phase = F (i.e., patients are not treated if they are in acute phase), subset
   # those patients who were infected more than dat$param$t_acute days ago.
