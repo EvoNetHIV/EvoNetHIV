@@ -1,0 +1,24 @@
+---
+title: "Transmission details"
+output: github_document
+---
+
+Transmission probabilities are calcluated as a function of risk factors (susceptible's age, type of sex, viral load of infected agent, condom usage, etc.)
+
+The default for the core transmission paramaters are listed below. (See )
+   trans_RR_uses_condoms= 0.22      
+    trans_RR_LogV        = 2.89      
+    trans_VLbase         = 4.0            
+    trans_RR_circumcised = 0.53      
+    trans_RR_age         = 0.67          
+    max_age_RR_age       = 45    
+    trans_base_age       = 35       
+    trans_RR_insertive_anal_msm = 2.9  
+    trans_RR_ins_ai      = 2.9
+    trans_RR_rec_ai      = 17.3
+    trans_RR_acute_phase = 1.0       
+    trans_RR_receptive_vaginal=1
+    trans_RR_vaccine     = 0.01      
+
+Below are figures of transmission probabilities for MSM and heterosexual sex as a function of infector's viral load.
+
