@@ -22,7 +22,7 @@ This project is supported by grants from the National Institutes of Health (NIAD
 * James T. Murphy <jtm6@uw.edu> 
 
 [Model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_overview.md)  
-[Model details](https://evonethiv.github.io/EvoNetHIV/documentation/Model_details.html)
-[Quick start I](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)  
-[Quick start II](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/Model_Basics_Overview.md)
+[Model details](https://evonethiv.github.io/EvoNetHIV/documentation/Model_details.html)    
+[Quick start I: run a simple model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)    
+[Quick start II: a few more details](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/Model_Basics_Overview.md)    
 
