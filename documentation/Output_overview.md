@@ -353,3 +353,15 @@ lines(timestep,prev3,type='o',pch=16,col=3)
 ```
 
 ![](Output_overview_files/figure-markdown_github/chunk2j-1.png)
+
+
+Below is an example of the default output summary plots automatically generated for each model run.
+
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/output_popsumm1.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/output_popsumm2.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/output_popsumm3.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/output_popsumm4.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/output_popsumm5.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/output_popsumm6.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/output_popsumm7.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/output_popsumm8.png)
