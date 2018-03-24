@@ -1,5 +1,5 @@
 ---
-title: "Processing EvoNet output"
+title: "Using Loops with EvoNet"
 output: github_document
 ---
 
@@ -57,11 +57,10 @@ for(ii in 1:length(target_stats_values)){
 ```
 
 
-```{r chunk4, eval=F}
 Plot and compare prevalence time series for each target stat value (prevalence increases with increasing target stat # / mean degree values)
+```{r chunk5, eval=F}
 par(mfrow=c(2,2))
 evoplot(output_list[[1]],variables = "prevalence")
 evoplot(output_list[[2]],variables = "prevalence")
 evoplot(output_list[[3]],variables = "prevalence")
 ```
-![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/loop_ex_fig.png)
