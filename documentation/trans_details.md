@@ -18,4 +18,7 @@ trans\_RR\_acute\_phase = 1.0
 trans\_RR\_receptive\_vaginal=1   
 trans\_RR\_vaccine = 0.01  
 
-Below are figures of transmission probabilities for MSM and heterosexual sex as a function of infector's viral load.
+Below are example of transmission probabilities for MSM and heterosexual sex as a function of infector's viral load, STI status, MSM role, and condom use.
+
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/trans_msm.png)
+
