@@ -1,5 +1,6 @@
 Transmission details
 ================
+(In progress)
 
 Transmission probabilities are calcluated as a function of risk factors (susceptible's age, type of sex, viral load of infected agent, condom usage, etc.)
 
