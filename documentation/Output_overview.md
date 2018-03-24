@@ -126,7 +126,18 @@ As an aside, using the lapply function is often useful for interacting with R li
 [1] 417 416 412
 ```
 
-The attribute "Status" refers to the current condition of an agent: 0, alive and uninfected; 1, alive and infected; -1.5, aged out of model (removed from model as maximum age was reached); -1, died of non-AIDS cause; -2, died of AIDS. The first 6 values for each Status vector can be viewed using the head function and the differences between replicates are clear.
+Plotting the time of infection (days since model start) of the 3 simulations. Many infections occur before day 0. This is because the time of infection for the agents that are initially infected at the start of the model are randomly given time of infections between the start of the modle and two years prior (-730 - 0). Thus, positive times of infection are for agents that were not part of the initially infected population.
+
+``` r
+aa=evomodel$pop
+time_inf_list=lapply(1:length(aa),function(xx) aa[[xx]]$Time_Inf)
+par(mfrow=c(2,2))
+lapply(time_inf_list,function(x) hist(x,main="Time of Infection",xlab="Day"))
+```
+
+![](Output_overview_files/figure-markdown_github/chunkzz2-1.png)
+
+> The attribute "Status" refers to the current condition of an agent: 0, alive and uninfected; 1, alive and infected; -1.5, aged out of model (removed from model as maximum age was reached); -1, died of non-AIDS cause; -2, died of AIDS. The first 6 values for each Status vector can be viewed using the head function and the differences between replicates are clear.
 
 ``` r
 > lapply(1:3,function(x) head(evomodel$pop[[x]]$Status))
@@ -199,4 +210,146 @@ This shows that agent 10 was a male, that aged out (reached default maximum age 
 Summary statistics
 ==================
 
-At the end of each daily timestep, a suite of summary statistics is caclulated to quantify epidemioligical, behavioral, and network dynamics of the population. These statistics are based on individual agent attributes (e.g., infection status to calculate prevalence) and provide a time series of statistics that can be used to describe and quanitfy the evolution of the epidemic.
+At the end of each daily timestep, a suite of summary statistics is caclulated to quantify epidemioligical, behavioral, and network dynamics of the population. These statistics are based on individual agent attributes (e.g., infection status to calculate prevalence) and provide a time series of statistics that can be used to describe and quanitfy the evolution of the epidemic. The name of the data object that has these daily statistics is the "popsumm" object.
+
+Again, here are output objects from a model run.
+
+``` r
+> names(evomodel)
+[1] "param"            "control"          "nwparam"          "epi"              "stats"  
+[6] "attr"             "pop"              "nw"               "coital_acts_list" "popsumm"
+[11] "vl_list"          "InfMat"           "age_list"         "el"               "sessionInfo"
+[16] "partner_list"     "popsumm_mats"
+```
+
+The has length of 3 because three simulations/replicates were run.
+
+``` r
+> length(evomodel$popsumm)
+[1] 3
+```
+
+Here are the names of the popsumm variables in aphabetical order
+
+``` r
+> aa=evomodel
+> sort(names(aa$popsumm[[1]]))
+ [1] "aged_out"                          "aids_deaths"                      
+ [3] "alive"                             "births"                           
+ [5] "cd4_0_200"                         "cd4_200_350"                      
+ [7] "cd4_gt_350"                        "mean_age_died_AIDS"               
+ [9] "mean_age_incident"                 "mean_age_infecteds"               
+[11] "mean_age_susceptibles"             "mean_degree"                      
+[13] "mean_degree_30_50"                 "mean_degree_inf_untreated"        
+[15] "mean_degree_over_50"               "mean_degree_under_30"             
+[17] "mean_spvl_incident"                "mean_spvl_pop_all"                
+[19] "mean_spvl_pop_untreated"           "mean_time_donor_infected_incident"
+[21] "mean_trans_prob"                   "mean_vl_pop_all"                  
+[23] "natural_deaths"                    "natural_deaths_infecteds"         
+[25] "natural_deaths_infecteds"          "natural_deaths_susceptibles"      
+[27] "new_diagnoses"                     "new_infections"                   
+[29] "no_edges"                          "no_in_aids_cd4"                   
+[31] "no_in_aids_gamma"                  "percent_donor_acute"              
+[33] "prevalence"                        "prop_nodes_concurrent"            
+[35] "prop_nodes_degree_0"               "prop_nodes_degree_1"              
+[37] "susceptibles"                      "timestep"                         
+[39] "total_infections_alive"            "total_infections_not_treated"     
+>
+```
+
+Here are what the values look like with their first ten or so values.
+
+``` r
+> str(evomodel$popsumm[[1]])
+List of 40
+ $ timestep                         : num [1:244] 1 30 60 90 120 150 180 210 240 270 ...
+ $ prevalence                       : num [1:244] 0.2 0.192 0.189 0.19 0.185 ...
+ $ new_infections                   : num [1:244] 0 0 0 0 0 0 0 1 0 0 ...
+ $ susceptibles                     : num [1:244] 160 160 159 158 159 160 159 159 159 161 ...
+ $ total_infections_alive           : num [1:244] 40 38 37 37 36 36 36 36 36 36 ...
+ $ births                           : num [1:244] 0 0 0 0 1 1 1 1 0 2 ...
+ $ aids_deaths                      : num [1:244] 0 2 0 0 1 0 0 0 0 0 ...
+ $ natural_deaths                   : num [1:244] 0 0 1 0 0 0 1 0 0 0 ...
+ $ aged_out                         : num [1:244] 0 0 1 1 0 0 1 1 0 0 ...
+ $ natural_deaths_infecteds         : num [1:244] 0 0 0 0 0 0 0 0 0 0 ...
+ $ natural_deaths_susceptibles      : num [1:244] 0 0 1 0 0 0 1 0 0 0 ...
+ $ alive                            : num [1:244] 200 198 196 195 195 196 195 195 195 197 ...
+ $ no_in_aids_gamma                 : num [1:244] 3 1 1 1 1 1 1 1 2 3 ...
+ $ no_in_aids_cd4                   : num [1:244] 3 1 1 1 1 1 1 1 1 2 ...
+ $ natural_deaths_infecteds         : num [1:244] NA NA NA NA NA NA NA NA NA NA ...
+ $ new_diagnoses                    : num [1:244] 0 7 1 6 4 3 2 3 3 3 ...
+ $ percent_donor_acute              : num [1:244] NA NA NA NA NA NA NA 0 NA NA ...
+ $ mean_time_donor_infected_incident: num [1:244] NaN NaN NaN NaN NaN NaN NaN 608 NaN NaN ...
+ $ mean_age_incident                : num [1:244] NaN NaN NaN NaN NaN ...
+ $ mean_age_died_AIDS               : num [1:244] NaN 43.6 NaN NaN 26 ...
+ $ mean_spvl_pop_all                : num [1:244] 4.58 4.51 4.5 4.5 4.49 ...
+ $ mean_vl_pop_all                  : num [1:244] 4.64 4.57 4.56 4.57 4.57 ...
+ $ mean_spvl_incident               : num [1:244] NaN NaN NaN NaN NaN ...
+ $ mean_spvl_pop_untreated          : num [1:244] 4.58 4.51 4.5 4.5 4.49 ...
+ $ total_infections_not_treated     : num [1:244] 40 38 37 37 36 36 36 36 36 36 ...
+ $ mean_age_infecteds               : num [1:244] 37.2 36.9 36.5 36.6 37 ...
+ $ mean_age_susceptibles            : num [1:244] 36.4 36.5 36.5 36.4 36.4 ...
+ $ mean_trans_prob                  : num [1:244] NA 0.00774 0.00145 0.00509 NA ...
+ $ no_edges                         : num [1:244] 38 40 39 36 34 37 35 33 34 34 ...
+ $ mean_degree                      : num [1:244] 0.38 0.404 0.398 0.369 0.349 ...
+ $ mean_degree_inf_untreated        : num [1:244] 0.45 0.553 0.595 0.405 0.306 ...
+ $ prop_nodes_degree_0              : num [1:244] 0.67 0.662 0.684 0.677 0.687 ...
+ $ prop_nodes_degree_1              : num [1:244] 0.28 0.278 0.245 0.277 0.282 ...
+ $ prop_nodes_concurrent            : num [1:244] 0.05 0.0606 0.0714 0.0462 0.0308 ...
+ $ cd4_gt_350                       : num [1:244] 34 34 34 34 33 33 33 33 31 31 ...
+ $ cd4_200_350                      : num [1:244] 3 3 2 2 2 2 2 2 4 3 ...
+ $ cd4_0_200                        : num [1:244] 3 1 1 1 1 1 1 1 1 2 ...
+ $ mean_degree_under_30             : num [1:244] 0.429 0.444 0.381 0.349 0.397 ...
+ $ mean_degree_30_50                : num [1:244] 0.4 0.431 0.444 0.37 0.315 ...
+ $ mean_degree_over_50              : num [1:244] 0.185 0.192 0.24 0.417 0.375 ...
+```
+
+Each popsumm variable above has a length of 244. This is because the model ran for 20 years (7300 days) and the summary statistics were calculated at the default frequency of 30 days. 30 days is the default frequency to not slow down the model too much as doing all the summary statistics calculations can take a bit of time. The first value for each popsumm variable represents the initial condition for the variable, that is what the population/network is like before any of the model processes begin. Thus, the length of 244 for the example above is calculated as
+
+``` r
+ pp=evomodel$param[[1]]
+> pp$n_steps
+[1] 7300
+> pp$popsumm_frequency
+[1] 30
+> floor(7300/30)+1
+[1] 244
+```
+
+We recommend keeping the "popsumm\_frequency" variable at 30 days, but it can be changed to larger or smaller values, e.g.,
+
+``` r
+evoparams$popsumm_frequency=1
+#or
+evoparams$popsumm_frequency=60
+```
+
+In this example there are 3 replicates, thus each variable has 3 separate vectors of output, using the head(), we'll look at the first 6 values of each replicate for the 'prevalence' variable. We notice that they start at the same value but then diverge, though are still quite similar at this point.
+
+``` r
+> head(round(aa$prevalence,3))
+[1] 0.200 0.192 0.189 0.190 0.185 0.184
+> aa=evomodel$popsumm[[2]]
+> head(round(aa$prevalence,3))
+[1] 0.200 0.175 0.174 0.174 0.174 0.174
+> aa=evomodel$popsumm[[3]]
+> head(round(aa$prevalence,3))
+[1] 0.200 0.196 0.201 0.193 0.193 0.185
+```
+
+Plotting the three prevalence replicates.
+
+``` r
+#note: timestep variable will be the same for all replicates.
+timestep=evomodel$popsumm[[1]]$timestep/365
+popsumm=evomodel$popsumm
+prev1=popsumm[[1]]$prevalence
+prev2=popsumm[[2]]$prevalence
+prev3=popsumm[[3]]$prevalence
+
+plot(timestep,prev1,type='o',pch=16,col=1,ylab="prevalence",xlab="years",ylim=c(0,.21))
+lines(timestep,prev2,type='o',pch=16,col=2)
+lines(timestep,prev3,type='o',pch=16,col=3)
+```
+
+![](Output_overview_files/figure-markdown_github/chunk2j-1.png)
