@@ -30,5 +30,7 @@ This project is supported by grants from the National Institutes of Health (NIAD
 [Treatment example](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/treatment_example.md)  
 [Output overview](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/Output_overview.md)  
 [Transmission details](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/trans_details.md)  
+[Viral load and CD4 progression](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/vlcd4.md)  
+
 
 

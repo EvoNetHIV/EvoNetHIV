@@ -11,8 +11,7 @@ Viral Load and Setpoint Viral Load
 • With commencement of ART, VL will decrease linearly over 30 days to a “undetectable” level of 1.7 and remain there for the duration of treatment. If treatment stops, VL will then increase linearly over 30 days to the VL level at the start of treatment and then progress as if treatment did not occur.
 
 Example of viral load progression with and without ART. For this example, ART begins at 5 years since infection. Without ART, AIDS begins at about 10 years since infection and death at about 13 years. While acute phase duration is fixed at 90 days, start of AIDS and time of AIDS death are stochastic.
-
-figure here
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/vl1.png)  
 
 CD4 Dynamics
 ------------
@@ -23,4 +22,6 @@ CD4 Dynamics
 
 • With commencement of ART, an agent’s CD4 category is set to 1 and remains there until treatment stops or agent’s death. If treatment stops before agent’s death, the CD4 category of an agent is set equal to the value at the start of treatment.
 
-figure here
+Example of CD4 progression with corresponding VL progression (no treatment)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/vl2.png)  
+
