@@ -10,7 +10,6 @@ This project is supported by grants from the National Institutes of Health (NIAD
 
 ## Project members  
 
-* James T. Murphy <jtm6@uw.edu> 
 * John E. Mittler <jmittler@uw.edu>
 * Steven M. Goodreau <goodreau@uw.edu>
 * Joshua T. Herbeck <herbeck@uw.edu>
@@ -20,6 +19,7 @@ This project is supported by grants from the National Institutes of Health (NIAD
 * Neil Abernethy <neila@uw.edu>
 * Juandalyn Burke <jcburke@uw.edu>
 * Geoff Gottlieb <gottlieb@uw.edu>  
+* James T. Murphy <jtm6@uw.edu> 
 
 [Model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_overview.md)  
 [Quick start](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)  
