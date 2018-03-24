@@ -22,3 +22,5 @@ Below are example of transmission probabilities for MSM and heterosexual sex as 
 
 ![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/trans_msm.png)
 
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/trans2.png)  
+
