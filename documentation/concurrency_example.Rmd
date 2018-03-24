@@ -1,0 +1,79 @@
+---
+title: "Concurrency example with EvoNet"
+output: github_document
+---
+
+
+
+##Simple example with concurrency
+Blurb about concurrency and its implemenatation here.
+
+Read in parameters, change default values for nsims, n_steps, popsumm_frequency, initial_pop, initial_infected. Use default modules.
+```{r chunk1, eval=F}
+#Read in default parameters (as list)
+evoparams <- evonet_setup(
+nsims=3,
+popsumm_frequency =30,
+ n_steps           = 365*30,
+ initial_pop       = 300,
+ initial_infected  = 30)
+
+#Use default modules
+modules <- c(
+  "aging",
+  "testing",
+  "treatment",
+  "viral_update",
+  "coital_acts",
+  "transmission",
+  "deaths",
+  "births",
+  "summary_module")
+```
+
+
+Create two variable vectors, each of length 2: concurrency model needs two target stats values:
+i) total edges and ii) total edges in concurrent relationship.
+
+```{r chunk2, eval=F}
+target_stats_monogamy <- c(0.35*evoparams$initial_pop, 0) #complete monomagy
+target_stats_concurrency <- c(0.35*evoparams$initial_pop, 0.25*evoparams$initial_pop) #25% relationships
+target_stats_list=list(target_stats_monogamy,target_stats_concurrency)
+```
+
+
+Create list to hold output of three model runs
+```{r chunk3, eval=F}
+output_list <- vector('list',length=length(target_stats_list))
+```
+
+Run model for each value of specified target stats
+```{r chunk4, eval=F}
+for(ii in 1:length(target_stats_list)){
+  evoparams$target_stats <- target_stats_list[[ii]]
+  nw <- nw_setup(evoparams)
+  output_list[[ii]] <- evorun(modules,evoparams,nw)
+}  
+```
+
+save parameters and output to current working directory for future work if needed (e.g., getwd() )
+```{r chunk5, eval=F}
+save(evoparams,output_list,file="concurrencny_Sim.RData")
+```
+
+Plot and compare prevalence time series for each target stat value (prevalence increases with increasing target stat # / mean degree values), line at 0.25 for reference
+```{r chunk6, eval=F}
+par(mfrow=c(2,2))
+evoplot(output_list[[1]],variables = "prevalence",main="prevalence: monogamy")
+abline(h=0.25)
+evoplot(output_list[[2]],variables = "prevalence",main="prevalence: concurrency")
+abline(h=0.25)
+```
+
+
+
+
+
+
+
+
