@@ -1,9 +1,5 @@
 Using Loops with EvoNet
 ================
-
-Using Loops for EvoNet
-----------------------
-
 Likely, the effects of a range of parameter values on epidemic dynamics will be of interest. This will require using a loop structure. A simple example is given below where three values for the parameter “target\_stats” (which determines the number of relationships between agents).
 
 Here is standard EvoNet model setup
