@@ -26,6 +26,7 @@ This project is supported by grants from the National Institutes of Health (NIAD
 [Quick start I: run a simple model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)    
 [Quick start II: a few more details](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/Model_Basics_Overview.md)    
 [Ouput plots](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/output_plots_overview.md)  
+[Using loops to run experiments](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/loops_example.md)  
 
 
 
