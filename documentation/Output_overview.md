@@ -134,8 +134,8 @@ time_inf_list=lapply(1:length(aa),function(xx) aa[[xx]]$Time_Inf)
 par(mfrow=c(2,2))
 lapply(time_inf_list,function(x) hist(x,main="Time of Infection",xlab="Day"))
 ```
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/timeinf.png)
 
-![](Output_overview_files/figure-markdown_github/chunkzz2-1.png)
 
 > The attribute "Status" refers to the current condition of an agent: 0, alive and uninfected; 1, alive and infected; -1.5, aged out of model (removed from model as maximum age was reached); -1, died of non-AIDS cause; -2, died of AIDS. The first 6 values for each Status vector can be viewed using the head function and the differences between replicates are clear.
 
@@ -351,8 +351,7 @@ plot(timestep,prev1,type='o',pch=16,col=1,ylab="prevalence",xlab="years",ylim=c(
 lines(timestep,prev2,type='o',pch=16,col=2)
 lines(timestep,prev3,type='o',pch=16,col=3)
 ```
-
-![](Output_overview_files/figure-markdown_github/chunk2j-1.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/prev_ex.png)
 
 
 Below is an example of the default output summary plots automatically generated for each model run.
