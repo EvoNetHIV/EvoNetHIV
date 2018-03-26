@@ -17,12 +17,6 @@ input_params<-function(
     start_timestep = 1, #parameter for EpiModel, should be "1" if new simulation
                         #if re-starting simulation,
                         #value should be "n_steps+1" (n_steps from original sim.)
-    
-    # new parameters for alternative restart routines
-    restart_val = "none", # "save" = save simulation, "restart" = restart simulation
-    restart_time = 1e9, # time that base simulation results get saved
-    restart_tx_type = "CD4_low",
-    
     fast_edgelist = FALSE,
     nsims        = 1,
     initial_pop  = 100, #initial popn
@@ -45,6 +39,12 @@ input_params<-function(
     save_RData_file= F, # for John's scripts,
     save_summary_figs = F, # for John's scripts,
     vital=FALSE, #epimodel requires this parameter, should be False
+    
+    # new parameters for alternative restart routines
+    restart_val = "none", # "save" = save simulation, "restart" = restart simulation
+    restart_time = 1e9, # time that base simulation results get saved
+    restart_tx_type = "CD4_low",
+    
   #--QA/QC terms ----------------------------#
     QA_QC_pause_time = 3,  # Time delay in seconds that the computer waits so that users can view QA/QC stats 
   
@@ -59,7 +59,7 @@ input_params<-function(
     dissolution="~offset(edges)",
     rm_offset_rel = F, # temporary solution to remove same-role (MSM simulations) and same-sex (heterosexual simulations) relationships. If = T, function remove_offset_relationships will be called in initialize_module.
 
-#-- virulence/vl/transmission model  parameters -------------#
+#-- viral load progression / spvl parameters -------------#
 
     VL_Function  = "aim2",  # Other option is "aim3" (aim 3 code)
     vl_peak_agent_flag    = FALSE,
@@ -96,6 +96,7 @@ input_params<-function(
     min_vl_viralcont_spvl = 2.5,
     prog_rate             = 0.14,     # per year rate.  Note VL progression cartoons typically show ~0.5 Log increase in VL over a 8-year
                                       # period.  That suggests a progression rate of ln(10^0.5) / 8 = ~0.14 per year
+# ---- Transmission parameters ----------------------------------
     Heritability          = 0.36,     # desired population heritability estimate is 0.36 (from Fraser; should vary by population). This value, in conjunction with the default mutation variance, seems to yield a stable population heritability of 3.6.  But user should always beware!
     Flat_Viral_Load       = 0,        # Setting this to 1 forces VL to be the same value during the entire primary infection period
     trans_lambda         = 0.000247,  # From Steve Goodreau's summary of discussions he had with Jim Hughes
@@ -117,7 +118,8 @@ input_params<-function(
     trans_RR_receptive_vaginal=1,
     trans_RR_vaccine     = 0.01,      #placeholder, 5/3/16
     perc_virus_vaccine_sens = 0.99,  #placeholder 5/3/16
-# Parameters for newly added (11/8/15) dynamic CD4 function (revised 11/11/15)
+
+# Parameters dynamic CD4 function (revised 11/11/15)
   cd4_homo_input     = 0.04,  # Rate of addition of CD4 T-cells per day when CD4 < 1000
   k_cd4              = 0.127,  # Rate at which virus kills CD4 T-cells [using log10(virus)]
   vl_kill_cd4        = 0.38,   # VL below which virus no longer kills off CD4 T-cells
@@ -400,7 +402,9 @@ input_params<-function(
     generic_nodal_att_values_props_births = NA, #how new values distributed with addtns to pop
     generic_nodal_att_no_categories = NA,   # how many generic att categories
     generic_nodal_att_trans_mat     = NA,    # matrix of per timestep transition probs, each row sums to one
-    cd4_init_probs =  structure(list(cd4_500     = c(0.88, 0.87, 0.85, 0.78, 0.73, 0.71, 0.64, 0, 0),
+# ----------    CD4 data   ----------------------------------------------------  
+   # Probabilities for initial CD4 value (based on SPVL)
+   cd4_init_probs =  structure(list(cd4_500     = c(0.88, 0.87, 0.85, 0.78, 0.73, 0.71, 0.64, 0, 0),
                       cd4_500_350 = c(.12,  0.12, 0.12, 0.19, 0.21, 0.25, 0.27, 0, 0),
                       cd4_350_200 = c(0.0,  0.01, 0.03, 0.03, 0.05, 0.04, 0.09, 1, 1)),
                       .Names = c("cd4_500+", "cd4_500_350", "cd4_350_200"),
@@ -408,7 +412,8 @@ input_params<-function(
                       row.names = c("spvl<3",       "spvl_3.0_3.5", "spvl_3.5_4.0",
                                     "spvl_4.0_4.5", "spvl_4.5_5.0", "spvl_5.0_5.5",
                                     "spvl_5.5_6.0", "spvl_6.0_6.5", "spvl>6.5")),
-     CD4_lookup =structure(list(cd4_500  = c(6.08, 4.69, 3.94, 2.96, 2.25, 1.47, 0.95, 0.32, 0.30),
+  # Mean passage time for CD4 categories 1,2,3,4   
+  CD4_lookup =structure(list(cd4_500  = c(6.08, 4.69, 3.94, 2.96, 2.25, 1.47, 0.95, 0.32, 0.30),
                  cd4_500_350  = c(5.01, 2.52, 4.07, 3.09, 2.32, 1.55, 1.19, 0.59, 0.46),
                  cd4_350_200  = c(3.60,  3.68, 2.38, 3.81, 3.21, 2.27, 1.00,  0.68, 0.37),
                  cd4_200  = c(4.67, 4.11, 3.54, 2.98, 2.42, 1.86, 1.29, 0.73, 0.17)),
