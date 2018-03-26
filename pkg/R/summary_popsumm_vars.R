@@ -70,16 +70,16 @@ summary_popsumm_vars <- function(dat){
   #hetero models
   if(dat$param$model_sex=="hetero"){popsumm_vars <- c(popsumm_vars,hetero_vars)}
   #models with treatment
-  if(dat$param$start_treatment_campaign < 5e5){popsumm_vars <- c(popsumm_vars,treatment_vars)}
+  if(dat$param$start_treatment_campaign[1] < 5e5){popsumm_vars <- c(popsumm_vars,treatment_vars)}
   #hetero models with treatment
   if (dat$param$model_sex=="hetero" &
-      dat$param$start_treatment_campaign < 5e5){
+      dat$param$start_treatment_campaign[1] < 5e5){
          popsumm_vars <- c(popsumm_vars,hetero_and_treatment_vars)
   }
   #circumcision model
   if(dat$param$circum_prob != 0.85){popsumm_vars <- c(popsumm_vars,circumcision_vars)}
   #prep model
-  if(dat$param$start_prep_campaign < 5e5){popsumm_vars <- c(popsumm_vars,prep_vars)}
+  if(dat$param$start_prep_campaign[1] < 5e5){popsumm_vars <- c(popsumm_vars,prep_vars)}
   #aim 3 model
   if(dat$param$VL_Function=="aim3"){popsumm_vars <- c(popsumm_vars,aim3_vars)}
   #vaccine model

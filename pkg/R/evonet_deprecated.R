@@ -116,13 +116,18 @@ vital_deaths_module_john  <- function(...) {
   deaths_tx_time_adjusted(...)
 }
 
-#' @export
-
 social_attribute_transition_module  <- function(...) {
   #  .Deprecated("births","package="evonet")
   risk_group_changes(...)
 }
 
+
+
+#' @export
+social_treatment_vaccination  <- function(...) {
+  #  .Deprecated("births","package="evonet")
+  vaccination(...)
+}
 
 
 

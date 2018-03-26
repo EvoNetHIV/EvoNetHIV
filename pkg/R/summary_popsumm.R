@@ -346,7 +346,7 @@ summary_popsumm<-function(dat,at){
 
   #--------------------------------------------
   #treatment (msm and hetero models)
-  if (dat$param$start_treatment_campaign < 5e5) {
+  if (dat$param$start_treatment_campaign[1] < 5e5) {
   dat$popsumm$no_treated[popsumm_index]<-length(which(inf_index & treated_index))
   dat$popsumm$percent_suppressed[popsumm_index]<-(length(which(treated_index &
           ((at-dat$pop$tx_init_time)>100) &(log10(dat$pop$V)< dat$pop$LogSetPoint/10) &
@@ -356,7 +356,7 @@ summary_popsumm<-function(dat,at){
   #--------------------------------------------
 
   #hetero model with treatment
-  if (dat$param$model_sex=="hetero" & dat$param$start_treatment_campaign < 5e5) {  #only plot if treatment is available in model
+  if (dat$param$model_sex=="hetero" & dat$param$start_treatment_campaign[1] < 5e5) {  #only plot if treatment is available in model
 
     dat$popsumm$treated_inf_men[popsumm_index]<-length(which(treated_inf_male_index))/length(which(inf_male_index))
     dat$popsumm$treated_inf_women[popsumm_index]<-length(which(treated_inf_female_index))/length(which(inf_female_index))
@@ -372,7 +372,7 @@ summary_popsumm<-function(dat,at){
 
   #--------------------------------------------
   #prep
-  if (dat$param$start_prep_campaign < 5e5) {
+  if (dat$param$start_prep_campaign[1] < 5e5) {
     dat$popsumm$prop_on_prep[popsumm_index] <-prop_on_prep
   }
 

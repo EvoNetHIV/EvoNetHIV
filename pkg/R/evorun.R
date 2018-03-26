@@ -2,6 +2,7 @@
 
 evorun <- function(modules,params,nw=NULL){
 
+params <-  input_parameters_derived(params)
   
 names(modules) <- paste(modules,".FUN",sep="")
 module_list <- as.list(modules)
