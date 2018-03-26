@@ -311,12 +311,8 @@ input_params<-function(
     percent_eligible_on_prep = 1,
     start_prep_campaign = 5e5,
     prob_tx_droput          = 0,
-   percent_condom_users= 1, # non-users never use condoms when partnered with other non-users.  users will use condoms with some probability
     compact_el_divisor=1e5,
-   ave_rel_dur_start = 5*365,
-   condom_use_rel_dur = FALSE,
-   condom_use_age = FALSE,
-   age_condom_use_halves = 50, # Only used when condom_use_age is true
+    ave_rel_dur_start = 5*365,
     test_result_delay = 35, # Delay between being infected and having sufficient antibodies for diagnosis
     reduction_test_interval_enhanced = 0.1,  # fage reduction in test interval for those identified for "enhanced" testing
     prob_enhanced_testing_before_campaign = 0.3, # Percentage of population that gets tested more frequently after scale-up campaign
@@ -401,9 +397,15 @@ input_params<-function(
 	  condom_prob_pow          = 4.1,      # parameter used in hill function if condom_prob_change == T
     RR_cond_male_concurrent  = 1.438,
     RR_cond_fem_concurrent   = 1.0,
-    sti_prob                 = 0.0, #used in "vital_new_additions"
-    sti_prob_att             = NA,
+    percent_condom_users= 1, # non-users never use condoms when partnered with other non-users.  users will use condoms with some probability
+    condom_use_rel_dur = FALSE,
+    condom_use_age = FALSE,
+    age_condom_use_halves = 50, # Only used when condom_use_age is true
+#sti/circumcision probabilites for agents (used in "vital new additions" fxn)  
     circum_prob              = 0.85,
+    sti_prob                 = 0.0, #used in "vital_new_additions"
+# miscellaneous/clarificaiton needed
+    sti_prob_att             = NA,
    circum_prob_chg          = c(0.45,   0.5,    0.55,   0.6,    0.65,   0.7,    0.75,   0.85),
    circum_prob_yr_chg       = NA, # c(12*365, 13*365, 15*365, 16*365, 18*365, 20*365, 22*365, 24*365),
     prop_AI                  = 0.10,
@@ -415,7 +417,7 @@ input_params<-function(
                                      nrow=3,dimnames=list(c("I","R","V"))),
     prob_iev                 = 0.4,         # Average of Mardham and PUMA
 # Generic attribute transition
- #"social_generic_att_transition"
+ #"social_generic_att_transition
     generic_nodal_att_values        = NA,   # names of generic attributes (eg, 1:5)
     generic_nodal_att_values_props  = NA,   # proportions of each att in initial pop
     generic_nodal_att_values_props_births = NA, #how new values distributed with addtns to pop
