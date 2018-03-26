@@ -9,7 +9,7 @@ input_params<-function(
 
 
 #-- Basic model setup parameters -------------#
-
+#used in top-level run scripts
     model_name   = "evomodel",
     hpc          = FALSE, #on hyak?
     hyak_par     = FALSE, #on hyak and parallelized run?
@@ -49,7 +49,8 @@ input_params<-function(
     QA_QC_pause_time = 3,  # Time delay in seconds that the computer waits so that users can view QA/QC stats 
   
   #-- Network estimation terms -------------#
-
+  #used in  nw_setup(...) ->  setup_initialize_network(...) for
+  #ergm/tergm estimation/simulation
     modes         = 1, #epimodel param, will change to 2 in "input_params_derived" if hetero model
     nw_form_terms = "~edges + offset(nodematch('role', diff=TRUE, keep=1:2))",
     nw_coef_form  = c(-Inf, -Inf),
@@ -60,25 +61,16 @@ input_params<-function(
     rm_offset_rel = F, # temporary solution to remove same-role (MSM simulations) and same-sex (heterosexual simulations) relationships. If = T, function remove_offset_relationships will be called in initialize_module.
 
 #-- viral load progression / spvl parameters -------------#
-
+ #used in "initialize_infecteds_vl" (for initial population)
+ # and "transmission_bookkeeping_module" for secondary infections
     VL_Function  = "aim2",  # Other option is "aim3" (aim 3 code)
     vl_peak_agent_flag    = FALSE,
     transmission_model    = "hughes",
     max_spvl_allowed      = 7.0,
     min_spvl_allowed      = 2.0,
     max_time_inf_initial_pop = 365*2,
-    vl_full_supp           = 13.0,       			# final viral load after complete treatment
-    vl_undetectable        = 50.0,
-    vl_exp_decline_tx     = -0.6,
-    InfRateBaseline       = 0.0000003,			  # 0.0001178/365		# Lingappa 2010
-    InfRateExponent       = 3.52,					    # Lingappa 2010
-    MaxInfRate            = 0.002,		    	  # Asymptotic function from Fraser 2007, Assuming P_inf(1 year) = 1 - (1 _ P_inf(1 day))^365
-    VHalfMaxInfRate       = 13938,				    # Fraser 2007
-    HillCoeffInfRate      = 1.02, 				    # Fraser 2007
-    shape_parameter       = 3.46,					    # 3.46 is from Fraser
-    Dmax                  = 9271, 					  # from Fraser, maximum time in days of asymptomatic state
-    D50                   = 3058, 					  # from Fraser, spVL at which duration is half maximum
-    Dk                    = 0.41, 					  # 0.41 is from Fraser, Hill coefficient
+    MutationVariance      = 0.01,
+  #used in "viral_update_aim2", default VL progression 
     V0                    = 1e-4,
     vl_peak_acute         = 7.7e6,            # Average viral load during primary infection; from Little et al 1999
     vl_max_aids           = 2.4e6,            # Piatak 1993
@@ -90,13 +82,25 @@ input_params<-function(
     vl_decay_rate_phase2 = 0.02,        #new on 3/2/16, revised acute decline code
     AverageLogSP0         = 4.5,
     VarianceLogSP0        = 0.8,
+    vl_full_supp           = 13.0,       			# final viral load after complete treatment
+    vl_undetectable        = 50.0,
+    vl_exp_decline_tx     = -0.6,
     MaxPPP                = 0.0,      # Maximum per pathogen pathogenecity (PPP). Viruses w/ PPP's > 0.0 kill hosts faster for a given SPVL
-    MutationVariance      = 0.01,
     max_vl_viralcont_spvl = 7,
     min_vl_viralcont_spvl = 2.5,
     prog_rate             = 0.14,     # per year rate.  Note VL progression cartoons typically show ~0.5 Log increase in VL over a 8-year
                                       # period.  That suggests a progression rate of ln(10^0.5) / 8 = ~0.14 per year
 # ---- Transmission parameters ----------------------------------
+#used in "transmission", main transmission function
+    InfRateBaseline       = 0.0000003,			  # 0.0001178/365		# Lingappa 2010
+    InfRateExponent       = 3.52,					    # Lingappa 2010
+    MaxInfRate            = 0.002,		    	  # Asymptotic function from Fraser 2007, Assuming P_inf(1 year) = 1 - (1 _ P_inf(1 day))^365
+    VHalfMaxInfRate       = 13938,				    # Fraser 2007
+    HillCoeffInfRate      = 1.02, 				    # Fraser 2007
+    shape_parameter       = 3.46,					    # 3.46 is from Fraser
+    Dmax                  = 9271, 					  # from Fraser, maximum time in days of asymptomatic state
+    D50                   = 3058, 					  # from Fraser, spVL at which duration is half maximum
+    Dk                    = 0.41, 					  # 0.41 is from Fraser, Hill coefficient
     Heritability          = 0.36,     # desired population heritability estimate is 0.36 (from Fraser; should vary by population). This value, in conjunction with the default mutation variance, seems to yield a stable population heritability of 3.6.  But user should always beware!
     Flat_Viral_Load       = 0,        # Setting this to 1 forces VL to be the same value during the entire primary infection period
     trans_lambda         = 0.000247,  # From Steve Goodreau's summary of discussions he had with Jim Hughes
@@ -120,6 +124,7 @@ input_params<-function(
     perc_virus_vaccine_sens = 0.99,  #placeholder 5/3/16
 
 # Parameters dynamic CD4 function (revised 11/11/15)
+# Function?
   cd4_homo_input     = 0.04,  # Rate of addition of CD4 T-cells per day when CD4 < 1000
   k_cd4              = 0.127,  # Rate at which virus kills CD4 T-cells [using log10(virus)]
   vl_kill_cd4        = 0.38,   # VL below which virus no longer kills off CD4 T-cells
@@ -241,11 +246,13 @@ input_params<-function(
     RestartDrug4 = 1000000000.0, # Drug 3 becomes available once again 
 
 # -- Parameters related to viral load testing
+ # "testing" fxn
     prob_elig_vl_test         = 0.75,
     time_on_tx_for_vl_testing = 365/2,
     vl_testing_interval       = 365/2,
 
 # -- Parameters related to PrEP / Vaccine models that use alleles to model resistance
+ #John's Prep?
     PrEP_Model = FALSE,
 
 # -- Parameters related to drug resistance testing and start of 2nd line therapy (aim 3 only)
@@ -256,6 +263,9 @@ input_params<-function(
     no_muts_switch_2nd_line = 1,  # Num resist mutations needed to trigger switch to 2nd-line therapy
    
 #-- vital dyamics model  parameters -------------#
+   #used to get ASMR/initial aged distributions
+    # input_parameters_derived(...) -> input_parameters_asmr(...) ->
+    #                               -> input_parameters_age_distribution(...)
     min_age                  = 18,
     max_age                  = 55,
     age_dist_new_adds        = "min_age", # "mixed" (some min_age, others older)
@@ -265,6 +275,7 @@ input_params<-function(
     asmr_data_female          = "south_africa_female",
     initial_agedata_male      = "usa_men_18_to_100", #other options:"south_africa_male_16_to_100", "stable_age_no_hiv_dist"
     initial_agedata_female    = "south_africa_female_16_to_100_2014", #other options: "stable_age_no_hiv_dist"
+  # "deaths(...) -> vital_death_aids() or vital_death_aged_out or vital_death_non_aids  
     aids_death_model         = "cd4",        # c("Gamma_Death","daily_prob","cd4")
     death_rate_constant      = 0.000003,   	 # 0.000003 is from CASCADE
     death_rate_exponent      = 6.45,         # 6.45 is from CASCADE
@@ -275,6 +286,8 @@ input_params<-function(
     cd4_prob_incr_nadir      = 0.03,         #prob of improving one cd4 cat from nadir
     cd4_prob_incr_nadir_minus= 0.0005,      #prob of improving one cd4 cat from nadir -1
     time_in_aids             = 475,
+#births module
+ #vital_births_calculate_new    
     birth_model              = "poisson_birth_numbers",   # "births=deaths", "poisson_birth_numbers", "exponential_growth","constant_rate", "constant_number", "exponential_growth"
     baseline_input_exp_growth = 0.007, # Used with "exponential_growth"  MUST BE SCALED BY HAND TO GET A STABLE AGE DISTRIBUTIONbirth_model              = "poisson_birth_numbers",   # "births=deaths", "poisson_birth_numbers", "constant_rate", "constant_number"
     contstant_birth_number   = 0,
@@ -285,8 +298,11 @@ input_params<-function(
     births_per_year          = 1, #birth model: "constant_number_spread_out"
 
 #-- social / treatment /testing  parameters -------------#
-
+ # "testing"
     testing_model            = "interval",
+    mean_test_interval_male  = 365,
+    mean_test_interval_female = 442,
+    mean_test_interval_under25 = 365,
     no_past_partners_time_prep = 365, 
     min_past_partners_prep = 1,
     min_current_partners_prep = 1, 
@@ -301,9 +317,6 @@ input_params<-function(
    condom_use_rel_dur = FALSE,
    condom_use_age = FALSE,
    age_condom_use_halves = 50, # Only used when condom_use_age is true
-    mean_test_interval_male  = 365,
-    mean_test_interval_female = 442,
-    mean_test_interval_under25 = 365,
     test_result_delay = 35, # Delay between being infected and having sufficient antibodies for diagnosis
     reduction_test_interval_enhanced = 0.1,  # fage reduction in test interval for those identified for "enhanced" testing
     prob_enhanced_testing_before_campaign = 0.3, # Percentage of population that gets tested more frequently after scale-up campaign
@@ -362,6 +375,7 @@ input_params<-function(
     max_age_recruit_for_care  = 100,   # Parameter that allows targeting of people of intermediate ages to get under care
 
 # -- vaccine parameters  --------#
+ #"vaccination" fxn
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.5,
     target_vacc_att          = FALSE,
@@ -370,7 +384,8 @@ input_params<-function(
     risk_comp_cond_rr        = 0.70,
     risk_comp_degree         = F,    # Set to T to induce increase in degree among vaccinated susceptible and vaccinated, infected, undiagnosed individuals
     risk_comp_degree_rr      = 1.3,
-
+#coital acts module
+  #social_coital-acts
     prob_sex_by_age          = FALSE,
     prob_sex_age_19          = 0.285, # used when prob_sex_by_age == TRUE
     max_age_sex              = 75,   # used when prob_sex_by_age == TRUE
@@ -378,6 +393,7 @@ input_params<-function(
     mean_sex_acts_day        = 0.2,
     disclosure_prob          = 0.9,    # PUMA - seems high and may want to revisit; also should perhaps impact condom use rather than coital freq (as per Mardham)
     act_redux_discl          = 0.0,    # MARDHAM
+ #"social_condom_use"
     condom_prob              = 0.5,
     condom_prob_change       = F,      # set to true for condom_prob to be 0 initially, and increase as a hill function governed by below parameters
     condom_prob_max          = 0.5,   # parameter used in hill function if condom_prob_change == T
@@ -385,7 +401,7 @@ input_params<-function(
 	  condom_prob_pow          = 4.1,      # parameter used in hill function if condom_prob_change == T
     RR_cond_male_concurrent  = 1.438,
     RR_cond_fem_concurrent   = 1.0,
-    sti_prob                 = 0.0,
+    sti_prob                 = 0.0, #used in "vital_new_additions"
     sti_prob_att             = NA,
     circum_prob              = 0.85,
    circum_prob_chg          = c(0.45,   0.5,    0.55,   0.6,    0.65,   0.7,    0.75,   0.85),
@@ -393,10 +409,13 @@ input_params<-function(
     prop_AI                  = 0.10,
     mean_prop_acts_AI        = 0.4266,
     sd_prop_acts_AI          = 0.2146,
-    role_props               = c('I'=0.24, 'R'=0.27, 'V'=0.49), #to activate msm roles, set role props to c("I"=x,"R"=y,"V"=z), where x+y+z=1 and are >=0
+  #msm role: "social_role_msm"  
+   role_props               = c('I'=0.24, 'R'=0.27, 'V'=0.49), #to activate msm roles, set role props to c("I"=x,"R"=y,"V"=z), where x+y+z=1 and are >=0
     role_trans_mat          = matrix(c(1,0,0,0,1,0,0,0,1),
                                      nrow=3,dimnames=list(c("I","R","V"))),
     prob_iev                 = 0.4,         # Average of Mardham and PUMA
+# Generic attribute transition
+ #"social_generic_att_transition"
     generic_nodal_att_values        = NA,   # names of generic attributes (eg, 1:5)
     generic_nodal_att_values_props  = NA,   # proportions of each att in initial pop
     generic_nodal_att_values_props_births = NA, #how new values distributed with addtns to pop
