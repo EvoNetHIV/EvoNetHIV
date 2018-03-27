@@ -14,33 +14,33 @@ input_params<-function(
     hpc          = FALSE, #on hyak?
     hyak_par     = FALSE, #on hyak and parallelized run?
     output_path  =  getwd(),
-    start_timestep = 1, #parameter for EpiModel, should be "1" if new simulation
-                        #if re-starting simulation,
-                        #value should be "n_steps+1" (n_steps from original sim.)
     fast_edgelist = FALSE,
     nsims        = 1,
     initial_pop  = 100, #initial popn
     n_steps      = 365*2,
     initial_infected  = 20,
     model_sex    = "msm",
+    popsumm_frequency=1, #frequency of timesteps should popsumm stats be calculated
+    ncores =1, #16 if running on hyak using EpiModelHPC
+  #runtime printing options  
     scrolling_output = TRUE,
     print_frequency = 10, # Set to 10 to print to output screen every 10 days. Default should be 1.
+    network_print_frequency = 100,
+  #runtime plotting options  
     plot_nw      = TRUE,
     plot_mean_degree_by_age = FALSE, # Set to true to see plots of mean degree broken out by age.
-    network_print_frequency = 100,
+  #output options  
     save_network  = FALSE,
     save_coital_acts = FALSE,
     save_vl_list = FALSE,    #TRUE to graph individual agent VL
     save_infection_matrix=FALSE,
-    popsumm_frequency=1, #frequency of timesteps should popsumm stats be calculated
-    estimate_new_nw =  TRUE, #for "master_script_loop", if false, only 1 nw estimated
-    ncores =1, #16 if running on hyak using EpiModelHPC
     save_partner_list = FALSE,    
     save_RData_file= F, # for John's scripts,
     save_summary_figs = F, # for John's scripts,
     vital=FALSE, #epimodel requires this parameter, should be False
     
     # new parameters for alternative restart routines
+    start_timestep = 1, #parameter for EpiModel, should be "1" if new simulation if re-starting simulation, value should be "n_steps+1" (n_steps from original sim.)
     restart_val = "none", # "save" = save simulation, "restart" = restart simulation
     restart_time = 1e9, # time that base simulation results get saved
     restart_tx_type = "CD4_low",
