@@ -1,12 +1,14 @@
 # Quick start guide to running EvoNetHIV 
 
-Download and install package
+Download and install package and dependencies (other necessary packages). Easiest to do with a newly opened instance of RStudio or R.
 
 ``` r
 if (!require("devtools")) {
 install.packages("devtools")
 library(devtools)}
 install_github("EvoNetHIV/EvoNet",subdir="pkg")
+devtools::install_github( "statnet/tergmLite",force=T)
+devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")
 library(evonet)
 ```
 
