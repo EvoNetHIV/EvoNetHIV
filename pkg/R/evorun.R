@@ -3,8 +3,8 @@
 evorun <- function(modules,params,nw=NULL){
 
   
-names(modules) <- paste(modules,".FUN",sep="")
-module_list <- as.list(modules)
+module_list <-lapply(modules,get)
+names(module_list) <- paste(modules,".FUN",sep="")
 
 evo_module_list<- c(
   list("initialize.FUN"= initialize_module,
