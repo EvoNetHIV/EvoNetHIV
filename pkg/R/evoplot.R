@@ -20,9 +20,12 @@ evoplot<-function(model,outpath=getwd(),name=NULL,nw_stats=TRUE,max_points_rep=N
   #                  variables=NULL,nw_stats=NULL,max_points_rep=NULL,
   #                  popsumm_frequency=NULL,...){
   
-  evoplot_internal(model=model,save=F,name=name,outpath=outpath,
+if(model$param[[1]]$ncores==1){
+    evoplot_internal(model=model,save=F,name=name,outpath=outpath,
                    variables=variables,main=main)
-  if(is.null(variables)){
+}
+  
+    if(is.null(variables)){
     evoplot_internal(model=model,save=T,name=name,outpath=outpath,
                      variables=variables,main=main)
   }
