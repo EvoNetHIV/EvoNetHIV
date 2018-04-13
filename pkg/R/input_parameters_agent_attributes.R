@@ -65,7 +65,10 @@ input_parameters_agent_attributes <-function(){
     "diag_resist_time", 
     "last_neg_resist_test",
     "time_init_2nd_line",
-    
+
+# -- therapeutic vaccine --- #    
+   "LogSetPoint_genotype", 
+   
 #--  Vital dynamics /social/treatment ------------------------------ #
     "vaccinated",                      "vacc_init_time",           
     "age","sqrt_age",                   "arrival_time",

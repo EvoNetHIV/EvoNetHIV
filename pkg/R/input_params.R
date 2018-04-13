@@ -380,6 +380,8 @@ input_params<-function(
     risk_comp_cond_rr        = 0.70,
     risk_comp_degree         = F,    # Set to T to induce increase in degree among vaccinated susceptible and vaccinated, infected, undiagnosed individuals
     risk_comp_degree_rr      = 1.3,
+    vacc_therapeutic_campaign = F, #flag whether protective (=F) or therapeutic vaccine(=T) in effect
+    spvl_decrement_vaccine    = 1.0,
 #coital acts module
   #social_coital-acts
     prob_sex_by_age          = FALSE,
