@@ -78,7 +78,7 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
      if(length(vaccinated)>0){
        vacc_ix <-  recipient[vaccinated] 
        dat$pop$LogSetPoint_genotype[vacc_ix] <- temp_spvl[vacc_ix] 
-       tempv_vacc_spvl <- temp_spvl[vacc_ix] - dat$param$spvl_decrement_vaccine
+       tempv_vacc_spvl <- temp_spvl[vacc_ix] * dat$param$spvl_decrement_vaccine
         tempv_vacc_spvl[tempv_vacc_spvl < dat$param$min_spvl_allowed] <- dat$param$min_spvl_allowed
        dat$pop$LogSetPoint[vacc_ix] <- tempv_vacc_spvl
      }
