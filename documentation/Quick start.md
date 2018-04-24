@@ -7,8 +7,8 @@ if (!require("devtools")) {
 install.packages("devtools")
 library(devtools)}
 install_github("EvoNetHIV/EvoNet",subdir="pkg")
-devtools::install_github( "statnet/tergmLite",force=T)
-devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")
+install_github( "statnet/tergmLite",force=T)
+install_github( "statnet/EpiModel", ref ="fast_edgelist")
 library(evonet)
 ```
 
