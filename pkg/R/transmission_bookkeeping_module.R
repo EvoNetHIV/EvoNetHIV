@@ -70,24 +70,29 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
     temp_spvl[temp_spvl> dat$param$max_spvl_allowed] <- dat$param$max_spvl_allowed
   
   
-  #therapeutic vaccine dynamics: 
-    #"actual" spvl is now "LogSetPoint_genotype",
-    # while phenotypic spvl is standard "LogSetPoint"
-  if(timeIndex >=  dat$param$start_vacc_campaign[1] & dat$param$vacc_therapeutic_campaign==T){
-   vaccinated <- which(dat$pop$vaccinated[recipient]==1)
-     if(length(vaccinated)>0){
-       vacc_ix <-  recipient[vaccinated] 
-       dat$pop$LogSetPoint_genotype[vacc_ix] <- temp_spvl[vacc_ix] 
-       tempv_vacc_spvl <- temp_spvl[vacc_ix] * dat$param$spvl_decrement_vaccine
-        tempv_vacc_spvl[tempv_vacc_spvl < dat$param$min_spvl_allowed] <- dat$param$min_spvl_allowed
-       dat$pop$LogSetPoint[vacc_ix] <- tempv_vacc_spvl
-     }
-  }
-  
   
     dat$pop$LogSetPoint[recipient] <- temp_spvl
     dat$pop$SetPoint[recipient] <- "^"(10.0,dat$pop$LogSetPoint[recipient])
 
+    
+    #therapeutic vaccine dynamics: 
+    #NOTE: this section must go after initial calcs for agent's LogSetPoint and SetPoint
+    #"actual" spvl is now "LogSetPoint_genotype",
+    # while phenotypic spvl is standard "LogSetPoint"
+    if(timeIndex >=  dat$param$start_vacc_campaign[1] & dat$param$vacc_therapeutic_campaign==T){
+      vaccinated <- which(dat$pop$vaccinated[recipient]==1)
+      if(length(vaccinated)>0){
+        vacc_ix <-  recipient[vaccinated] 
+        dat$pop$LogSetPoint_genotype[vacc_ix] <- temp_spvl[vaccinated] 
+        tempv_vacc_spvl <- temp_spvl[vaccinated] * dat$param$spvl_decrement_vaccine
+        tempv_vacc_spvl[tempv_vacc_spvl < dat$param$min_spvl_allowed] <- dat$param$min_spvl_allowed
+        dat$pop$LogSetPoint[vacc_ix] <- tempv_vacc_spvl
+        dat$pop$SetPoint[vacc_ix] <- "^"(10.0,dat$pop$LogSetPoint[vacc_ix])
+      }
+    }
+    
+    
+    
   dat$pop$vl_peak_agent[recipient] <-  "^"(10.0,4.639 + 0.495*dat$pop$LogSetPoint[recipient])
   
   if(dat$param$vl_peak_agent_flag){
