@@ -3,7 +3,7 @@ Quick Start 2: Model Basics
 
 ### Agent attributes
 
-Each agent has an associated set of variables that describe/quantify demographic, behavioral, and epidemiological conditions or states. The most important attributes are sex, age, sex role (for MSM), circumcision status, infection status, treatment status, SPVL, and VL. Some attributes remain fixed for the duration of the model run (e.g., sex) while others are updated each timestep (e.g., age and VL). A full list of agent attributes and their default values are given in the Appendix.
+Each agent has an associated set of variables that describe/quantify demographic, behavioral, and epidemiological conditions or states. The most important attributes are sex, age, sex role (for MSM), circumcision status (for males), infection status, treatment status, SPVL, and VL. Some attributes remain fixed for the duration of the model run (e.g., sex) while others are updated each timestep (e.g., age and VL). A full list of agent attributes and their default values are given in the Appendix.
 
 ### Sequence of Virological, Epidemiological, and Demographic Processes
 
@@ -95,7 +95,7 @@ While EvoNet has about several dozen parameters (excluding parameters related to
 ### Treatment
 
 -   **start\_treatment\_campaign**: When treatment of tested and diagnosed agents begins (in days) since model start.
--   **tx\_type**: This determines the criteria used for an agent to receive treatment, given they are infected and have tested positive. The default setting is NA, thus a treatment type must be specified. The possible values are "VL", "CD4", "time", "vl\_and\_cd4", "vl\_and\_time", "vl\_and\_cd4\_and\_time", which indicat refer to viral load / CD4 values or time since infection.
+-   **tx\_type**: This determines the criteria used for an agent to receive treatment, given they are infected and have tested positive. The default setting is NA, thus a treatment type must be specified. The possible values are "VL", "CD4", "time", "vl\_and\_cd4", "vl\_and\_time", "vl\_and\_cd4\_and\_time", which refer to viral load, CD4 count, or time since infection, either alone or in combination.
 
 ### Coital Acts
 
