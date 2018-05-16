@@ -41,4 +41,5 @@ Important behavioral dynamics include sex roles (for MSM), frequency of sex, con
 * *Vaccination*. Currently, the HIV vaccine in the model is protective, not therapeutic:  it protects vaccinated individuals from infection by decreasing the per-act rate of transmission, but does not affect disease progression or the viral load of a vaccinated individual if that person becomes infected. The model also includes viral diversity with respect to vaccination, via one locus with two alleles: sensitive and resistant.
 
 
+[Back to Table of Contents](https://github.com/EvoNetHIV/EvoNetHIV)  
 
