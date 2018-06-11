@@ -64,49 +64,45 @@ if(dat$param$save_coital_acts)
 
 #EpiModel's edges correct fxn here, 
 #msm
-if(dat$param$model_sex=="msm"){
-  if(dat$param$popsumm_frequency==1)
-  {
-    old.num <- dat$popsumm$alive[at-1]
-    new.num <- dat$popsumm$alive[at]
-    dat$nwparam[[1]]$coef.form[1] <- ( dat$nwparam[[1]]$coef.form[1] + 
-                                         log(old.num) - log(new.num) )
+#EpiModel's edges correct fxn here, 
+#note: initial values set in "initialize_module"
+if(at==2){
+  if(dat$param$model_sex=="msm"){
+    #at=2, msm
+    dat$number_males_prev <- dat$param$initial_pop
+    dat$number_females_prev <- 0
   }else{
-    if(at%%dat$param$popsumm_frequency==0 & at>2){
-      index1=(at/dat$param$popsumm_frequency)+1
-      index2=(at/dat$param$popsumm_frequency)
-      old.num <- dat$popsumm$alive[index2]
-      new.num <- dat$popsumm$alive[index1]
-      dat$nwparam[[1]]$coef.form[1] <- ( dat$nwparam[[1]]$coef.form[1] + 
-                                           log(old.num) - log(new.num) )
-    }} #end of msm, popsumm_frequency !=1
+    #at=2, hetero
+    dat$number_females_prev <- dat$param$initial_pop/2
+    dat$number_males_prev <- dat$param$initial_pop/2
+  }
+}else{
+  #at>2
+  dat$number_males_prev <- dat$number_males
+  dat$number_females_prev <- dat$number_females
+}
+
+
+#msm
+if(dat$param$model_sex=="msm"){
+  dat$number_males <- length(which(dat$pop$sex=='m' & dat$pop$Status %in% c(0,1)))
+  old.num <- dat$number_males_prev
+  new.num <- dat$number_males
+  dat$nwparam[[1]]$coef.form[1] <- ( dat$nwparam[[1]]$coef.form[1] + 
+                                       log(old.num) - log(new.num) )
 }#end of msm, start of hetero
 else{
-mode <- dat$attr$sex
-if(dat$param$popsumm_frequency==1){
-  old.num.m1 <- dat$popsumm$alive_female[at - 1]
-  old.num.m2 <- dat$popsumm$alive_male[at - 1]
-  new.num.m1 <- sum(dat$attr$active == 1 & mode =="f")
-  new.num.m2 <- sum(dat$attr$active == 1 & mode == "m")
+  dat$number_males <- length(which(dat$pop$sex=='m' & dat$pop$Status %in% c(0,1)))
+  dat$number_females <- length(which(dat$pop$sex=='f' & dat$pop$Status %in% c(0,1)))
+  old.num.m1 <- dat$number_females_prev
+  old.num.m2 <- dat$number_males_prev
+  new.num.m1 <- dat$number_females
+  new.num.m2 <- dat$number_males
   dat$nwparam[[1]]$coef.form[1] <- (dat$nwparam[[1]]$coef.form[1]+
-        log(2 * old.num.m1 * old.num.m2/(old.num.m1 +
-         old.num.m2)) - log(2 * new.num.m1 *
-         new.num.m2/(new.num.m1+new.num.m2)))
-}else{
-  if(at%%dat$param$popsumm_frequency==0 & at>2){
-    index1=(at/dat$param$popsumm_frequency)+1
-    index2=(at/dat$param$popsumm_frequency)
-    old.num.m1 <- dat$popsumm$alive_female[index2]
-    old.num.m2 <- dat$popsumm$alive_male[index1]
-    new.num.m1 <- sum(dat$attr$active == 1 & mode =="f")
-    new.num.m2 <- sum(dat$attr$active == 1 & mode == "m")
-    dat$nwparam[[1]]$coef.form[1] <- (dat$nwparam[[1]]$coef.form[1]+
-        log(2 * old.num.m1 * old.num.m2/(old.num.m1 +
-        old.num.m2)) - log(2 * new.num.m1 *
-        new.num.m2/(new.num.m1+new.num.m2)))
-  }
-}#end of hetero, popsumm_frequency!=1
-}#end of hetero part
+                                      log(2 * old.num.m1 * old.num.m2/(old.num.m1 +
+                                                                         old.num.m2)) - log(2 * new.num.m1 *
+                                                                                              new.num.m2/(new.num.m1+new.num.m2)))
+}
 
 #-----------------------------------------------------------------
 #5 (Version 5a -- Refresh screen very time step)
