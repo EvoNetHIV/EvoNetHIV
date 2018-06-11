@@ -13,18 +13,19 @@ This project is supported by grants from the National Institutes of Health (NIAD
 * John E. Mittler <jmittler@uw.edu>
 * Steven M. Goodreau <goodreau@uw.edu>
 * Joshua T. Herbeck <herbeck@uw.edu>
-* Kathryn Peebles <kpeebles@uw.edu>
+* James T. Murphy <jtm6@uw.edu>
+* Kathryn C. Peebles <kpeebles@uw.edu>
 * Sarah E. Stansfield <sestans@uw.edu>
-* Molly Reid <mollyr6@uw.edu>
-* Neil Abernethy <neila@uw.edu>
-* Juandalyn Burke <jcburke@uw.edu>
-* Geoff Gottlieb <gottlieb@uw.edu>  
+* Molly C. Reid <mollyr6@uw.edu>
+* Neil F. Abernethy <neila@uw.edu>
+* Juandalyn C. Burke <jcburke@uw.edu>
+* Geoffrey S. Gottlieb <gottlieb@uw.edu>  
 
 [Model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_overview.md)  
 [Model details](https://evonethiv.github.io/EvoNetHIV/documentation/Model_details.html)    
 [Quick start I: run a simple model](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Quick%20start.md)    
 [Quick start II: a few more details](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/Model_Basics_Overview.md)    
-[Ouput plots](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/output_plots_overview.md)  
+[Output plots](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/output_plots_overview.md)  
 [Using loops to run experiments](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/loops_example.md)  
 [Concurrency example](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/concurrency_example.md)  
 [Treatment example](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/treatment_example.md)  
