@@ -80,6 +80,7 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
     #"actual" spvl is now "LogSetPoint_genotype",
     # while phenotypic spvl is standard "LogSetPoint"
     if(timeIndex >=  dat$param$start_vacc_campaign[1] & dat$param$vacc_therapeutic_campaign==T){
+      #agents just got infected and are vaccinated (indexing recipient vector)
       vaccinated <- which(dat$pop$vaccinated[recipient]==1)
       if(length(vaccinated)>0){
         vacc_ix <-  recipient[vaccinated] 
