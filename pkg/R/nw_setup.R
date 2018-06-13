@@ -16,7 +16,7 @@ netest_arg_list <- list(
   verbose       =  FALSE,
   coef.diss     =  dissolution_coefs( dissolution =  as.formula(params$dissolution),
                                       duration    =  params$relation_dur,
-                                      d.rate      =  3e-05) )
+                                      d.rate      =  params$d_rate) )
 
 sim <- do.call(EpiModel::netest, netest_arg_list)
 if(params$hyak_par==T){
