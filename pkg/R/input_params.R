@@ -56,6 +56,7 @@ input_params<-function(
     nw_coef_form  = c(-Inf, -Inf),
     target_stats  = 100*0.7/2,
     relation_dur  = 50,
+    d_rate =        3e-05, # default value in epimodel's netest
     nw_constraints = " ~.",
     dissolution="~offset(edges)",
     rm_offset_rel = F, # temporary solution to remove same-role (MSM simulations) and same-sex (heterosexual simulations) relationships. If = T, function remove_offset_relationships will be called in initialize_module.
