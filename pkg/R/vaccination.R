@@ -14,10 +14,40 @@
   
   if(at < dat$param$start_vacc_campaign[1]) {return(dat)}
 
-  if(at > dat$param$start_vacc_campaign[1]) {
+   # off/on for preventive vaccine
+  if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_therapeutic_campaign==F) {
     vaccinated <- which(dat$pop$vaccinated == 1)
     dat$pop$vaccinated[vaccinated] <- rbinom(length(vaccinated), 1, 1 - (1/dat$param$vacc_eff_duration))
   }
+   
+   #off/on for therapeutic vaccine
+   if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_therapeutic_campaign==T) {
+     vaccinated <- which(dat$pop$vaccinated == 1)
+     #0, off vaccine; 1, stay on
+     vacc_status <- rbinom(length(vaccinated), 1, 1 - (1/dat$param$vacc_eff_duration))
+     dat$pop$vaccinated[vaccinated] <- vacc_status
+     vacc_terminate_ix <- which(vacc_status==0)
+     #if any agents go off vaccine, revert to "genotypic" spvl (and for VL)
+     if(length(vacc_terminate_ix)>0){
+     vacc_terminate <- vaccinated[vacc_terminate_ix]
+     #resetting spvl and vl 
+     dat$pop$LogSetPoint[vacc_terminate] <- dat$pop$LogSetPoint_genotype[vacc_terminate]
+     dat$pop$SetPoint[vacc_terminate] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_terminate])
+     #reset time infection, so vl progression starts at beginning of chronic stage
+     dat$pop$Time_Inf[vacc_terminate] <- at-dat$param$t_acute+1
+     #resetting cd4 counts and associated attributes, taken straight from transmission_cd4 fxn
+     index1 <- vacc_terminate
+     dat$pop$spvl_cat[index1] <- viral_spvl_cat_fxn(dat$pop$LogSetPoint[index1])
+     dat$pop$CD4[index1]      <-  viral_initialCD4(dat$pop$spvl_cat[index1],dat$param )
+     dat$pop$CD4_initial_value[index1] <- dat$pop$CD4[index1]
+     dat$pop$CD4_nadir[index1] <- dat$pop$CD4[index1]
+     dat$pop$CD4_time[index1] <- 0
+     dat$pop$CD4_treatment_delay_index[index1] <- 0
+    }
+     
+     
+   }
+   
   
   if(!is.element(at,dat$param$start_vacc_campaign)) {return(dat)}
   
