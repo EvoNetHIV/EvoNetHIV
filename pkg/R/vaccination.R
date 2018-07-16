@@ -33,16 +33,18 @@
      #resetting spvl and vl 
      dat$pop$LogSetPoint[vacc_terminate] <- dat$pop$LogSetPoint_genotype[vacc_terminate]
      dat$pop$SetPoint[vacc_terminate] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_terminate])
+     
+     # 7/16/18: believe this is not necessary or incorrect, eventually remove after confirmation
      #reset time infection, so vl progression starts at beginning of chronic stage
-     dat$pop$Time_Inf[vacc_terminate] <- at-dat$param$t_acute+1
+     #dat$pop$Time_Inf[vacc_terminate] <- at-dat$param$t_acute+1
      #resetting cd4 counts and associated attributes, taken straight from transmission_cd4 fxn
-     index1 <- vacc_terminate
-     dat$pop$spvl_cat[index1] <- viral_spvl_cat_fxn(dat$pop$LogSetPoint[index1])
-     dat$pop$CD4[index1]      <-  viral_initialCD4(dat$pop$spvl_cat[index1],dat$param )
-     dat$pop$CD4_initial_value[index1] <- dat$pop$CD4[index1]
-     dat$pop$CD4_nadir[index1] <- dat$pop$CD4[index1]
-     dat$pop$CD4_time[index1] <- 0
-     dat$pop$CD4_treatment_delay_index[index1] <- 0
+     #index1 <- vacc_terminate
+     #dat$pop$spvl_cat[index1] <- viral_spvl_cat_fxn(dat$pop$LogSetPoint[index1])
+     #dat$pop$CD4[index1]      <-  viral_initialCD4(dat$pop$spvl_cat[index1],dat$param )
+     #dat$pop$CD4_initial_value[index1] <- dat$pop$CD4[index1]
+     #dat$pop$CD4_nadir[index1] <- dat$pop$CD4[index1]
+     #dat$pop$CD4_time[index1] <- 0
+     #dat$pop$CD4_treatment_delay_index[index1] <- 0
     }
      
      
