@@ -41,8 +41,8 @@ viral_update_gamma <- function(dat, at) {
   vl_zero     <-  dat$pop$V < 0.0
   aids_max_vl <- dat$pop$V> (dat$param$vl_max_aids)
   
-  acute_exp_ix  <- which(infected & acute_exp)
-  acute_ph1_ix <- which(acute_ph1)
+  acute_exp_ix  <- which(infected & acute_exp)#who is in actue
+  acute_ph1_ix <- which(acute_ph1)#which stage in acute
   acute_ph2_ix <- which(acute & !acute_exp & !acute_ph1)
   
   post_acute_ix  <- which(infected & !acute & !aids_start)
@@ -53,7 +53,7 @@ viral_update_gamma <- function(dat, at) {
   # During the earliest phases of acute infection, VL increases rapidly at rate "r0" 
   if(length(acute_exp_ix)>0){
     inf_duration <- (timestep-dat$pop$Time_Inf[acute_exp_ix])
-    dat$pop$V[acute_exp_ix] <- dat$param$V0 * exp(dat$pop$r0[acute_exp_ix]*inf_duration)
+    dat$pop$V[acute_exp_ix] <- dat$param$V0 * exp(dat$pop$r0[acute_exp_ix]*inf_duration)#expo model of where VL should be based on time since infection
   }  
   
   

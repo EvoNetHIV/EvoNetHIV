@@ -32,7 +32,7 @@ cd4_update <- function(dat,at)
   }else{
     #index of alive infectees not on tx
     infectees <- which(dat$pop$CD4 < 5 & dat$pop$Status==1  &
-                         dat$pop$treated!=1)
+                         dat$pop$treated!=1, dat$pop$vaccinated==0)
   }
   
   #increment time in cd4 category
