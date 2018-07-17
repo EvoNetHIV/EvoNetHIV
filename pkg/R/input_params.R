@@ -320,6 +320,7 @@ input_params<-function(
     proportion_treated       = 1,
     yearly_incr_tx         = 0, # Setting this to 0.1 would mean 10% more people get treated each year
     proportion_treated_begin = 0.0,
+    prop_tx_before= 2.0,
     start_treat_before_big_campaign = 5e5,
     num_randomly_chosen_start_campaign = 0,  # Number of people outside the prioritized group who get treated (this is actually an outcome rather than a parameter)
     num_treated_start_campaign = 0,  # Total number of people treated at the start of the campaign (this is actually an outcome rather than a parameter)
