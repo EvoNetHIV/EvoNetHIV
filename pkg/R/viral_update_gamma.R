@@ -41,7 +41,7 @@ viral_update_gamma <- function(dat, at) {
   vl_zero     <-  dat$pop$V < 0.0
   aids_max_vl <- dat$pop$V> (dat$param$vl_max_aids)
   
-  acute_exp_ix  <- which(infected & acute_exp)#who is in actue
+  acute_exp_ix  <- which(infected & acute_exp)#who is in acute
   acute_ph1_ix <- which(acute_ph1)#which stage in acute
   acute_ph2_ix <- which(acute & !acute_exp & !acute_ph1)
   
