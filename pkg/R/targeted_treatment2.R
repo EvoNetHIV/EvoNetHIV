@@ -114,56 +114,6 @@ targeted_treatment2 <- function(dat, at)
       dat$pop$tx_init_time[selected] <- at
     }
     
-    if (tx_strategy[j] == "men_under27_women_under23"){ 
-      eligible_tx <-(  ((dat$pop$sex == "m" & dat$pop$age <= 27) | 
-                                       (dat$pop$sex == "f" & dat$pop$age <= 23)))
-      selected <- which(eligible_tx)
-      dat$pop$treated[selected] <- 1  
-      dat$pop$tx_init_time[selected] <- at
-    }
-    
-    if (tx_strategy[j] == "men_under30_women_under20"){ 
-      eligible_tx <-(  ((dat$pop$sex == "m" & dat$pop$age <= 30) | 
-                                       (dat$pop$sex == "f" & dat$pop$age <= 20)))
-      selected <- which(eligible_tx)
-      dat$pop$treated[selected] <- 1  
-      dat$pop$tx_init_time[selected] <- at
-    }
-    
-    if (tx_strategy[j] == "men_under20_women_under30"){ 
-      eligible_tx <-( ((dat$pop$sex == "m" & dat$pop$age <= 20) | 
-                                       (dat$pop$sex == "f" & dat$pop$age <= 30)))
-      selected <- which(eligible_tx)
-      dat$pop$treated[selected] <- 1  
-      dat$pop$tx_init_time[selected] <- at
-    }
-    
-    if (tx_strategy[j] == "men_under35_women_under25"){ 
-      eligible_tx <-( ((dat$pop$sex == "m" & dat$pop$age <= 35) | 
-                                       (dat$pop$sex == "f" & dat$pop$age <= 25)))
-      selected <- which(eligible_tx)
-      dat$pop$treated[selected] <- 1  
-      dat$pop$tx_init_time[selected] <- at
-    }
-    
-    
-    if (tx_strategy[j] == "men_under25_women_under_35"){ 
-      eligible_tx <-( ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
-                                       (dat$pop$sex == "f" & dat$pop$age <= 35)))
-      selected <- which(eligible_tx)
-      dat$pop$treated[selected] <- 1  
-      dat$pop$tx_init_time[selected] <- at
-    }
-    
-    
-    if (tx_strategy[j] == "men_under25_women_under_35"){ 
-      eligible_tx <-( ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
-                                       (dat$pop$sex == "f" & dat$pop$age <= 35)))
-      selected <- which(eligible_tx)
-      dat$pop$treated[selected] <- 1  
-      dat$pop$tx_init_time[selected] <- at
-    }
-    
     
     # Identify people total eligible for tx and those aren't already being treated
     not_curr_tx <- dat$pop$Status == 1 & dat$pop$eligible_care == 1 & dat$pop$diag_status == 1  & dat$pop$treated == 0 & (at - diag_time_noNAs > dat$param$mean_trtmnt_delay)
@@ -256,6 +206,7 @@ targeted_treatment2 <- function(dat, at)
         # Note: Although this is more general than "under50" etc., the fixed ones like "under50" are more useful for nested tests (so keep them)
       }
 
+      
       if (tx_strategy[j] == "10acts")     eligible_tx <- not_curr_tx & dat$pop$total_acts >= 10
       if (tx_strategy[j] == "25acts")     eligible_tx <- not_curr_tx & dat$pop$total_acts >= 25
       if (tx_strategy[j] == "50acts")     eligible_tx <- not_curr_tx & dat$pop$total_acts >= 50
@@ -269,7 +220,57 @@ targeted_treatment2 <- function(dat, at)
       if (tx_strategy[j] == "men_under35")  eligible_tx <- not_curr_tx & dat$pop$sex == "m" & dat$pop$age <= 35
       if (tx_strategy[j] == "men_under30")  eligible_tx <- not_curr_tx & dat$pop$sex == "m" & dat$pop$age <= 30
       if (tx_strategy[j] == "men_under25")  eligible_tx <- not_curr_tx & dat$pop$sex == "m" & dat$pop$age <= 25
-
+      
+      if (tx_strategy[j] == "men_under27_women_under23"){ 
+        eligible_tx <-(not_curr_tx &  ((dat$pop$sex == "m" & dat$pop$age <= 27) | 
+                            (dat$pop$sex == "f" & dat$pop$age <= 23)))
+        selected <- which(eligible_tx)
+        dat$pop$treated[selected] <- 1  
+        dat$pop$tx_init_time[selected] <- at
+      }
+      
+      if (tx_strategy[j] == "men_under30_women_under20"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 30) | 
+                            (dat$pop$sex == "f" & dat$pop$age <= 20)))
+        selected <- which(eligible_tx)
+        dat$pop$treated[selected] <- 1  
+        dat$pop$tx_init_time[selected] <- at
+      }
+      
+      if (tx_strategy[j] == "men_under20_women_under30"){ 
+        eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 20) | 
+                           (dat$pop$sex == "f" & dat$pop$age <= 30)))
+        selected <- which(eligible_tx)
+        dat$pop$treated[selected] <- 1  
+        dat$pop$tx_init_time[selected] <- at
+      }
+      
+      if (tx_strategy[j] == "men_under35_women_under25"){ 
+        eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 35) | 
+                           (dat$pop$sex == "f" & dat$pop$age <= 25)))
+        selected <- which(eligible_tx)
+        dat$pop$treated[selected] <- 1  
+        dat$pop$tx_init_time[selected] <- at
+      }
+      
+      
+      if (tx_strategy[j] == "men_under25_women_under_35"){ 
+        eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
+                           (dat$pop$sex == "f" & dat$pop$age <= 35)))
+        selected <- which(eligible_tx)
+        dat$pop$treated[selected] <- 1  
+        dat$pop$tx_init_time[selected] <- at
+      }
+      
+      
+      if (tx_strategy[j] == "men_under25_women_under_35"){ 
+        eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
+                           (dat$pop$sex == "f" & dat$pop$age <= 35)))
+        selected <- which(eligible_tx)
+        dat$pop$treated[selected] <- 1  
+        dat$pop$tx_init_time[selected] <- at
+      }
+      
       if (tx_strategy[j] == "men_under23_women_under27")  eligible_tx <- not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 23) | (dat$pop$sex == "f" & dat$pop$age <= 27))
 
       if (tx_strategy[j] == "women_under45")  eligible_tx <- not_curr_tx & dat$pop$sex == "f" & dat$pop$age <= 45
