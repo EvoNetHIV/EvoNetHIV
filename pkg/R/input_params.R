@@ -287,6 +287,7 @@ input_params<-function(
 #-- social / treatment /testing  parameters -------------#
 
     testing_model            = "interval",
+    tasp_model = FALSE,
     no_past_partners_time_prep = 365, 
     min_past_partners_prep = 1,
     min_current_partners_prep = 1, 
@@ -321,6 +322,11 @@ input_params<-function(
     yearly_incr_tx         = 0, # Setting this to 0.1 would mean 10% more people get treated each year
     proportion_treated_begin = 0.0,
     prop_tx_before= 2.0,
+    cost_hiv_treated = 0.053,
+    cost_cd4_gt_350 = 0.053,
+    cost_cd4_200_350 = 0.221,
+    cost_cd4_lt_200 = 0.547, 
+    cost_died_AIDS=  1.0  ,
     start_treat_before_big_campaign = 5e5,
     num_randomly_chosen_start_campaign = 0,  # Number of people outside the prioritized group who get treated (this is actually an outcome rather than a parameter)
     num_treated_start_campaign = 0,  # Total number of people treated at the start of the campaign (this is actually an outcome rather than a parameter)

@@ -23,6 +23,10 @@ summary_popsumm_vars <- function(dat){
   treatment_vars <- c( "no_treated",
   "percent_suppressed")
 
+  tasp_vars <- c("daly1","daly2","daly3","daly5",
+                 "daly7","daly8","daly10","daly15","daly20")
+  
+  
   hetero_and_treatment_vars <- c("treated_inf_men", "treated_inf_women",
   "treated_inf_under30", "treated_inf_30to50", "treated_inf_over50",
   "no_treated_undetectable", "mean_vl_pop_untreated",
@@ -84,5 +88,6 @@ summary_popsumm_vars <- function(dat){
   if(dat$param$VL_Function=="aim3"){popsumm_vars <- c(popsumm_vars,aim3_vars)}
   #vaccine model
   if (dat$param$perc_vaccinated != 0.5){ popsumm_vars <- c(popsumm_vars,vaccine_vars)}
+  if(dat$param$tasp_model) { popsumm_vars <- c(popsumm_vars,tasp_vars)}
   return(popsumm_vars)
 }

@@ -464,6 +464,69 @@ summary_popsumm<-function(dat,at){
     dat$popsumm$Perc_5_drug_muts_long[popsumm_index]<- mutations5_long/total_inf
   }#end of aim3 summary stats
   
+  #########333
+  # tasp 
+  
+  if(dat$param$tasp_model & at>dat$param$start_treatment_campaign){
+    
+    #daly for infected and alive
+    min_age=dat$param$min_age
+    max_age=dat$param$max_age
+    #daily mortality rate
+    asmr=input_parameters_asmr(data_name=dat$param$asmr_data_male,min_age,max_age)
+    #daily survival
+    surv=1-asmr
+    #annual surv
+    ann_surv=surv^365
+    total_ages=length(min_age:max_age)
+    prob_live_to=matrix(0,nrow=total_ages,ncol=total_ages)
+    expect_years=numeric(total_ages)
+    for(ii in 1:total_ages){
+      prob_live_to[ii,ii:total_ages]=cumprod(ann_surv[ii:total_ages])
+      
+    }
+    
+    expect_years=rowSums(prob_live_to)+0.5
+    
+    #initialize cost at zero, vector length = # infected
+    relevant_cost = numeric(length(which(inf_index)))
+    
+    ix <- match(which(treated_index), which(inf_index))
+    relevant_cost[ix] <- dat$param$cost_hiv_treated/365.0
+    ix <- match(which(not_treated_index & dat$pop$CD<=2), which(inf_index))
+    relevant_cost[ix] <- dat$param$cost_cd4_gt_350/365.0;
+    ix <- match(which(not_treated_index & dat$pop$CD==3), which(inf_index))
+    relevant_cost[ix] <- dat$param$cost_cd4_200_350/365.0;
+    ix <- match(which(not_treated_index & dat$pop$CD==4), which(inf_index))
+    relevant_cost[ix] <- dat$param$cost_cd4_lt_200/365.0;
+    
+    rates=(c(99,98,97,95,93,92,90,85,80)/100)
+    vec1=relevant_cost*((at-dat$param$start_treatment_campaign)/365.0)
+    out1=lapply(rates,function(xx) vec1^xx)
+    out2=as.numeric(unlist(lapply(out1,sum)))
+    
+    #daly for infected and just died
+    ix = dat$pop$CD4_time_death %in% time_index
+    #initialize cost at zero, vector length = # dead
+    relevant_cost = dat$param$cost_died_AIDS * expect_years[dat$pop$age[ix]-dat$param$min_age+1]
+    vec1=relevant_cost*((at-dat$param$tart_TasP_Campaign)/365.0)
+    out1=lapply(rates,function(xx) vec1^xx)
+    out3=as.numeric(unlist(lapply(out1,sum)))
+    
+    total=out2+out3
+    dat$popsumm$daly1[popsumm_index]=total[1]
+    dat$popsumm$daly2[popsumm_index]=total[2]
+    dat$popsumm$daly3[popsumm_index]=total[3]
+    dat$popsumm$daly5[popsumm_index]=total[4]
+    dat$popsumm$daly7[popsumm_index]=total[5]
+    dat$popsumm$daly8[popsumm_index]=total[6]
+    dat$popsumm$daly10[popsumm_index]=total[7]
+    dat$popsumm$daly15[popsumm_index]=total[8]
+    dat$popsumm$daly20[popsumm_index]=total[9]
+  }
+  
+  
+  
   ####################################
   #calculation of generic attribute stats
   
