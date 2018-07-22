@@ -253,6 +253,55 @@ targeted_treatment2 <- function(dat, at)
                            (dat$pop$sex == "f" & dat$pop$age <= 35)))
       }
       
+      
+      if (tx_strategy[j] == "under25_or_CD4_nadir_under200"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 25) | 
+                                         (dat$pop$CD4==4)))
+      }
+      
+      if (tx_strategy[j] == "under25_or_CD4_nadir_under350"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 25) | 
+                                         (dat$pop$CD>=3)))
+      }
+      
+      if (tx_strategy[j] == "under25_or_CD4_nadir_under500"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 25) | 
+                                         (dat$pop$CD>=2)))
+      }
+      
+      
+      if (tx_strategy[j] == "under23_or_CD4_nadir_under200"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 23) | 
+                                         (dat$pop$CD4==4)))
+      }
+      
+      if (tx_strategy[j] == "under23_or_CD4_nadir_under350"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 23) | 
+                                         (dat$pop$CD>=3)))
+      }
+      
+      if (tx_strategy[j] == "under23_or_CD4_nadir_under500"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 23) | 
+                                         (dat$pop$CD>=2)))
+      }
+      
+      
+      if (tx_strategy[j] == "under20_or_CD4_nadir_under200"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 20) | 
+                                         (dat$pop$CD4==4)))
+      }
+      
+      if (tx_strategy[j] == "under20_or_CD4_nadir_under350"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 20) | 
+                                         (dat$pop$CD>=3)))
+      }
+      
+      if (tx_strategy[j] == "under20_or_CD4_nadir_under500"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 20) | 
+                                         (dat$pop$CD>=2)))
+      }
+      
+      
       if (tx_strategy[j] == "men_under23_women_under27")  eligible_tx <- not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 23) | (dat$pop$sex == "f" & dat$pop$age <= 27))
 
       if (tx_strategy[j] == "women_under45")  eligible_tx <- not_curr_tx & dat$pop$sex == "f" & dat$pop$age <= 45
