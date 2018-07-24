@@ -40,6 +40,7 @@ treatment_dropout <- function(dat, at)
   if(length(dropouts)>0){
     dropout_ix <- treated_30days[dropouts]
     dat$pop$treated[dropout_ix] <- 0
+    dat$pop$prioritized_tx[dropout_ix] <- 0
     dat$pop$tx_stop_time[dropout_ix] <- at
     dat$pop$Time_Inf_Adj[dropout_ix] <- dat$pop$Time_Inf_Adj[dropout_ix] + at - dat$pop$tx_init_time
   }

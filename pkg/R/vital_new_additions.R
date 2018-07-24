@@ -118,7 +118,8 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   input_list$no_partners_past_prep[index] <- 0
   input_list$no_partners_now_prep[index] <- 0
   
-  
+  #tasp related
+  input_list$prioritized_tx[index] <- 0
   
   #-----------------------------
   #these variables need different functions for initial population and births

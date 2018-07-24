@@ -466,6 +466,9 @@ summary_popsumm<-function(dat,at){
   
   #########333
   # tasp 
+  if(dat$param$tasp_model){
+    dat$popsumm$prioritized_tx[popsumm_index] <- length(which(dat$pop$prioritized_tx==1))
+  }
   
   if(dat$param$tasp_model & at>dat$param$start_treatment_campaign){
     

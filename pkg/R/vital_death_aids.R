@@ -142,6 +142,7 @@ vital_death_aids <-function(dat,at)
     # Change status of persons who have died
     if (length(List_Dying_Persons) > 0) {
       dat$pop$Status[List_Dying_Persons] <- (-2)
+      dat$pop$prioritized_tx[List_Dying_Persons] <- 0 #tasp related 
       dat$attr$status_evo[match(List_Dying_Persons,dat$attr$id)] <- (-2)
       dat$attr$active[match(List_Dying_Persons,dat$attr$id)] <- 0
       dat$attr$exitTime [match(List_Dying_Persons,dat$attr$id)] <- at

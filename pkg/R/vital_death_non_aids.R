@@ -52,7 +52,7 @@ vital_death_non_aids <- function(dat,at)
     dat$attr$status_evo[active][nat_deaths] <- (-1)
     dat$attr$active[active][nat_deaths] <- 0
     dat$pop$Time_Death[active_evo][nat_deaths] <- at
-    
+    dat$pop$prioritized_tx[active_evo][nat_deaths] <- 0 #tasp related
     #modify network
     dat <- EpiModel:::terminate_vertices(dat = dat,
                                          at = at,

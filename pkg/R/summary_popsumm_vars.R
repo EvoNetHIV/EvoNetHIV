@@ -24,7 +24,7 @@ summary_popsumm_vars <- function(dat){
   "percent_suppressed")
 
   tasp_vars <- c("daly1","daly2","daly3","daly5",
-                 "daly7","daly8","daly10","daly15","daly20")
+                 "daly7","daly8","daly10","daly15","daly20","prioritized_tx")
   
   
   hetero_and_treatment_vars <- c("treated_inf_men", "treated_inf_women",

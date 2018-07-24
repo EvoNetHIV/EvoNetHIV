@@ -33,7 +33,7 @@ vital_death_aged_out <- function(dat,at)
     dat$attr$status_evo[active][aged_out_index] <- (-1)
     dat$attr$active[active][aged_out_index] <- 0
     dat$pop$Time_Death[active_evo][aged_out_index] <- at
-
+    dat$pop$prioritized_tx[active_evo][aged_out_index] <- 0 #tasp related
     # modify either network or edgelist version
     # in edgelist mode, corresponding attributes on dat$attr will be deleted as well
     dat <- EpiModel:::terminate_vertices(dat = dat,
