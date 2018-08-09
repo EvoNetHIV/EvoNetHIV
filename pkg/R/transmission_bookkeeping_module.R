@@ -133,7 +133,7 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   
   #switch status of those on prep and became infected to "-1"
   prep_infected <- which(dat$pop$on_prep[recipient]==1)
-  if(length(prep_infected)>0){dat$pop$on_prep[recipient] <- -1}
+  if(length(prep_infected)>0){dat$pop$on_prep[recipient[prep_infected]] <- -1}
   
   
   #aim 3 bookkeeping (ask john)
