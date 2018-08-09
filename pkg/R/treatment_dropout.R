@@ -25,7 +25,7 @@ treatment_dropout <- function(dat, at)
   # pop$treated
   # pop$tx_stop_time  *** new attribute ***
   
-  treated_30days <- which(dat$pop$Status >= 0  & dat$pop$treated == 1 & dat$pop$tx_schedule == "V" & (dat$pop$tx_init_time - at > 30))
+  treated_30days <- which(dat$pop$Status >= 0  & dat$pop$treated == 1 & dat$pop$tx_schedule == "V" & (at-dat$pop$tx_init_time   > 30))
   # Current code doesn't allow for gradual increases in VL when patients go off of therapy.
   # Instead VL jumps immediately to SPVL (or whatever it should be)
   # To get around this, I build in a 30-day time delay.  This way the probabilities can be 
