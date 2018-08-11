@@ -66,7 +66,7 @@ targeted_treatment2 <- function(dat, at)
     }
     # Allow for gradual increases in number treated in early spontaneous campaign to levels at the start of the TasP campaign
     time_elapsed <- (at - dat$param$start_treat_before_big_campaign) / (dat$param$start_treatment_campaign - dat$param$start_treat_before_big_campaign)
-    dat$param$proportion_treated_begin <-  time_elapsed * dat$param$proportion_treated
+    dat$param$proportion_treated_begin <-  time_elapsed * dat$param$proportion_treated / dat$param$prop_tx_before # Model assumes TasP campaign doubles # suppressed.
     if (dat$param$proportion_treated_begin > 1) dat$param$proportion_treated_begin <- 1
     if (dat$param$proportion_treated_begin < 0) dat$param$proportion_treated_begin <- 0
     dat$param$max_num_treated_begin <- dat$param$proportion_treated_begin*dat$param$total_infected_begin
@@ -113,7 +113,8 @@ targeted_treatment2 <- function(dat, at)
       dat$pop$treated[selected] <- 1
       dat$pop$tx_init_time[selected] <- at
     }
-
+    
+    
     # Identify people total eligible for tx and those aren't already being treated
     not_curr_tx <- dat$pop$Status == 1 & dat$pop$eligible_care == 1 & dat$pop$diag_status == 1  & dat$pop$treated == 0 & (at - diag_time_noNAs > dat$param$mean_trtmnt_delay)
     eligible_tx <- NULL
@@ -205,6 +206,7 @@ targeted_treatment2 <- function(dat, at)
         # Note: Although this is more general than "under50" etc., the fixed ones like "under50" are more useful for nested tests (so keep them)
       }
 
+      
       if (tx_strategy[j] == "10acts")     eligible_tx <- not_curr_tx & dat$pop$total_acts >= 10
       if (tx_strategy[j] == "25acts")     eligible_tx <- not_curr_tx & dat$pop$total_acts >= 25
       if (tx_strategy[j] == "50acts")     eligible_tx <- not_curr_tx & dat$pop$total_acts >= 50
@@ -218,7 +220,88 @@ targeted_treatment2 <- function(dat, at)
       if (tx_strategy[j] == "men_under35")  eligible_tx <- not_curr_tx & dat$pop$sex == "m" & dat$pop$age <= 35
       if (tx_strategy[j] == "men_under30")  eligible_tx <- not_curr_tx & dat$pop$sex == "m" & dat$pop$age <= 30
       if (tx_strategy[j] == "men_under25")  eligible_tx <- not_curr_tx & dat$pop$sex == "m" & dat$pop$age <= 25
-
+      
+      if (tx_strategy[j] == "men_under27_women_under23"){ 
+        eligible_tx <-(not_curr_tx &  ((dat$pop$sex == "m" & dat$pop$age <= 27) | 
+                            (dat$pop$sex == "f" & dat$pop$age <= 23)))
+      }
+      
+      if (tx_strategy[j] == "men_under30_women_under20"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 30) | 
+                            (dat$pop$sex == "f" & dat$pop$age <= 20)))
+      }
+      
+      if (tx_strategy[j] == "men_under20_women_under30"){ 
+        eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 20) | 
+                           (dat$pop$sex == "f" & dat$pop$age <= 30)))
+      }
+      
+      if (tx_strategy[j] == "men_under35_women_under25"){ 
+        eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 35) | 
+                           (dat$pop$sex == "f" & dat$pop$age <= 25)))
+      }
+      
+      
+      if (tx_strategy[j] == "men_under25_women_under_35"){ 
+        eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
+                           (dat$pop$sex == "f" & dat$pop$age <= 35)))
+      }
+      
+      
+      if (tx_strategy[j] == "men_under25_women_under_35"){ 
+        eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
+                           (dat$pop$sex == "f" & dat$pop$age <= 35)))
+      }
+      
+      
+      if (tx_strategy[j] == "under25_or_CD4_nadir_under200"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 25) | 
+                                         (dat$pop$CD4==4)))
+      }
+      
+      if (tx_strategy[j] == "under25_or_CD4_nadir_under350"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 25) | 
+                                         (dat$pop$CD>=3)))
+      }
+      
+      if (tx_strategy[j] == "under25_or_CD4_nadir_under500"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 25) | 
+                                         (dat$pop$CD>=2)))
+      }
+      
+      
+      if (tx_strategy[j] == "under23_or_CD4_nadir_under200"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 23) | 
+                                         (dat$pop$CD4==4)))
+      }
+      
+      if (tx_strategy[j] == "under23_or_CD4_nadir_under350"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 23) | 
+                                         (dat$pop$CD>=3)))
+      }
+      
+      if (tx_strategy[j] == "under23_or_CD4_nadir_under500"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 23) | 
+                                         (dat$pop$CD>=2)))
+      }
+      
+      
+      if (tx_strategy[j] == "under20_or_CD4_nadir_under200"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 20) | 
+                                         (dat$pop$CD4==4)))
+      }
+      
+      if (tx_strategy[j] == "under20_or_CD4_nadir_under350"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 20) | 
+                                         (dat$pop$CD>=3)))
+      }
+      
+      if (tx_strategy[j] == "under20_or_CD4_nadir_under500"){ 
+        eligible_tx <-( not_curr_tx & ((dat$pop$age <= 20) | 
+                                         (dat$pop$CD>=2)))
+      }
+      
+      
       if (tx_strategy[j] == "men_under23_women_under27")  eligible_tx <- not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 23) | (dat$pop$sex == "f" & dat$pop$age <= 27))
 
       if (tx_strategy[j] == "women_under45")  eligible_tx <- not_curr_tx & dat$pop$sex == "f" & dat$pop$age <= 45
@@ -233,7 +316,7 @@ targeted_treatment2 <- function(dat, at)
       if (num_eligible_tx >= 1) {
         current_tx <- length(which(dat$pop$treated==1 & dat$pop$Status >= 0))
         if (dat$param$tx_limit == "absolute_num")  {
-          if (at == dat$param$start_treatment_campaign) {
+          if (at <= dat$param$start_treatment_campaign + 0.99999) {
             total_infected <- length(which(dat$pop$Status ==1))
             dat$param$max_num_treated <- dat$param$proportion_treated*total_infected
           }
