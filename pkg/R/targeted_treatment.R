@@ -228,13 +228,13 @@ targeted_treatment <- function(dat, at)
       }
       
       
-      if (tx_strategy[j] == "men_under25_women_under_35"){ 
+      if (tx_strategy[j] == "men_under25_women_under35"){ 
         eligible_tx <-( not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
                                          (dat$pop$sex == "f" & dat$pop$age <= 35)))
       }
       
       
-      if (tx_strategy[j] == "men_under25_women_under_35"){ 
+      if (tx_strategy[j] == "men_under25_women_under35"){ 
         eligible_tx <-( not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
                                          (dat$pop$sex == "f" & dat$pop$age <= 35)))
       }

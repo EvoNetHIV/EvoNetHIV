@@ -152,10 +152,10 @@ targeted_treatment2 <- function(dat, at)
       if (tx_strategy[j] == "random10") eligible_tx <- not_curr_tx & (dat$pop$id %% 10 == 1)
 
       if (tx_strategy[j] == "diag10yrs")  eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 10*365)
-      if (tx_strategy[j] == "diag8rsyr")  eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 8*365)
+      if (tx_strategy[j] == "diag8yrs")  eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 8*365)
       if (tx_strategy[j] == "diag6yrs")   eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 6*365)
       if (tx_strategy[j] == "diag5yrs")   eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 5*365)
-      if (tx_strategy[j] == "diga4yrs")   eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 4*365)
+      if (tx_strategy[j] == "diag4yrs")   eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 4*365)
       if (tx_strategy[j] == "diag3yrs")   eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 3*365)
       if (tx_strategy[j] == "diag2yrs")   eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 2*365)
       if (tx_strategy[j] == "diag1yrs")   eligible_tx <- not_curr_tx & (at - diag_time_noNAs > 1*365)
@@ -242,13 +242,13 @@ targeted_treatment2 <- function(dat, at)
       }
       
       
-      if (tx_strategy[j] == "men_under25_women_under_35"){ 
+      if (tx_strategy[j] == "men_under25_women_under35"){ 
         eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
                            (dat$pop$sex == "f" & dat$pop$age <= 35)))
       }
       
       
-      if (tx_strategy[j] == "men_under25_women_under_35"){ 
+      if (tx_strategy[j] == "men_under25_women_under35"){ 
         eligible_tx <-(not_curr_tx & ((dat$pop$sex == "m" & dat$pop$age <= 25) | 
                            (dat$pop$sex == "f" & dat$pop$age <= 35)))
       }
