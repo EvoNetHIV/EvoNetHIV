@@ -240,9 +240,9 @@ targeted_treatment <- function(dat, at)
       }
       
       
-      under25_or_CD4_nadir_under200  # Under age 25 OR has a CD4 count under 200 (i.e., CD4 category 4)
-      under25_or_CD4_nadir_under350  # Under age 25 OR has a CD4 count under 350 (i.e., CD4 category >=3)
-      under25_or_CD4_nadir_under500  # Under age 25 OR has a CD4 count under 500 (i.e., CD4 category >=2)
+      #under25_or_CD4_nadir_under200  # Under age 25 OR has a CD4 count under 200 (i.e., CD4 category 4)
+      #under25_or_CD4_nadir_under350  # Under age 25 OR has a CD4 count under 350 (i.e., CD4 category >=3)
+      #under25_or_CD4_nadir_under500  # Under age 25 OR has a CD4 count under 500 (i.e., CD4 category >=2)
       
       if (tx_strategy[j] == "under25_or_CD4_nadir_under200"){ 
         eligible_tx <-( not_curr_tx & ((dat$pop$age <= 25) | 
