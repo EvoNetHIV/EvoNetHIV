@@ -512,7 +512,7 @@ summary_popsumm<-function(dat,at){
     ix = dat$pop$CD4_time_death %in% time_index
     #initialize cost at zero, vector length = # dead
     relevant_cost = dat$param$cost_died_AIDS * expect_years[dat$pop$age[ix]-dat$param$min_age+1]
-    vec1=relevant_cost*((at-dat$param$tart_TasP_Campaign)/365.0)
+    vec1=relevant_cost*((at-dat$param$start_TasP_Campaign)/365.0)
     out1=lapply(rates,function(xx) vec1^xx)
     out3=as.numeric(unlist(lapply(out1,sum)))
     
