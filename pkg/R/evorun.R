@@ -4,8 +4,8 @@ evorun <- function(modules,params,nw=NULL){
 
 params <-  input_parameters_derived(params)
   
-names(modules) <- paste(modules,".FUN",sep="")
-module_list <- as.list(modules)
+module_list <-lapply(modules,get)
+names(module_list) <- paste(modules,".FUN",sep="")
 
 evo_module_list<- c(
   list("initialize.FUN"= initialize_module,
@@ -44,7 +44,8 @@ if(!params$hyak_par){
                                        init = infected_list,
                                        save.min = FALSE,
                                        save.max = FALSE,
-                                       control = evocontrol)
+                                       control = evocontrol,
+                                       cp.save.int = params$cp_int)
 }   
 
 
