@@ -52,12 +52,8 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   }
   
 
-  #Patient inherits previous patient's virus + mutational deviation
-  variance_vals<-rnorm(length(recipient),
-                mean=0,sd=(dat$param$MutationVariance))
-  
-  dat$pop$ViralContribToLogSP0[recipient] <- (
-        dat$pop$ViralContribToLogSP0[infector] + variance_vals)
+  #Patient inherits previous patient's virus
+  dat$pop$ViralContribToLogSP0[recipient] <- dat$pop$ViralContribToLogSP0[infector] 
 
   #Environmental component is independent
   dat$pop$EnvirContribToLogSP0[recipient] <- rnorm(length(recipient),

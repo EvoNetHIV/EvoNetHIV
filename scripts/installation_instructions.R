@@ -40,7 +40,7 @@ install.packages("data.table")
 install.packages("plotrix")
 install.packages("testthat")
 devtools::install_github( "statnet/tergmLite",force=T)
-devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")
+devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist",force=T)
 
 ##########################################
 #install absdiffby branch as package
