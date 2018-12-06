@@ -20,13 +20,14 @@
     dat$pop$vaccinated[vaccinated] <- rbinom(length(vaccinated), 1, 1 - (1/dat$param$vacc_eff_duration))
   }
    
-   #off/on for therapeutic vaccine
+   #off/on for disease-modifying (therapeutic) vaccine
    if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_therapeutic_campaign==T) {
      vaccinated <- which(dat$pop$vaccinated == 1)
      #0, off vaccine; 1, stay on
-     vacc_status <- rbinom(length(vaccinated), 1, 1 - (1/dat$param$vacc_eff_duration))
-     dat$pop$vaccinated[vaccinated] <- vacc_status
-     vacc_terminate_ix <- which(vacc_status==0)
+     vacc_time = at - dat$pop$vacc_init_time[vaccinated] #sets time a person is vaccinated for as current time minus time at which they were vaccinated  
+     vacc_terminate_ix <- which(dat$pop$vaccinated == 1 & vacc_time > dat$param$vacc_eff_duration) #vector of people who are vaccinated and whose vacc_time exceeds efficacy duration
+     dat$pop$vaccinated[vacc_terminate_ix] <- 0 #people whose vaccinated status reverts to zero because they've exceeded efficacy duration
+     
      #if any agents go off vaccine, revert to "genotypic" spvl (and for VL)
      if(length(vacc_terminate_ix)>0){
      vacc_terminate <- vaccinated[vacc_terminate_ix]
