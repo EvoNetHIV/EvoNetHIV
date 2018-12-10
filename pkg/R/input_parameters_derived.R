@@ -33,8 +33,9 @@ input_parameters_derived  <- function(initial_param)
     initial_param$Max_Allowable_Loci <- 0
   }
   
-  # This line requires some thinking
-  poisson_birth_lambda     = (initial_param$initial_pop/100)* initial_param$poisson_birth_lambda_base
+  # poisson_birth_lambda, parameter for default birth fxn, is a fxn of popn size
+    initial_param$poisson_birth_lambda     = (initial_param$initial_pop/100)* initial_param$poisson_birth_lambda_base
+  
   
   mort_per_timestep_male = input_parameters_asmr(
     data_name=initial_param$asmr_data_male ,
@@ -58,7 +59,6 @@ input_parameters_derived  <- function(initial_param)
                                                       initial_param$min_age,initial_param$max_age)
   
 derived_params <- list( 
-  poisson_birth_lambda     = poisson_birth_lambda ,
   h     = sqrt(initial_param$Heritability),
   r0    = (log(initial_param$vl_peak_acute / initial_param$V0) /
               initial_param$t_peak),
