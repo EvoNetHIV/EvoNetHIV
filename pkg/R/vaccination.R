@@ -24,28 +24,23 @@
    if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_therapeutic_campaign==T) {
      vaccinated <- which(dat$pop$vaccinated == 1)
      #0, off vaccine; 1, stay on
-     vacc_time = at - dat$pop$vacc_init_time[vaccinated] #sets time a person is vaccinated for as current time minus time at which they were vaccinated  
+     vacc_time = at - dat$pop$vacc_init_time #sets time a person is vaccinated for as current time minus time at which they were vaccinated  
      vacc_terminate_ix <- which(dat$pop$vaccinated == 1 & vacc_time > dat$param$vacc_eff_duration) #vector of people who are vaccinated and whose vacc_time exceeds efficacy duration
      dat$pop$vaccinated[vacc_terminate_ix] <- 0 #people whose vaccinated status reverts to zero because they've exceeded efficacy duration
+    
+     vacc_inf_terminate_ix <- which(dat$pop$vaccinated == 1 & 
+                                    vacc_time > dat$param$vacc_eff_duration &
+                                    dat$pop$Status==1) #vector of people who are vaccinated and whose vacc_time exceeds efficacy duration
      
      #if any agents go off vaccine, revert to "genotypic" spvl (and for VL)
-     if(length(vacc_terminate_ix)>0){
-     vacc_terminate <- vaccinated[vacc_terminate_ix]
+     if(length(vacc_inf_terminate_ix)>0){
      #resetting spvl and vl 
-     dat$pop$LogSetPoint[vacc_terminate] <- dat$pop$LogSetPoint_genotype[vacc_terminate]
-     dat$pop$SetPoint[vacc_terminate] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_terminate])
+     dat$pop$LogSetPoint[vacc_inf_terminate_ix] <- dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix]
+     dat$pop$SetPoint[vacc_inf_terminate_ix] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix])
      
-     # 7/16/18: believe this is not necessary or incorrect, eventually remove after confirmation
-     #reset time infection, so vl progression starts at beginning of chronic stage
-     #dat$pop$Time_Inf[vacc_terminate] <- at-dat$param$t_acute+1
-     #resetting cd4 counts and associated attributes, taken straight from transmission_cd4 fxn
-     #index1 <- vacc_terminate
-     #dat$pop$spvl_cat[index1] <- viral_spvl_cat_fxn(dat$pop$LogSetPoint[index1])
-     #dat$pop$CD4[index1]      <-  viral_initialCD4(dat$pop$spvl_cat[index1],dat$param )
-     #dat$pop$CD4_initial_value[index1] <- dat$pop$CD4[index1]
-     #dat$pop$CD4_nadir[index1] <- dat$pop$CD4[index1]
-     #dat$pop$CD4_time[index1] <- 0
-     #dat$pop$CD4_treatment_delay_index[index1] <- 0
+     #temp qaqc check
+     if(any(is.na(dat$pop$LogSetPoint_genotype[vacc_terminate_ix]))){browser()}
+     if(any(is.na(dat$pop$LogSetPoint[vacc_terminate_ix]))){browser()}
     }
      
      
