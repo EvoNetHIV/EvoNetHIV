@@ -35,7 +35,9 @@ summary_popsumm_vars <- function(dat){
   vaccine_vars = c("new_infections_vacc_sens_virus",
                      "new_infections_vacc_resist_virus", "percent_virus_sensitive_vacc",
                      "percentAliveVaccinated")
-
+  
+  dmv_vaccine_vars = c("mean_spvl_genotype","mean_spvl_nonvacc")
+  
   aim3_vars <-  c("total_new_infections", "new_infections_drug_sens_virus",
   "new_infections_drug_part_res_virus", "new_infections_drug_3_plus_res_virus",
   "mean_PPP_incident", "mean_PPP_infected", "drug_muts_1+", "drug_muts_3+",
@@ -83,6 +85,11 @@ summary_popsumm_vars <- function(dat){
   #aim 3 model
   if(dat$param$VL_Function=="aim3"){popsumm_vars <- c(popsumm_vars,aim3_vars)}
   #vaccine model
-  if (dat$param$perc_vaccinated != 0.5){ popsumm_vars <- c(popsumm_vars,vaccine_vars)}
-  return(popsumm_vars)
+  if (dat$param$preventative_campaign){ popsumm_vars <- c(popsumm_vars,vaccine_vars)}
+  #dmv vaccine model
+  if(dat$param$vacc_therapeutic_campaign){
+    popsumm_vars <- c(popsumm_vars,dmv_vaccine_vars)
+  }
+    
+    return(popsumm_vars)
 }

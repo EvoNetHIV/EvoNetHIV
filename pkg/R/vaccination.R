@@ -15,7 +15,7 @@
   if(at < dat$param$start_vacc_campaign[1]) {return(dat)}
 
    # off/on for preventive vaccine
-  if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_therapeutic_campaign==F) {
+  if(at > dat$param$start_vacc_campaign[1] &  dat$param$preventative_campaign == T) {
     vaccinated <- which(dat$pop$vaccinated == 1)
     dat$pop$vaccinated[vaccinated] <- rbinom(length(vaccinated), 1, 1 - (1/dat$param$vacc_eff_duration))
   }

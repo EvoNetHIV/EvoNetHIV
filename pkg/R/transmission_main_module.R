@@ -89,7 +89,7 @@ transmission_main_module <- function(dat,at)
   #set vaccine effect to zero, but then fill in if necessary
   vacc_sens_sus <- rep(0,nrow(dat$discord_coital_df))
   #if sus is vaccinated and infected with sensitive virus
-  if(at >=  dat$param$start_vacc_campaign[1] & dat$param$vacc_therapeutic_campaign==F){
+  if(at >=  dat$param$start_vacc_campaign[1] & dat$param$preventative_campaign==T){
   vacc_ix <- which(dat$pop$vaccinated[sus_id]==1 & 
                    dat$pop$virus_sens_vacc[inf_id]==1)
   if(length(vacc_ix)>0){vacc_sens_sus[vacc_ix] <- 1}  

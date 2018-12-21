@@ -386,13 +386,23 @@ summary_popsumm<-function(dat,at){
   #--------------------------------------------
   #vaccine
 
-  if (dat$param$perc_vaccinated != 0.5) {    #only plot if vaccine campaign in model
+  if (dat$param$preventative_campaign) {    #only plot if vaccine campaign in model
     dat$popsumm$new_infections_vacc_sens_virus[popsumm_index]<- new_infections_virus_vacc_sens_count
     dat$popsumm$new_infections_vacc_resist_virus[popsumm_index]<-  new_infections_virus_vacc_notsens_count
     dat$popsumm$percent_virus_sensitive_vacc[popsumm_index]<- percent_virus_sensitive
     dat$popsumm$percentAliveVaccinated[popsumm_index]<- percentVaccinated
   }
-
+  #--------------------------------------------
+  #disease modifying vaccine
+  if(dat$param$vacc_therapeutic_campaign){
+    dat$popsumm$mean_spvl_genotype[popsumm_index] <- mean(dat$pop$LogSetPoint_genotype[which(dat$pop$Status==1)],na.rm=T)
+    dat$popsumm$mean_spvl_nonvacc[popsumm_index] <- mean(dat$pop$LogSetPoint[which(dat$pop$vaccinated == 0 &
+                                                                                            dat$pop$Status==1)],na.rm=T)
+  }
+    
+  
+  #--------------------------------------------
+  #"aim3"
   if(dat$param$VL_Function=="aim3"){
 
     dat$popsumm$total_new_infections[popsumm_index]<- sum(c(0,dat$popsumm$new_infections[1:popsumm_index]))

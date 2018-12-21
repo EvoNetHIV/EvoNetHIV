@@ -374,8 +374,9 @@ input_params<-function(
 
 # -- vaccine parameters  --------#
  #"vaccination" fxn
+    preventative_campaign    = F,
     start_vacc_campaign      = 5e5,
-    perc_vaccinated          = 0.5,
+    perc_vaccinated          = 0.99,
     target_vacc_att          = FALSE,
     vacc_eff_duration        =  365*3,
     risk_comp_cond           = F,    # Set to T to induce reduction in condom use among vaccinated susceptibles and vaccinated, infected, undiagnosed individuals.
