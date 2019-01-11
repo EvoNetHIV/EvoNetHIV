@@ -94,7 +94,7 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   
   loess_vars <- c("percent_donor_acute","mean_time_donor_infected_incident",
                   "mean_age_incident","mean_age_died_AIDS","mean_spvl_incident",
-                  "mean_PPP_incident")
+                  "mean_PPP_incident","mean_spvl_incident_vacc")
   
   cumul_vars <-c("births" ,"aids_deaths","natural_deaths",
                  "aged_out", "natural_deaths_infecteds","natural_deaths_susceptibles",  
@@ -149,7 +149,7 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
       values=as.data.frame(popsumm_mats[[vars[ii]]]$values)
       apply(values,1,function(xx) values[which(is.na(xx))]<<-0)
       values=t(apply(popsumm_mats[[vars[ii]]]$values,1,cumsum))
-      mean_values=colMeans(values)
+      mean_values=colMeans(values,na.rm=T)
       ylim=c(min(mean_values,na.rm=T),max(mean_values,na.rm=T))
     }else{
       values=popsumm_mats[[vars[ii]]]$values

@@ -50,8 +50,8 @@
   if(!is.element(at,dat$param$start_vacc_campaign)) {return(dat)}
   
   # If vaccine is targeted to attribute groups
-  if(evoparams$target_vacc_att) {
-    for(i in 1:evoparams$generic_nodal_att_no_categories) {
+  if(dat$param$target_vacc_att) {
+    for(i in 1:dat$param$generic_nodal_att_no_categories) {
       eligible_index <- which(dat$pop$Status == 0 & 
                                 (dat$pop$vaccinated == 0 | is.na(dat$pop$vaccinated)) &
                                 dat$pop$eligible_care == 1 & dat$pop$att1 == i) 

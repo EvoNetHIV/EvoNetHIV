@@ -398,6 +398,15 @@ summary_popsumm<-function(dat,at){
     dat$popsumm$mean_spvl_genotype[popsumm_index] <- mean(dat$pop$LogSetPoint_genotype[which(dat$pop$Status==1)],na.rm=T)
     dat$popsumm$mean_spvl_nonvacc[popsumm_index] <- mean(dat$pop$LogSetPoint[which(dat$pop$vaccinated == 0 &
                                                                                             dat$pop$Status==1)],na.rm=T)
+    new_infections1 <- which(dat$pop$Time_Inf %in% time_index &
+                             dat$pop$vaccinated==0)
+    spvl1 <- dat$pop$LogSetPoint[new_infections1]
+    new_infections2<-which(dat$pop$Time_Inf %in% time_index &
+                             dat$pop$vaccinated==1)
+    spvl2 <- dat$pop$LogSetPoint_genotype[new_infections2]
+    spvl <- c(spvl1,spvl2)
+    dat$popsumm$mean_spvl_incident_vacc[popsumm_index]<-mean(spvl)
+    
   }
     
   

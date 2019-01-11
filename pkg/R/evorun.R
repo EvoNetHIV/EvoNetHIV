@@ -50,7 +50,7 @@ if(!params$hyak_par){
 
 
 save(evomodel,
-     file = file.path(evoparams$output_path,"evomodel.RData"))
+     file = file.path(params$output_path,"evomodel.RData"))
 
 return(evomodel)
 
