@@ -395,7 +395,7 @@ summary_popsumm<-function(dat,at){
   #--------------------------------------------
   #disease modifying vaccine
   if(dat$param$vacc_therapeutic_campaign){
-    dat$popsumm$mean_spvl_genotype[popsumm_index] <- mean(dat$pop$LogSetPoint_genotype[which(dat$pop$Status==1)],na.rm=T)
+    dat$popsumm$mean_spvl_genotype[popsumm_index] <- mean(dat$pop$LogSetPoint_genotype[which(dat$pop$Status==1 & dat$pop$vaccinated == 1 )],na.rm=T)
     dat$popsumm$mean_spvl_nonvacc[popsumm_index] <- mean(dat$pop$LogSetPoint[which(dat$pop$vaccinated == 0 &
                                                                                             dat$pop$Status==1)],na.rm=T)
     new_infections1 <- which(dat$pop$Time_Inf %in% time_index &
