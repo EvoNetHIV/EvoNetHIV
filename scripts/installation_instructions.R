@@ -45,6 +45,8 @@ devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist",force=T)
 ##########################################
 #install absdiffby branch as package
 library(devtools)
+install_github("EvoNetHIV/EvoNet",subdir="pkg",ref="absdiffby")
+#or
+#install_github("EvoNetHIV/EvoNet",subdir="pkg",ref="absdiffby_Aug_2018",force=TRUE)
 devtools::install_github( "statnet/tergmLite",force=T)
-devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist",force=T)
-install_github("EvoNetHIV/EvoNet",subdir="pkg",ref="absdiffby",force=TRUE)
+devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")
