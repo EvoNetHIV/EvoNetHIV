@@ -25,12 +25,17 @@
      vaccinated <- which(dat$pop$vaccinated == 1)
      #0, off vaccine; 1, stay on
      vacc_time = at - dat$pop$vacc_init_time #sets time a person is vaccinated for as current time minus time at which they were vaccinated  
-     vacc_terminate_ix <- which(dat$pop$vaccinated == 1 & vacc_time > dat$param$vacc_eff_duration) #vector of people who are vaccinated and whose vacc_time exceeds efficacy duration
+     
+     #vaccine efficacy ending for uninfected agents
+     vacc_terminate_ix <- which(dat$pop$vaccinated == 1 & 
+                                  vacc_time > dat$param$vacc_eff_duration &
+                                  dat$pop$Status==0) #vector of uninfected agents who are vaccinated and whose vacc_time exceeds efficacy duration
      dat$pop$vaccinated[vacc_terminate_ix] <- 0 #people whose vaccinated status reverts to zero because they've exceeded efficacy duration
     
+     #vaccine efficacy ending for infected agents
      vacc_inf_terminate_ix <- which(dat$pop$vaccinated == 1 & 
                                     vacc_time > dat$param$vacc_eff_duration &
-                                    dat$pop$Status==1) #vector of people who are vaccinated and whose vacc_time exceeds efficacy duration
+                                    dat$pop$Status==1) #vector of infected who are vaccinated and whose vacc_time exceeds efficacy duration
      
      #if any agents go off vaccine, revert to "genotypic" spvl (and for VL)
      if(length(vacc_inf_terminate_ix)>0){
@@ -39,8 +44,8 @@
      dat$pop$SetPoint[vacc_inf_terminate_ix] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix])
      
      #temp qaqc check
-     if(any(is.na(dat$pop$LogSetPoint_genotype[vacc_terminate_ix]))){browser()}
-     if(any(is.na(dat$pop$LogSetPoint[vacc_terminate_ix]))){browser()}
+     #if(any(is.na(dat$pop$LogSetPoint_genotype[vacc_terminate_ix]))){browser()}
+     #if(any(is.na(dat$pop$LogSetPoint[vacc_terminate_ix]))){browser()}
     }
      
      
