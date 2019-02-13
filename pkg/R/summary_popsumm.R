@@ -394,19 +394,22 @@ summary_popsumm<-function(dat,at){
   }
   #--------------------------------------------
   #disease modifying vaccine
+  #Note 2/11/19: intrinsic (formerly called genotypic) = spvl assigned to agents regardless of vaccine status, one that is passed on to infectees, 
+  #as opposed to phenotypic spvl, which is the expressed spvl that reflects modification by vaccine. Intrinsic and phenotypic are the same in unvaccinated agents
   if(dat$param$vacc_therapeutic_campaign){
-    dat$popsumm$mean_spvl_genotype[popsumm_index] <- mean(dat$pop$LogSetPoint_genotype[which(dat$pop$Status==1 & dat$pop$vaccinated == 1 )],na.rm=T)
+    dat$popsumm$mean_spvl_genotype[popsumm_index] <- mean(dat$pop$LogSetPoint_genotype[which(dat$pop$Status==1 & dat$pop$vaccinated == 1 )],na.rm=T) #prevalent spvl, maybe should remove, not too useful
     dat$popsumm$mean_spvl_nonvacc[popsumm_index] <- mean(dat$pop$LogSetPoint[which(dat$pop$vaccinated == 0 &
                                                                                             dat$pop$Status==1)],na.rm=T)
-    new_infections1 <- which(dat$pop$Time_Inf %in% time_index &
+    new_infections_nonvacc <- which(dat$pop$Time_Inf %in% time_index &   #all new infections occuring in nonvaccinated agents during the popsumm frequency window (default 30 days)
                              dat$pop$vaccinated==0)
-    spvl1 <- dat$pop$LogSetPoint[new_infections1]
-    new_infections2<-which(dat$pop$Time_Inf %in% time_index &
+    ispvl_nonvacc <- dat$pop$LogSetPoint[new_infections_nonvacc]   #spvls of newly infected nonvaccinees (phenotypic, which in nonvaccinated agents is same as intrinsic)
+    new_infections_vacc<-which(dat$pop$Time_Inf %in% time_index &    #all new infections occuring in vaccinated agents during the popsumm frequency window (default 30 days)
                              dat$pop$vaccinated==1)
-    spvl2 <- dat$pop$LogSetPoint_genotype[new_infections2]
-    spvl <- c(spvl1,spvl2)
-    dat$popsumm$mean_spvl_incident_vacc[popsumm_index]<-mean(spvl)
-    
+    ispvl_vacc <- dat$pop$LogSetPoint_genotype[new_infections_vacc] #spvls of newly infected nonvaccinees (intrinsic)
+    ispvl_all <- c(ispvl_nonvacc,ispvl_vacc)  #all spvls of agents infected in this time window, in vaccinated and unvaccinated agents
+    dat$popsumm$mean_ispvl_intrinsic_all[popsumm_index]<-mean(ispvl_all) #mean of all spvls of agents infected during this time window, provides mean incident SPVL
+    dat$popsumm$mean_ispvl_intrinsic_nonvacc[popsumm_index]<-mean(ispvl_nonvacc)  #mean of nonvaccinated spvls of agents infected during this time window, provides mean incident SPVL
+    dat$popsumm$mean_ispvl_instrinsic_vacc[popsumm_index]<-mean(ispvl_vacc)  #mean of vaccinated spvls of agents infected during this time window, provides mean incident SPVL
   }
     
   
