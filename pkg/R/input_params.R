@@ -124,6 +124,8 @@ input_params<-function(
     trans_RR_receptive_vaginal=1,
     trans_RR_vaccine     = 0.01,      #placeholder, 5/3/16
     perc_virus_vaccine_sens = 0.99,  #placeholder 5/3/16
+    
+    susceptibility_var = 0.1,        # First added for AgeAndSPVL work 3/2019 by SMG
 
 # Parameters dynamic CD4 function (revised 11/11/15)
 # Function?
