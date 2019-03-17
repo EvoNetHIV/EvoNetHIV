@@ -354,7 +354,11 @@ input_params<-function(
     #this value is set within module at start of tx campaign,
     #NA value is flat that indicates it hasn't been initialized yet
   
-    prob_care                = 1.0,      # Probability of being eligible for care before the "under care" campaign
+    prob_care                = 1.0,      # Probability of being eligible for care (i.e., prob being linked to care under UTT w/ daily testing) 
+    prob_care_men_under30    = 1.0,      # Probability of men under 30 being eligible for care (priority relative to "prob_care" will depend on fxns to be written)
+    prob_care_men_under25    = 1.0,      # Probability of men under 25 being eligible for care 
+    prob_care_women_under30  = 1.0,      # Probability of women under 30 being eligible for care 
+    prob_care_women_under25  = 1.0,      # Probability of women under 25 being eligible for care 
     prob_eligible_ART        = 1.0,
     prob_eligible_2nd_line_ART = 1.0,
     second_line_elig         = "vl_only",
