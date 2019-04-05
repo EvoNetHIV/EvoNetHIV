@@ -58,18 +58,16 @@ nw <- nw_setup(evoparams)
 #---  Create list of modules to run for input into epimodel_control_fxn() below
 # "initialize_module" and "resim.nets" modules automatically added, no need to specify
 
-
 modules <- c(
-"aging",
-"testing",
-"treatment",
-"viral_update",
-"coital_acts",
-"transmission",
-"deaths",
-"births",
-"summary_module")
-
+  "aging",
+  "testing",
+  "treatment",
+  "viral_update",
+  "coital_acts",
+  "transmission",
+  "evo_departures",
+  "evo_arrivals",
+  "summary_module")
 #--------------------------------------------------------------
 
 evomodel <- evorun(modules,evoparams,nw)

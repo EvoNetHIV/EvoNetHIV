@@ -16,8 +16,8 @@ modules <- c(
   "viral_update",
   "coital_acts",
   "transmission",
-  "deaths",
-  "births",
+  "evo_departures",
+  "evo_arrivals",
   "summary_module")
 
 #Three values of target stats, corresponding to mean degrees of 0.7, 1.0 and 2.0.
