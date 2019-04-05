@@ -11,7 +11,7 @@
 #' example function call here
 
 #' @export
-births <- function(dat, at) {
+evo_arrivals <- function(dat, at) {
   
   #Description:
   #Calculates number of births (additions) to population for timestep
