@@ -397,6 +397,7 @@ summary_popsumm<-function(dat,at){
   #Note 2/11/19: intrinsic (formerly called genotypic) = spvl assigned to agents regardless of vaccine status, one that is passed on to infectees, 
   #as opposed to phenotypic spvl, which is the expressed spvl that reflects modification by vaccine. Intrinsic and phenotypic are the same in unvaccinated agents
   if(dat$param$vacc_therapeutic_campaign){
+    dat$popsumm$percentAliveVaccinated[popsumm_index]<- percentVaccinated
     dat$popsumm$mean_spvl_genotype[popsumm_index] <- mean(dat$pop$LogSetPoint_genotype[which(dat$pop$Status==1 & dat$pop$vaccinated == 1 )],na.rm=T) #prevalent spvl, maybe should remove, not too useful
     dat$popsumm$mean_spvl_nonvacc[popsumm_index] <- mean(dat$pop$LogSetPoint[which(dat$pop$vaccinated == 0 &
                                                                                             dat$pop$Status==1)],na.rm=T)

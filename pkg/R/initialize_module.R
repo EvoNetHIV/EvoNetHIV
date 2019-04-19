@@ -25,8 +25,9 @@ initialize_module <- function(x, param, init, control, s)
   #	creates and inserts initial values for "popsumm" stats (calculated at end of
   # each timestep_ with initialize_popsumm_dynamics()
   
-  #sets up basic EpiModel structure
-  dat  <-  EpiModel::initialize.net(x, param, init, control,s)
+
+    #sets up basic EpiModel structure
+  dat  <-  evo_initialize(x, param, init, control,s)
 
   ## Remove relationships specified as prohibited in network formation terms
   if(dat$param$rm_offset_rel) {

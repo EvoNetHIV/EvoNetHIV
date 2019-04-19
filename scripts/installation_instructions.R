@@ -6,7 +6,6 @@ if (!require("devtools")) {
   library(devtools)}
 install_github("EvoNetHIV/EvoNet",subdir="pkg")
 devtools::install_github( "statnet/tergmLite",force=T)
-devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")
 library(evonet)
 
 ##########################################
@@ -19,7 +18,6 @@ install.packages("data.table")
 install.packages("plotrix")
 install.packages("testthat")
 devtools::install_github( "statnet/tergmLite",force=T)
-devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")
 
 #2) In Rstudio, choose "new project", then "version control", then "git"
 #3) url: https://github.com/EvoNetHIV/EvoNetHIV/
@@ -40,7 +38,6 @@ install.packages("data.table")
 install.packages("plotrix")
 install.packages("testthat")
 devtools::install_github( "statnet/tergmLite",force=T)
-devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist",force=T)
 
 ##########################################
 #install absdiffby branch as package
@@ -49,4 +46,3 @@ install_github("EvoNetHIV/EvoNet",subdir="pkg",ref="absdiffby")
 #or
 #install_github("EvoNetHIV/EvoNet",subdir="pkg",ref="absdiffby_Aug_2018",force=TRUE)
 devtools::install_github( "statnet/tergmLite",force=T)
-devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")

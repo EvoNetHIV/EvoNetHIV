@@ -70,9 +70,8 @@ vital_death_aids_john <-function(dat,at)
       #dat$popsumm$aids_deaths[at] <-  length(List_Dying_Persons)
       #dat$popsumm$mean_age_died_AIDS[at] <- mean(dat$pop$age[List_Dying_Persons])
       
-      dat <- EpiModel:::terminate_vertices(dat = dat,
-                                           at = at,
-                                           vids.to.terminate = which(is.element(dat$attr$id,List_Dying_Persons)))
+      dat <-  terminate_vertices(dat = dat,at = at,
+                                vids.to.terminate = which(is.element(dat$attr$id,List_Dying_Persons)))
       # End changing status of those who died
     }else{
       #dat$popsumm$aids_deaths[at]<- 0
@@ -119,9 +118,8 @@ vital_death_aids_john <-function(dat,at)
       #dat$popsumm$aids_deaths[at] <-  length(List_Dying_Persons)
       #dat$popsumm$mean_age_died_AIDS[at] <- mean(dat$pop$age[List_Dying_Persons])
       
-      dat <- EpiModel:::terminate_vertices(dat = dat,
-                                           at = at,
-                                           vids.to.terminate = which(is.element(dat$attr$id,List_Dying_Persons)))
+      dat <- terminate_vertices(dat = dat,at = at,
+                              vids.to.terminate = which(is.element(dat$attr$id,List_Dying_Persons)))
       # end changing status of those who died
     }else{
       #dat$popsumm$aids_deaths[at]<- 0
@@ -148,9 +146,8 @@ vital_death_aids_john <-function(dat,at)
       dat$pop$Time_Death[List_Dying_Persons]<-timeIndex
       #dat$popsumm$aids_deaths[at] <-  length(List_Dying_Persons)
       #dat$popsumm$mean_age_died_AIDS[at] <- mean(dat$pop$age[List_Dying_Persons])
-      dat <- EpiModel:::terminate_vertices(dat = dat,
-                                           at = at,
-                                           vids.to.terminate = which(is.element(dat$attr$id,List_Dying_Persons)))
+      dat <- terminate_vertices(dat = dat,at = at,
+                                vids.to.terminate = which(is.element(dat$attr$id,List_Dying_Persons)))
       # End changing status of those who died
     }
     
