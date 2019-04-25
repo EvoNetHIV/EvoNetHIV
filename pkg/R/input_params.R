@@ -385,6 +385,7 @@ input_params<-function(
     risk_comp_degree_rr      = 1.3,
     vacc_therapeutic_campaign = F, #flag whether protective (=F) or therapeutic vaccine(=T) in effect
     spvl_decrement_vaccine    = 1.0,
+    vacc_multi_eff           = F, # flag for vaccine model with distribution of vaccine efficacies
 #coital acts module
   #social_coital-acts
     prob_sex_by_age          = FALSE,

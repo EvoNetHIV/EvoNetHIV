@@ -1,57 +1,42 @@
-#' @title Title
-#'
-#' @description Description
-#'
-#' @param x A number.
-#' @param y A number.
-#' @return return value here.
-#' @details
-#' Additional details here
-#' @examples
-#' example function call here
-#' @export
- vaccination <- function(dat, at) {
+vaccination <- function(dat, at) {
   
   if(at < dat$param$start_vacc_campaign[1]) {return(dat)}
-
-   # off/on for preventive vaccine
-  if(at > dat$param$start_vacc_campaign[1] &  dat$param$preventative_campaign == T) {
-    vaccinated <- which(dat$pop$vaccinated == 1)
-    dat$pop$vaccinated[vaccinated] <- rbinom(length(vaccinated), 1, 1 - (1/dat$param$vacc_eff_duration))
-  }
-   
-   #off/on for disease-modifying (therapeutic) vaccine
-   if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_therapeutic_campaign==T) {
-     vaccinated <- which(dat$pop$vaccinated == 1)
-     #0, off vaccine; 1, stay on
-     vacc_time = at - dat$pop$vacc_init_time #sets time a person is vaccinated for as current time minus time at which they were vaccinated  
-     
-     #vaccine efficacy ending for uninfected agents
-     vacc_terminate_ix <- which(dat$pop$vaccinated == 1 & 
-                                  vacc_time > dat$param$vacc_eff_duration &
-                                  dat$pop$Status==0) #vector of uninfected agents who are vaccinated and whose vacc_time exceeds efficacy duration
-     dat$pop$vaccinated[vacc_terminate_ix] <- 0 #people whose vaccinated status reverts to zero because they've exceeded efficacy duration
-    
-     #vaccine efficacy ending for infected agents
-     vacc_inf_terminate_ix <- which(dat$pop$vaccinated == 1 & 
-                                    vacc_time > dat$param$vacc_eff_duration &
-                                    dat$pop$Status==1) #vector of infected who are vaccinated and whose vacc_time exceeds efficacy duration
-     
-     #if any agents go off vaccine, revert to "genotypic" spvl (and for VL)
-     if(length(vacc_inf_terminate_ix)>0){
-     #resetting spvl and vl 
-     dat$pop$LogSetPoint[vacc_inf_terminate_ix] <- dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix]
-     dat$pop$SetPoint[vacc_inf_terminate_ix] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix])
-     
-     #temp qaqc check
-     #if(any(is.na(dat$pop$LogSetPoint_genotype[vacc_terminate_ix]))){browser()}
-     #if(any(is.na(dat$pop$LogSetPoint[vacc_terminate_ix]))){browser()}
-    }
-     
-     
-   }
-   
   
+  # off/on for preventive vaccine
+  if(at > dat$param$start_vacc_campaign[1] &  dat$param$preventative_campaign == T) {
+    vacc_ix <- which(dat$pop$vaccinated == 1)
+    dat$pop$vaccinated[vacc_ix] <- rbinom(length(vacc_ix), 1, 1 - (1/dat$param$vacc_eff_duration))
+  }
+  
+  # off/on for multi efficacy vaccine model
+  if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_multi_eff == T) {
+    vacc_ix <- which(dat$pop$vaccinated == 1)
+    dat$pop$vaccinated[vacc_ix] <- rbinom(length(vacc_ix), 1, 1 - (1/dat$param$vacc_eff_duration))
+  }
+  
+  #off/on for disease-modifying (therapeutic) vaccine
+  #differs from others by resetting spvl/vl
+  if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_therapeutic_campaign==T) {
+    vacc_ix <- which(dat$pop$vaccinated == 1)
+    vacc_on_off_ix <- rbinom(length(vacc_ix), 1, 1 - (1/dat$param$vacc_eff_duration))
+    dat$pop$vaccinated[vacc_ix] <- vacc_on_off_ix
+    vacc_off_ix <- which(vacc_on_off_ix==0)
+    
+    #if any agents go off vaccine, revert to "genotypic" spvl (and for VL)
+    if(length(vacc_off_ix)>0){
+      #resetting spvl and vl
+      vacc_inf_terminate_ix <- vacc_ix[vacc_off_ix]
+      dat$pop$LogSetPoint[vacc_inf_terminate_ix] <- dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix]
+      dat$pop$SetPoint[vacc_inf_terminate_ix] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix])
+      
+      #temp qaqc check
+      #if(any(is.na(dat$pop$LogSetPoint_genotype[vacc_terminate_ix]))){browser()}
+      #if(any(is.na(dat$pop$LogSetPoint[vacc_terminate_ix]))){browser()}
+    }
+  }  
+  
+  
+  #NOTE: need this right after off/on steps 
   if(!is.element(at,dat$param$start_vacc_campaign)) {return(dat)}
   
   # If vaccine is targeted to attribute groups
@@ -86,7 +71,8 @@
     
     dat$pop$vaccinated[treated_index] <- 1
     dat$pop$vacc_init_time[treated_index] <- at
+    if(dat$param$vacc_multi_eff){dat$pop$vacc_eff[treated_index] <- runif(length(treated_index))}
   }
-
+  
   return(dat)
 }

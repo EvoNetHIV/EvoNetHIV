@@ -86,15 +86,34 @@ transmission_main_module <- function(dat,at)
   sti_status_sus <- dat$pop$sti_status[sus_id]
   #on prep
   
+  #--------- vaccine dynamics -----------------
+  #note: this vector is used for both 'preventative' (original vacc model)
+  #and "mulit_efficacy" model 
   #set vaccine effect to zero, but then fill in if necessary
   vacc_sens_sus <- rep(0,nrow(dat$discord_coital_df))
+
+    #preventative
   #if sus is vaccinated and infected with sensitive virus
   if(at >=  dat$param$start_vacc_campaign[1] & dat$param$preventative_campaign==T){
   vacc_ix <- which(dat$pop$vaccinated[sus_id]==1 & 
                    dat$pop$virus_sens_vacc[inf_id]==1)
   if(length(vacc_ix)>0){vacc_sens_sus[vacc_ix] <- 1}  
   }
-  #end of vaccine
+  
+  #multi efficacy model
+  #find which suscept. agent is vaccinated, get their vaccine efficacy
+  # and fill in "vacc_sens_sus" vector (all other values of this vector are zero)
+  if(at >=  dat$param$start_vacc_campaign[1] & dat$param$vacc_multi_eff==T){
+    vacc_ix <- which(dat$pop$vaccinated[sus_id]==1) 
+    if(length(vacc_ix)>0){
+      vacc_sens_sus[vacc_ix] <- dat$pop$vacc_eff[vacc_ix]
+     }  
+  }
+    
+  
+  #------end of vaccine--------------------
+  
+  
   
   if(dat$param$model_sex=="msm"){
     

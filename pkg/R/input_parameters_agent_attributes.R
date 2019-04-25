@@ -91,7 +91,7 @@ input_parameters_agent_attributes <-function(){
     "prep_decrease",                     "eligible_for_prep",
     "prep_list",                         "known_pos_partner_duration",
     "condom_user",                       "partner_recent_test", 
-    "have_suppressed_partner")
+    "have_suppressed_partner",           "vacc_eff")
     ##############################
   ) #end of  list
   
