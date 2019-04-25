@@ -65,6 +65,7 @@ vaccination <- function(dat, at) {
     if(length(eligible_index) == 0) {return(dat)}
     
     no_treated <- sum(rbinom(length(eligible_index), 1, dat$param$perc_vaccinated))
+    
     if(no_treated == 0) {return(dat)}
     
     treated_index <- sample(eligible_index, no_treated)
