@@ -38,6 +38,8 @@ social_treatement_prep_SES<-function(dat,at){
    #V2    <- dat$pop$V[col2]
    txt1  <- dat$pop$treated[col1]
    txt2  <- dat$pop$treated[col2]
+   condom_use1 <- dat$pop$individual_condom_prob[col1]
+   condom_use2 <- dat$pop$individual_condom_prob[col2]
    
    ix1=which(status1==1 & status2==0 )
    ix2=which(status1==0 & status2==1 )
@@ -102,8 +104,19 @@ social_treatement_prep_SES<-function(dat,at){
    #track whether at least one unknown status partner #condition 6
    unknown1=which((status1==0 & status2==1 & disc2==0)|(abs(at - tested2)>dat$param$prep_recent_test))
    unknown2=which((status1==1 & status2==0 & disc1==0)|(abs(at - tested1)>dat$param$prep_recent_test))
-   dat$pop$have_unknown_partner[col1[unknown1]] <- 1
-   dat$pop$have_unknown_partner[col2[unknown2]] <- 1
+   dat$pop$have_unknown_status_partner[col1[unknown1]] <- 1
+   dat$pop$have_unknown_status_partner[col2[unknown2]] <- 1
+   #---------------------------------------------
+   #track whether agent uses condoms #conditions 6 & 7
+   condom_user1=which(condom_use1>=0.95)
+   condom_user2=which(condom_use2>=0.95)
+   dat$pop$agent_condom_user[col1[condom_user1]] <- 1
+   dat$pop$agent_condom_user[col2[condom_user2]] <- 1
+   #or if their monogamous partner does
+   #condom_partner1=which(condom_use2>=0.95 & dat$pop$no_partners_now_prep==1)
+   #condom_partner2=which(condom_use1>=0.95 & dat$pop$no_partners_now_prep==1)
+   #dat$pop$agent_condom_user[col1[condom_partner1]] <- 1
+   #dat$pop$agent_condom_user[col2[condom_partner1]] <- 1
    #---------------------------------------------
    # track partnerships with supressed partners #re-add later? not in CDC scheme now
    #s1=which(status1==0 & status2==1 & txt2==1 & (V2<dat$param$vl_undetectable))
@@ -123,12 +136,11 @@ social_treatement_prep_SES<-function(dat,at){
        (dat$pop$last_neg_test == at) &                                     # 1. at HIV test visit 
        is.na(dat$pop$diag_status) &                                        # 2. does not have diagnosed HIV
        (dat$pop$no_partners_past_prep >= dat$param$min_past_partners_prep) & # 3. has had at least 1 partner in last 6 months
-       ((dat$pop$no_partners_now_prep==1 & dat$pop$partner_recent_test==1)==F) &  # 4. not in monogamous recently tested partnership
+       ((dat$pop$no_partners_past_prep==1 & dat$pop$partner_recent_test==1)==F) &  # 4. not in monogamous recently tested partnership
        # AND ONE OF THE FOLLOWING
-       (( dat$pop$have_disclosed_partner==1)  # 5. in relationship with known positive partner 
-         # OR 6. condomless acts with 1 status unknown partner
-         # OR 7. condomless acts with 2+ partners 
-                   
+        ((dat$pop$have_disclosed_partner==1) |  # 5. in relationship with known positive partner 
+         (dat$pop$have_unknown_status_partner==1 & dat$pop$agent_condom_user!=1 & dat$pop$no_partners_past_prep==1) | # OR 6. condomless acts with 1 status unknown partner
+         (dat$pop$agent_condom_user!=1 & dat$pop$no_partners_past_prep>1)  # OR 7. condomless acts with 2+ partners 
                   ))
     
    ### change from social_treatment_prep: there dat$pop$eligible_for_prep is dat$pop$on_prep       

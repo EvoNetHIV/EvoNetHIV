@@ -88,11 +88,12 @@ input_parameters_agent_attributes <-function(){
     "rand_prob_test_init",              "tx_dropout",
      "pos_partner_duration",             "no_partners_past_prep",
     "no_partners_now_prep",              "have_diag_partner",
-    "have_disc_partner",                 "on_prep",                      
+    "have_disclosed_partner",            "on_prep",                      
     "prep_decrease",                     "eligible_for_prep",
     "prep_list",                         "known_pos_partner_duration",
     "condom_user",                       "partner_recent_test", 
-    "have_suppressed_partner",           "vacc_eff")
+    "have_suppressed_partner",           "have_unknown_status_partner",
+    "agent_condom_user",                 "vacc_eff")
     ##############################
   ) #end of  list
   
