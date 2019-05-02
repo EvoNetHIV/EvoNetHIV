@@ -397,6 +397,7 @@ input_params<-function(
     act_redux_discl          = 0.0,    # MARDHAM
  #"social_condom_use"
     condom_prob              = 0.5,
+    condom_prob_sd           = 0.0373, # standard deviation for condom prob from MARDHAM simulation
     condom_prob_change       = F,      # set to true for condom_prob to be 0 initially, and increase as a hill function governed by below parameters
     condom_prob_max          = 0.5,   # parameter used in hill function if condom_prob_change == T
 	  condom_prob_inflect      = 365*12, # parameter used in hill function if condom_prob_change == T
@@ -407,6 +408,8 @@ input_params<-function(
     condom_use_rel_dur = FALSE,
     condom_use_age = FALSE,
     age_condom_use_halves = 50, # Only used when condom_use_age is true
+    individual_condom_prob   = F, #set to T for condom probability to be at the agent level, First added for PrEP work by SES 5/2019 
+    individual_condom_prob_var   = 0.5, #Agent level condom probability, First added for PrEP work by SES 5/2019 
 #sti/circumcision probabilites for agents (used in "vital new additions" fxn)  
     circum_prob              = 0.85,
     sti_prob                 = 0.0, #used in "vital_new_additions"

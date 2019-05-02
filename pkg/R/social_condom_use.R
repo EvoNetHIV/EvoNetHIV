@@ -72,7 +72,19 @@ if(dat$param$condom_use_age){
     
     condom_prob <- condom_prob*condom_user_modifier_age
     
-  }
+}
+
+#update condom_prob based on agent level condom use probability
+  if(dat$param$individual_condom_prob){
+    max_condom_use_prob <- max(dat$pop$individual_condom_prob[dat$discord_coital_df$sus_id], dat$pop$individual_condom_prob[dat$discord_coital_df$inf_id],na.rm=T)
+    #max_condom_use_prob_temp <- max_condom_use_prob
+    if(max_condom_use_prob< 0)
+      max_condom_use_prob <- 0
+    if(max_condom_use_prob> 1)
+      max_condom_use_prob <- 1
+    
+    condom_prob <- max_condom_use_prob
+   }  
   
   #fill in "condom" column in table "discord_coital_df" (0s or 1s)
   dat$discord_coital_df$condom <- rbinom(n = nrow(dat$discord_coital_df),

@@ -39,6 +39,7 @@ input_parameters_agent_attributes <-function(){
     "Donors_LogSetPoint",              "Donors_SetPoint",
     "Donors_d_acute",                  "Time_Death",
     "Donors_diag_status",              "Donors_age", 
+    "individual_condom_prob",
     
     "V_vec",                           "I_vec",
     "M_vec",                           "L_vec",
