@@ -133,7 +133,7 @@ social_treatement_prep_SES<-function(dat,at){
   #       is.na(dat$pop$diag_status))                                                       # AND does not have diagnosed HIV
   
    prep_ix <-  which(
-       (dat$pop$last_neg_test == at) &                                     # 1. at HIV test visit 
+       #(dat$pop$last_neg_test == at) &                                     # 1. at HIV test visit 
        is.na(dat$pop$diag_status) &                                        # 2. does not have diagnosed HIV
        (dat$pop$no_partners_past_prep >= dat$param$min_past_partners_prep) & # 3. has had at least 1 partner in last 6 months
        ((dat$pop$no_partners_past_prep==1 & dat$pop$partner_recent_test==1)==F) &  # 4. not in monogamous recently tested partnership
