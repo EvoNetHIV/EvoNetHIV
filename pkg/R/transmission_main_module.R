@@ -42,6 +42,8 @@ transmission_main_module <- function(dat,at)
   logV_inf <-  log10(dat$pop$V[inf_id])
   V_inf <-   dat$pop$V[inf_id]
   on_prep <- dat$pop$on_prep[sus_id]
+  susceptibility <- dat$pop$susceptibility[sus_id]
+  
   ###############################################################
   ##### identify: 1) msm susceptible and insertive 
   #               2) msm susceptible and insertive and circumcised
@@ -157,14 +159,14 @@ transmission_main_module <- function(dat,at)
                                          msm_circum_status_insert_sus, age_vec_sus,
                                          hetero_sus_female_vi, hetero_sus_female_ai, 
                                          hetero_sus_male_ai, hetero_sus_male_circum_status,
-                                         V_inf, vacc_sens_sus)
+                                         V_inf, vacc_sens_sus, susceptibility)
   }else{
     trans_probs <- transmission_hughes_and_exp(dat, acute_phase_status, sti_status_sus, condom_use,
                                                msm_sus_receptive_status, msm_sus_insert_status,
                                                msm_circum_status_insert_sus, age_vec_sus,
                                                hetero_sus_female_vi, hetero_sus_female_ai,
                                                hetero_sus_male_ai, hetero_sus_male_circum_status,
-                                               logV_inf, vacc_sens_sus)
+                                               logV_inf, vacc_sens_sus, susceptibility)
   }
   
   ###################################
