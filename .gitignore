@@ -4,3 +4,10 @@
 .Ruserdata
 EvoNetHIV.Rproj
 evomodel.RData
+EvoNet.Rproj
+evoplots.pdf
+RcppExports.o
+absdiffbyErgmTerm.o
+evonet.dll
+include_stubs.o
+modified_logistic_V5.o
