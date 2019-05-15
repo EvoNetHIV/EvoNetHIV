@@ -93,7 +93,8 @@ input_parameters_agent_attributes <-function(){
     "prep_list",                         "known_pos_partner_duration",
     "condom_user",                       "partner_recent_test", 
     "have_suppressed_partner",           "have_unknown_status_partner",
-    "agent_condom_user",                 "vacc_eff")
+    "agent_condom_user",                 "vacc_eff",
+    "last_ts_relationship",              "last_ts_multiple_relationships")
     ##############################
   ) #end of  list
   
