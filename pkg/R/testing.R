@@ -57,17 +57,11 @@ testing <- function(dat, at){
   }
   
   if(length(testing)>0) {
-    
+    #testing time for infected agents and associated values
     testing_and_infected <- which(dat$pop$Status[testing]==1 & at- dat$pop$Time_Inf[testing] > dat$param$test_result_delay)
     if(length(testing_and_infected)>0){
           
         testing_positive <- testing[testing_and_infected]
-        testing_negative <- setdiff(testing, testing_positive)
-              
-          if(length(testing_negative)>0){
-                
-             dat$pop$last_neg_test[testing_negative] <- at
-           }
               
            if(length(testing_positive)>0){    
               dat$pop$diag_status[testing_positive] <- 1
@@ -75,7 +69,13 @@ testing <- function(dat, at){
               dat$pop$vl_at_test[testing_positive] <- dat$pop$V[testing_positive]
               dat$pop$cd4_at_test[testing_positive] <- dat$pop$CD4[testing_positive]
             }
-        }  
     }
+    #testing time for uninfected agens
+    testing_and_not_infected <- which(dat$pop$Status[testing]==0)
+    if(length(testing_and_not_infected)>0){
+      testing_negative <- testing[testing_and_not_infected]
+      dat$pop$last_neg_test[testing_negative] <- at
+    }
+  }
   return(dat)
 }
