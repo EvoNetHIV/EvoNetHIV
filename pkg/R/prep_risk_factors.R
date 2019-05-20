@@ -30,15 +30,10 @@ prep_risk_factors<-function(dat,at){
   
   #risk factor = in 1+ relationships
   n_occur <- data.frame(table(all.el)) #data frame with a list of ids and the number of times they occurred.
-  
   multiples <- n_occur[n_occur$Freq > 1,] #which ids occurred more than once.
-  #multiples <- multiples[drop=T]
+  mult_rel <- as.numeric(as.character(multiples$all.el))
   
-  #all.el[all.el %in% n_occur$all.el[n_occur$Freq > 1],]
-  #all.el[all.el %in% n_occur$all.el[n_occur$Freq > 1],]
-  #vocabulary[vocabulary$id %in% n_occur$Var1[n_occur$Freq > 1],]
-  
-  dat$pop$last_ts_multiple_relationships[all.el[multiples$all.el]] <- risk_time #maybe?
+  dat$pop$last_ts_multiple_relationships[mult_rel] <- risk_time
   
   return(dat)
 }
