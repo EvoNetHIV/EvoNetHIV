@@ -28,7 +28,7 @@ summary_popsumm_vars <- function(dat){
   "no_treated_undetectable", "mean_vl_pop_untreated",
   "percent_treated_undetectable", "total_pills_taken", "mean_degree_inf_treated")
 
-  prep_vars= c("prop_on_prep")
+  prep_vars= c("prop_on_prep","prop_eligible_prep")
 
   circumcision_vars=c("circum_prev")
 

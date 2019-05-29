@@ -117,8 +117,8 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   input_list$known_pos_partner_duration[index] <- 0
   input_list$no_partners_past_prep[index] <- 0
   input_list$no_partners_now_prep[index] <- 0
-  input_list$last_ts_relationship[index] <- NA
-  input_list$last_ts_multiple_relationships[index] <- NA
+  input_list$last_ts_relationship[index] <- 0
+  input_list$last_ts_multiple_relationships[index] <- 0
   
   input_list$individual_condom_prob[index] <- rnorm(total_new, dat$param$individual_condom_prob_var,dat$param$condom_prob_sd)
    

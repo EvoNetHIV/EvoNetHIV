@@ -306,6 +306,7 @@ input_params<-function(
     mean_test_interval_female = 442,
     mean_test_interval_under25 = 365,
     no_past_partners_time_prep = 365, 
+    prep_eligibility_time = 182, # default 6 monts for PrEP eligibilty
     min_past_partners_prep = 1,
     min_current_partners_prep = 1, 
     min_pos_partner_duration = 50,
