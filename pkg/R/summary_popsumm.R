@@ -155,7 +155,7 @@ summary_popsumm<-function(dat,at){
 
     #prep
     prop_on_prep <- length(which(alive_index & dat$pop$prep_list == 1))/total_alive
-    prop_eligible_prep <- length(which(alive_index & dat$pop$eligible_for_prep == 1))/total_alive
+    prop_eligible_prep <- length(which(alive_index & dat$pop$prep_eligible_list == 1))/total_alive
 
     #network statistics
     # some of these can't be computed if we are in edgelist mode
@@ -374,6 +374,7 @@ summary_popsumm<-function(dat,at){
   #prep
   if (dat$param$start_prep_campaign[1] < 5e5) {
     dat$popsumm$prop_on_prep[popsumm_index] <-prop_on_prep
+    dat$popsumm$prop_eligible_prep[popsumm_index] <-prop_eligible_prep
   }
 
   #--------------------------------------------

@@ -134,6 +134,9 @@ social_treatement_prep_SES<-function(dat,at){
   dat$pop$prep_list <- dat$pop$on_prep
   dat$pop$prep_list[is.na(dat$pop$prep_list)] <- 0
   
+  dat$pop$prep_eligible_list <- dat$pop$eligible_for_prep
+  dat$pop$prep_eligible_list[is.na(dat$pop$prep_eligible_list)] <- 0
+  
   #if(at<900){return(dat)}else{browser()}
   return(dat)
 }
