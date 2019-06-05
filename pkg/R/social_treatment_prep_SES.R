@@ -93,7 +93,7 @@ social_treatement_prep_SES<-function(dat,at){
   #---------------------------------------------
   #Eligible for PrEP  
   prep_ix <-  which(
-    (dat$pop$last_neg_test == at) &                                     # 1. at HIV test visit 
+      (dat$pop$last_neg_test == at) &                                     # 1. at HIV test visit 
       is.na(dat$pop$diag_status) &                                        # 2. does not have diagnosed HIV
       (dat$pop$no_partners_past_prep >= dat$param$min_past_partners_prep) & # 3. has had at least 1 partner in last 6 months
       ((dat$pop$no_partners_past_prep==1 & dat$pop$partner_recent_test==1)==F) &  # 4. not in monogamous recently tested partnership
@@ -102,6 +102,19 @@ social_treatement_prep_SES<-function(dat,at){
          (dat$pop$have_unknown_status_partner==1 & dat$pop$agent_condom_user!=1 & dat$pop$no_partners_past_prep==1) | # OR 6. condomless acts with 1 status unknown partner
          (dat$pop$agent_condom_user!=1 & dat$pop$no_partners_past_prep>1)  # OR 7. condomless acts with 2+ partners 
       ))
+  #Eligible for PrEP and generic attr==2  
+  if(!is.logical(dat$param$generic_nodal_att_percent_eligible_on_prep)){
+  prep_ix_2 <-  which(
+      dat$pop$att1==2 &
+      (dat$pop$last_neg_test == at) &                                     # 1. at HIV test visit 
+      is.na(dat$pop$diag_status) &                                        # 2. does not have diagnosed HIV
+      (dat$pop$no_partners_past_prep >= dat$param$min_past_partners_prep) & # 3. has had at least 1 partner in last 6 months
+      ((dat$pop$no_partners_past_prep==1 & dat$pop$partner_recent_test==1)==F) &  # 4. not in monogamous recently tested partnership
+      # AND ONE OF THE FOLLOWING
+      ((dat$pop$have_disclosed_partner==1) |  # 5. in relationship with known positive partner 
+         (dat$pop$have_unknown_status_partner==1 & dat$pop$agent_condom_user!=1 & dat$pop$no_partners_past_prep==1) | # OR 6. condomless acts with 1 status unknown partner
+         (dat$pop$agent_condom_user!=1 & dat$pop$no_partners_past_prep>1)  # OR 7. condomless acts with 2+ partners 
+      ))}
   #Not eligible for PrEP
   prep_not_ix <-  which(
     (dat$pop$last_neg_test == at) &                                     # 1. at HIV test visit 
@@ -125,7 +138,11 @@ social_treatement_prep_SES<-function(dat,at){
                                     length(prep_ix),
                                     replace=T,
                                     prob=c(dat$param$percent_eligible_on_prep, 1-dat$param$percent_eligible_on_prep))
-  
+  if(!is.logical(dat$param$generic_nodal_att_percent_eligible_on_prep)){
+  dat$pop$on_prep[prep_ix_2]<- sample(c(1,NA),
+                                    length(prep_ix_2),
+                                    replace=T,
+                                    prob=c(dat$param$generic_nodal_att_percent_eligible_on_prep, 1-dat$param$generic_nodal_att_percent_eligible_on_prep))}
   dat$pop$prep_decrease[prep_ix]<- sample(c(0.0,0.31,0.81,0.95),
                                           length(prep_ix),
                                           replace=T,
