@@ -72,7 +72,7 @@ vaccination <- function(dat, at) {
     
     dat$pop$vaccinated[treated_index] <- 1
     dat$pop$vacc_init_time[treated_index] <- at
-    if(dat$param$vacc_multi_eff){dat$pop$vacc_eff[treated_index] <- runif(length(treated_index))}
+    
   }
   
   return(dat)

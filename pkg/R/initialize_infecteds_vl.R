@@ -129,6 +129,9 @@ initialize_infecteds_vl <- function(dat,at)
   pop$virus_sens_vacc[ind] <- rbinom(length(ind),1,
                               prob=dat$param$perc_virus_vaccine_sens)
   
+  if(dat$param$vacc_multi_eff){dat$pop$vacc_eff[ind] <- dat$param$vacc_multi_fxn(length(ind))}
+  
+  
   #give all initial infected the initial vl value, which will be updated
   #in viral_update_gamma to appropriate level (still in initialization module)
   pop$V[ind]<-param$V0

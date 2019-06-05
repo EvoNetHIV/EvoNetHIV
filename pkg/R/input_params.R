@@ -388,6 +388,7 @@ input_params<-function(
     vacc_therapeutic_campaign = F, #flag whether protective (=F) or therapeutic vaccine(=T) in effect
     spvl_decrement_vaccine    = 1.0,
     vacc_multi_eff           = F, # flag for vaccine model with distribution of vaccine efficacies
+    vacc_multi_fxn = function(xx,...){runif(xx)}, #function to determine values of vaccine efficacies for "vacc_mulit_eff" models, default is random 
 #coital acts module
   #social_coital-acts
     prob_sex_by_age          = FALSE,
