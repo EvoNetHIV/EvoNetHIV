@@ -433,6 +433,10 @@ input_params<-function(
     generic_nodal_att_values_props_births = NA, #how new values distributed with addtns to pop
     generic_nodal_att_no_categories = NA,   # how many generic att categories
     generic_nodal_att_trans_mat     = NA,    # matrix of per timestep transition probs, each row sums to one
+    generic_nodal_att_percent_eligible_on_prep = NA,
+    generic_nodal_att_mean_test_interval_male  = NA, #only added the parameters currently need
+    generic_nodal_att_prob_care = NA,
+    generic_nodal_att_mean_trtmnt_delay = NA,
 # ----------    CD4 data   ----------------------------------------------------  
    # Probabilities for initial CD4 value (based on SPVL)
    cd4_init_probs =  structure(list(cd4_500     = c(0.88, 0.87, 0.85, 0.78, 0.73, 0.71, 0.64, 0, 0),
