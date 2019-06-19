@@ -72,7 +72,6 @@ input_parameters_asmr <- function(data_name="usa_men_18_to_100",min_age,max_age)
     0.1403, 0.1403, 0.1403, 0.1403, 0.1403, 
     0.1403), age_range=c(16,100))
   
-  # Variant in which death rate is independent of age (average of log10's of "south_africa_female" above)
   asmr_data_list$"south_africa_female_average"<- list(
      asmr =rep(0.02296779,85), 
              age_range=c(16,100))
@@ -97,7 +96,6 @@ input_parameters_asmr <- function(data_name="usa_men_18_to_100",min_age,max_age)
     0.1629, 0.1629, 0.1629, 0.1629, 0.1629, 
     0.1629),age_range=c(16,100))
   
-  # Variant in which death rate is independent of age (average of log10's of "south_africa_male" above)
   asmr_data_list$"south_africa_male_average"<- list(
     asmr = rep(0.03048575,85),
             age_range=c(16,100))
