@@ -72,5 +72,5 @@ Example of two default output plots ![](https://github.com/EvoNetHIV/EvoNetHIV-O
 Approximately 30 default output plots are produced at the end of each model run. These plots are both printed to the screen and saved as a pdf file. The name of the pdf file and its location path can be specided with
 
 ``` r
-evoplot(model=evomodel, names = "name.pdf", path= "\path")
+evoplot(model=evomodel, name = "name.pdf", path= "\path")
 ```
