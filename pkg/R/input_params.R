@@ -411,7 +411,7 @@ input_params<-function(
     age_condom_use_halves = 50, # Only used when condom_use_age is true
     individual_condom_prob   = F, #set to T for condom probability to be at the agent level, First added for PrEP work by SES 5/2019 
     individual_condom_prob_var = 0.5, #Agent level condom probability, First added for PrEP work by SES 5/2019 
-    individual_condom_prob_rc = 0.5, #Agent level condom prob when using PrEP and risk compensation is in effect 
+    individual_condom_prob_rc = 0.5, #Agent level condom prob when using PrEP and risk compensation is in effect, no risk compensation by default 
 #sti/circumcision probabilites for agents (used in "vital new additions" fxn)  
     circum_prob              = 0.85,
     sti_prob                 = 0.0, #used in "vital_new_additions"
