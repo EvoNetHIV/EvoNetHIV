@@ -78,10 +78,8 @@ if(dat$param$condom_use_age){
   if(dat$param$individual_condom_prob){
     max_condom_use_prob <- max(dat$pop$individual_condom_prob[dat$discord_coital_df$sus_id], dat$pop$individual_condom_prob[dat$discord_coital_df$inf_id],na.rm=T)
     #max_condom_use_prob_temp <- max_condom_use_prob
-    if(max_condom_use_prob< 0)
-      max_condom_use_prob <- 0
-    if(max_condom_use_prob> 1)
-      max_condom_use_prob <- 1
+    if(max_condom_use_prob< 0) max_condom_use_prob <- 0
+    if(max_condom_use_prob> 1) max_condom_use_prob <- 1
     
     condom_prob <- max_condom_use_prob
    }  

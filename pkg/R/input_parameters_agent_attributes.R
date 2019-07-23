@@ -90,6 +90,8 @@ input_parameters_agent_attributes <-function(){
     "no_partners_now_prep",              "have_diag_partner",
     "have_disclosed_partner",            "on_prep",                      
     "prep_decrease",                     "eligible_for_prep",
+    "eligible_for_prep_1",               "eligible_for_prep_2",
+    "prep_init_time",                    "prep_discontinue_time",
     "prep_list",                         "known_pos_partner_duration",
     "condom_user",                       "partner_recent_test", 
     "have_suppressed_partner",           "have_unknown_status_partner",

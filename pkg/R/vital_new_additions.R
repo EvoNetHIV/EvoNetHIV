@@ -121,7 +121,8 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   input_list$last_ts_multiple_relationships[index] <- 0
   
   input_list$individual_condom_prob[index] <- rnorm(total_new, dat$param$individual_condom_prob_var,dat$param$condom_prob_sd)
-   
+  input_list$prep_init_time[index] <- NA
+  input_list$prep_discontinue_time[index] <- NA
   #-----------------------------
   #these variables need different functions for initial population and births
   if(type=="initial")
