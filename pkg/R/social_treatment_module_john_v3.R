@@ -72,8 +72,8 @@ social_treatment_module_john_v3 <- function(dat, at)
   
   no_on_tx <- length(which(dat$pop$treated==1 & dat$pop$Status==1))
   
-  is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
-  if(is.wholenumber(at/365/10)==T){browser()}
+  #is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+  #if(is.wholenumber(at/365/10)==T){browser()}
   #{browser()}
   #------------------------------------------------------------------------  
   # this section for treatment scenarios where there is limit to number treated (max_treated)  
