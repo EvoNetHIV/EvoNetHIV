@@ -57,8 +57,10 @@ transmission_hughes_and_exp<-function(dat, acute_phase_status, sti_status_sus, c
   # Age effect
   temp_age_xb <-  (age_vec_sus - dat$param$trans_base_age) * log(dat$param$trans_RR_age)/10
   xB <- xB + temp_age_xb
+  #vaccine effect
   xB <- xB + vacc_sens_sus * log(dat$param$trans_RR_vaccine)
   exp_xB = exp(xB)
+  
   result <- 1 - ((1-dat$param$trans_lambda)^(1*exp_xB))
   return(result)
 }

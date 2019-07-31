@@ -35,9 +35,10 @@ vaccination <- function(dat, at) {
     }
   }  
   
-  
+  #------------------------------------------------
   #NOTE: need this right after off/on steps 
   if(!is.element(at,dat$param$start_vacc_campaign)) {return(dat)}
+  #------------------------------------------------
   
   # If vaccine is targeted to attribute groups
   if(dat$param$target_vacc_att) {
