@@ -142,7 +142,7 @@ social_treatement_prep_SES<-function(dat,at){
          (dat$pop$agent_condom_user==1 | dat$pop$no_partners_past_prep<2)  # OR 7. no condomless acts with 2+ partners 
       ))) 
   
-  prep_seroconverter <-  which(dat$pop$on_prep==-1)
+  prep_seroconverter <-  which(dat$pop$on_prep == -1 & dat$pop$diag_time == at)
   
   ### if on prep and no longer eligible
   dat$pop$on_prep[prep_not_ix] <- NA
@@ -170,10 +170,10 @@ social_treatement_prep_SES<-function(dat,at){
                                     length(prep_ix),
                                     replace=T,
                                     prob=c(percent_new_eligibles_on_prep, 1-percent_new_eligibles_on_prep))
-  dat$pop$prep_decrease[prep_ix]<- sample(c(0.0,0.31,0.81,0.95),
+  dat$pop$prep_decrease[prep_ix]<- sample(dat$param$prep_risk_decrease, #follows Jenness et al JID 2016
                                           length(prep_ix),
                                           replace=T,
-                                          prob=c(0.21,0.07,0.10,0.62))
+                                          prob=dat$param$prep_adherance_prob)
   
   dat$pop$prep_init_time[prep_ix]<- at*dat$pop$on_prep[prep_ix]
   dat$pop$prep_discontinue_time[prep_not_ix]<- at
@@ -192,10 +192,16 @@ social_treatement_prep_SES<-function(dat,at){
                                         length(prep_ix_1),
                                         replace=T,
                                         prob=c(percent_new_eligibles_on_prep, 1-percent_new_eligibles_on_prep))
-    dat$pop$prep_decrease[prep_ix_1]<- sample(c(0.0,0.31,0.81,0.95),
+    dat$pop$prep_decrease[prep_ix_1]<- sample(dat$param$prep_risk_decrease,
                                             length(prep_ix_1),
                                             replace=T,
-                                            prob=c(0.21,0.07,0.10,0.62))
+                                            prob=dat$param$prep_adherance_prob)
+    if(dat$param$risk_group_prep_adherance_link==T){
+      dat$pop$prep_decrease[prep_ix_1]<- sample(dat$param$prep_risk_decrease,
+                                                length(prep_ix_1),
+                                                replace=T,
+                                                prob=dat$param$main_group_prep_adherance_prob)
+    }
     dat$pop$prep_init_time[prep_ix_1]<- at*dat$pop$on_prep[prep_ix_1]
   ### with generic attribute 2
     possible_spaces = round(dat$param$generic_nodal_att_percent_eligible_on_prep * length(which(dat$pop$eligible_for_prep_2==1)))
@@ -209,10 +215,16 @@ social_treatement_prep_SES<-function(dat,at){
                                     length(prep_ix_2),
                                     replace=T,
                                     prob=c(percent_new_eligibles_on_prep, 1-percent_new_eligibles_on_prep))
-  dat$pop$prep_decrease[prep_ix_2]<- sample(c(0.0,0.31,0.81,0.95),
+  dat$pop$prep_decrease[prep_ix_2]<- sample(dat$param$prep_risk_decrease,
                                           length(prep_ix_2),
                                           replace=T,
-                                          prob=c(0.21,0.07,0.10,0.62))
+                                          prob=dat$param$prep_adherance_prob)
+  if(dat$param$risk_group_prep_adherance_link==T){
+    dat$pop$prep_decrease[prep_ix_2]<- sample(dat$param$prep_risk_decrease,
+                                              length(prep_ix_2),
+                                              replace=T,
+                                              prob=dat$param$risk_group_prep_adherance_prob)
+  }
   dat$pop$prep_init_time[prep_ix_2]<- at*dat$pop$on_prep[prep_ix_2]}
   
   dat$pop$prep_list <- dat$pop$on_prep

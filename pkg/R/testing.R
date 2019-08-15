@@ -40,7 +40,7 @@ testing <- function(dat, at){
   mean_test_interval <- numeric(length(ix))
   mean_test_interval[ix_male] <- dat$param$mean_test_interval_male
   if(!is.logical(dat$param$generic_nodal_att_mean_test_interval_male)){
-    ix_male_2 <- which(dat$pop$sex[ix] == 'm' & dat$pop$att1==2)
+    ix_male_2 <- which(dat$pop$sex[ix] == 'm' & dat$pop$att1[ix]==2)
     mean_test_interval[ix_male_2] <- dat$param$generic_nodal_att_mean_test_interval_male}
   mean_test_interval[ix_female] <- dat$param$mean_test_interval_female
   if(dat$param$under_25_flag){
