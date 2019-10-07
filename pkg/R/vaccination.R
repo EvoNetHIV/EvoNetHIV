@@ -49,13 +49,13 @@ vaccination <- function(dat, at) {
       
       if(length(eligible_index) == 0) {next}
       
-      no_treated <- sum(rbinom(length(eligible_index), 1, dat$param$perc_vaccinated[i]))
-      if(no_treated == 0) {next}
+      no_vaccinated <- sum(rbinom(length(eligible_index), 1, dat$param$perc_vaccinated[i])) #denominator is eligible people
+      if(no_vaccinated == 0) {next}
       
-      treated_index <- sample(eligible_index, no_treated)
+      vaccinated_index <- sample(eligible_index, no_vaccinated)
       
-      dat$pop$vaccinated[treated_index] <- 1
-      dat$pop$vacc_init_time[treated_index] <- at
+      dat$pop$vaccinated[vaccinated_index] <- 1
+      dat$pop$vacc_init_time[vaccinated_index] <- at
     }
   } else {
     # Eligible_patients: eligible for care, not vaccinated, not infected
@@ -63,16 +63,21 @@ vaccination <- function(dat, at) {
                               (dat$pop$vaccinated == 0 | is.na(dat$pop$vaccinated)) &
                               dat$pop$eligible_care == 1) 
     
-    if(length(eligible_index) == 0) {return(dat)}
+    if(length(eligible_index) == 0) {return(dat)}  #if no agents are eligible
     
-    no_treated <- sum(rbinom(length(eligible_index), 1, dat$param$perc_vaccinated))
+    no_vaccinated <- sum(rbinom(length(which(dat$pop$Status>=0)), 1, dat$param$perc_vaccinated)) #denominator is total population alive 
+    if(no_vaccinated == 0) {return(dat)}
     
-    if(no_treated == 0) {return(dat)}
     
-    treated_index <- sample(eligible_index, no_treated)
+    if(no_vaccinated <length(eligible_index)){
+      vaccinated_index <- sample(eligible_index, no_vaccinated)
+    }else{
+      vaccinated_index <- eligible_index
+      #if the %coverage in total population alive exceeds #eligible, vaccinate all eligible
+    }
     
-    dat$pop$vaccinated[treated_index] <- 1
-    dat$pop$vacc_init_time[treated_index] <- at
+    dat$pop$vaccinated[vaccinated_index] <- 1
+    dat$pop$vacc_init_time[vaccinated_index] <- at
     
   }
   
