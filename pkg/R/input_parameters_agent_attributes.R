@@ -39,7 +39,6 @@ input_parameters_agent_attributes <-function(){
     "Donors_LogSetPoint",              "Donors_SetPoint",
     "Donors_d_acute",                  "Time_Death",
     "Donors_diag_status",              "Donors_age", 
-    "individual_condom_prob",
     
     "V_vec",                           "I_vec",
     "M_vec",                           "L_vec",
@@ -71,6 +70,7 @@ input_parameters_agent_attributes <-function(){
    "LogSetPoint_genotype", 
    
 #--  Vital dynamics /social/treatment ------------------------------ #
+    "individual_condom_prob",          "susceptibility",
     "vaccinated",                      "vacc_init_time",           
     "age","sqrt_age",                   "arrival_time",
     "last_neg_test",                   "diag_status",

@@ -121,9 +121,11 @@ input_params<-function(
     trans_RR_ins_ai      = 2.9,
     trans_RR_rec_ai      = 17.3,
     trans_RR_acute_phase = 1.0,       #increased infectiousness during acute phase
-    trans_RR_receptive_vaginal=1,
+    trans_RR_receptive_vaginal=1,     #1 per Jim Hughes ref; RR=2 if using data from Patel et al (PMC6195215)
     trans_RR_vaccine     = 0.01,      #placeholder, 5/3/16
     perc_virus_vaccine_sens = 0.99,  #placeholder 5/3/16
+    
+    susceptibility_var = 0.0,        # First added for AgeAndSPVL work 3/2019 by SMG
 
 # Parameters dynamic CD4 function (revised 11/11/15)
 # Function?
@@ -275,7 +277,7 @@ input_params<-function(
     prop_new_agents_min_age   = 0.45, #for "mixed" see above line
     asmr_data_male            = "usa_men_18_to_100",#other option: "south_africa_male"
     asmr_data_female          = "south_africa_female",
-    initial_agedata_male      = "usa_men_18_to_100", #other options:"south_africa_male_16_to_100", "stable_age_no_hiv_dist"
+    initial_agedata_male      = "usa_men_18_to_100", #other options:"south_africa_male_16_to_100_2014", "stable_age_no_hiv_dist"
     initial_agedata_female    = "south_africa_female_16_to_100_2014", #other options: "stable_age_no_hiv_dist"
   # "deaths(...) -> vital_death_aids() or vital_death_aged_out or vital_death_non_aids  
     aids_death_model         = "cd4",        # c("Gamma_Death","daily_prob","cd4")
@@ -396,6 +398,7 @@ input_params<-function(
     vacc_therapeutic_campaign = F, #flag whether protective (=F) or therapeutic vaccine(=T) in effect
     spvl_decrement_vaccine    = 1.0,
     vacc_multi_eff           = F, # flag for vaccine model with distribution of vaccine efficacies
+    vacc_multi_fxn = "function(xx,...){runif(xx)}", #function to determine values of vaccine efficacies for "vacc_mulit_eff" models, default is random 
 #coital acts module
   #social_coital-acts
     prob_sex_by_age          = FALSE,

@@ -198,7 +198,8 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   dat$pop$Donors_CD4[recipient] <- dat$pop$CD4[infector] 
   dat$pop$NumRecipients[infector] <- dat$pop$NumRecipients[infector] + 1
   dat$pop$virus_sens_vacc[recipient] <- dat$pop$virus_sens_vacc[infector]
-  dat$pop$Donors_age[recipient] <- dat$pop$age[infector]
+  dat$pop$vacc_eff[recipient] <- dat$pop$vacc_eff[infector]
+    dat$pop$Donors_age[recipient] <- dat$pop$age[infector]
   dat$pop$age_infection[recipient] <- dat$pop$age[recipient]
   
   

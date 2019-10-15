@@ -120,9 +120,15 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   input_list$last_ts_relationship[index] <- 0
   input_list$last_ts_multiple_relationships[index] <- 0
   
+ #Sarah's prep
   input_list$individual_condom_prob[index] <- rnorm(total_new, dat$param$individual_condom_prob_var,dat$param$condom_prob_sd)
   input_list$prep_init_time[index] <- NA
   input_list$prep_discontinue_time[index] <- NA
+
+  #first added for AgeAndSPVL model (Steve); note that the log of RR tends to be approx normal, not the RR itself
+  input_list$susceptibility[index] <- exp(rnorm(total_new, 0 , dat$param$susceptibility_var))
+  
+
   #-----------------------------
   #these variables need different functions for initial population and births
   if(type=="initial")

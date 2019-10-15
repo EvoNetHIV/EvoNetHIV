@@ -325,6 +325,11 @@ targeted_treatment2 <- function(dat, at)
         if (dat$param$tx_limit == "percentage")  {
           upper_limit_tx <- round(dat$param$proportion_treated*total_alive)
         }
+        if (dat$param$tx_limit == "percent_of_currently_diagnosed") {
+          upper_limit_tx <- round(dat$param$proportion_treated*
+                                    sum(dat$pop$Status >= 0 & dat$pop$eligible_care == 1 & dat$pop$diag_status %in% 1))          
+        }
+          
         max_new_tx <- max(0,upper_limit_tx - current_tx)
 
         # Subset if the number eligible exceeds the maximum
@@ -350,7 +355,7 @@ targeted_treatment2 <- function(dat, at)
     } # At least one eligible in j-th strategy before apply any criteria
   } # j-th strategy
 
-  # Now allow for increases in treatment rates over time. Apply to both percentage and absolute_num
+  # Now allow for increases in treatment rates over time. Apply to both percentage and absolute_num, but not to percent_currently_diagnosed
   if (at >= dat$param$start_treatment_campaign) {
     dat$param$proportion_treated <-  dat$param$proportion_treated * ( (1+dat$param$yearly_incr_tx)^(1/365) )
     if (dat$param$proportion_treated > 1) dat$param$proportion_treated <- 1
