@@ -28,7 +28,7 @@ summary_popsumm_vars <- function(dat){
   "no_treated_undetectable", "mean_vl_pop_untreated",
   "percent_treated_undetectable", "total_pills_taken", "mean_degree_inf_treated")
 
-  prep_vars= c("prop_on_prep")
+  prep_vars= c("prop_on_prep","prop_eligible_prep")
 
   circumcision_vars=c("circum_prev")
 
@@ -61,8 +61,14 @@ summary_popsumm_vars <- function(dat){
     if (dat$param$perc_vaccinated != 0.5){
       genatt_var3 <- paste("generic_att_percent_vacc_cat_",dat$param$generic_nodal_att_values,sep="")
     }
+    genatt_var4 <- paste("prevalence_attr_",dat$param$generic_nodal_att_values,sep="")
+    genatt_var5 <- paste("new_infections_attr_",dat$param$generic_nodal_att_values,sep="")
+    genatt_var6 <- paste("susceptibles_attr_",dat$param$generic_nodal_att_values,sep="")
+    genatt_var7 <- paste("mean_spvl_incident_attr_",dat$param$generic_nodal_att_values,sep="")
+    genatt_var8 <- paste("prop_on_prep_attr_",dat$param$generic_nodal_att_values,sep="")
+    genatt_var9 <- paste("prop_eligible_prep_attr_",dat$param$generic_nodal_att_values,sep="")
     
-    genatt_vars <- c(genatt_var1,genatt_var2,genatt_var2b,genatt_var3)
+    genatt_vars <- c(genatt_var1,genatt_var2,genatt_var2b,genatt_var3,genatt_var4,genatt_var5,genatt_var6,genatt_var7,genatt_var8,genatt_var9)
   }  
   
   

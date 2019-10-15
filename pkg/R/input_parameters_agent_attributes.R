@@ -39,7 +39,6 @@ input_parameters_agent_attributes <-function(){
     "Donors_LogSetPoint",              "Donors_SetPoint",
     "Donors_d_acute",                  "Time_Death",
     "Donors_diag_status",              "Donors_age", 
-    "susceptibility",
     
     "V_vec",                           "I_vec",
     "M_vec",                           "L_vec",
@@ -71,6 +70,7 @@ input_parameters_agent_attributes <-function(){
    "LogSetPoint_genotype", 
    
 #--  Vital dynamics /social/treatment ------------------------------ #
+    "individual_condom_prob",          "susceptibility",
     "vaccinated",                      "vacc_init_time",           
     "age","sqrt_age",                   "arrival_time",
     "last_neg_test",                   "diag_status",
@@ -88,11 +88,15 @@ input_parameters_agent_attributes <-function(){
     "rand_prob_test_init",              "tx_dropout",
      "pos_partner_duration",             "no_partners_past_prep",
     "no_partners_now_prep",              "have_diag_partner",
-    "have_disc_partner",                 "on_prep",                      
+    "have_disclosed_partner",            "on_prep",                      
     "prep_decrease",                     "eligible_for_prep",
+    "eligible_for_prep_1",               "eligible_for_prep_2",
+    "prep_init_time",                    "prep_discontinue_time",
     "prep_list",                         "known_pos_partner_duration",
     "condom_user",                       "partner_recent_test", 
-    "have_suppressed_partner",           "vacc_eff")
+    "have_suppressed_partner",           "have_unknown_status_partner",
+    "agent_condom_user",                 "vacc_eff",
+    "last_ts_relationship",              "last_ts_multiple_relationships")
     ##############################
   ) #end of  list
   

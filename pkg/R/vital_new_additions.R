@@ -117,10 +117,18 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   input_list$known_pos_partner_duration[index] <- 0
   input_list$no_partners_past_prep[index] <- 0
   input_list$no_partners_now_prep[index] <- 0
+  input_list$last_ts_relationship[index] <- 0
+  input_list$last_ts_multiple_relationships[index] <- 0
   
+ #Sarah's prep
+  input_list$individual_condom_prob[index] <- rnorm(total_new, dat$param$individual_condom_prob_var,dat$param$condom_prob_sd)
+  input_list$prep_init_time[index] <- NA
+  input_list$prep_discontinue_time[index] <- NA
+
   #first added for AgeAndSPVL model (Steve); note that the log of RR tends to be approx normal, not the RR itself
   input_list$susceptibility[index] <- exp(rnorm(total_new, 0 , dat$param$susceptibility_var))
   
+
   #-----------------------------
   #these variables need different functions for initial population and births
   if(type=="initial")
@@ -144,6 +152,10 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
           input_list$sti_status[(att_ix[[ii]])] <- rbinom(length(att_ix[[ii]]), 1, dat$param$sti_prob_att[ii])
         }
       }
+      if(!is.logical(dat$param$generic_nodal_att_prob_care)){
+        index_2 <- index[input_list$att1[index]==2]
+        total_new_2 <- length(index_2)
+        input_list$eligible_care[index_2] <- rbinom(total_new_2,1,dat$param$generic_nodal_att_prob_care)}
     }
     
     # Assign role
@@ -172,7 +184,11 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
     input_list$last_neg_test[index_male] = sample( - dat$param$mean_test_interval_male:0, 
                                                   length(index_male),
                                                   replace = TRUE)
-    
+    if(!is.logical(dat$param$generic_nodal_att_mean_test_interval_male)){
+      index_male_2 <- index[input_list$sex[index] == 'm' & input_list$att1[index]==2] 
+      input_list$last_neg_test[index_male_2] = sample( - dat$param$generic_nodal_att_mean_test_interval_male:0, 
+                                                     length(index_male_2),
+                                                     replace = TRUE) }
     input_list$last_neg_test[index_female ] = sample( - dat$param$mean_test_interval_female:0, 
                                                      length(index_female),
                                                      replace = TRUE)
@@ -212,6 +228,10 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
           input_list$sti_status[(att_ix[[ii]])] <- rbinom(length(att_ix[[ii]]), 1, dat$param$sti_prob_att[ii])
         }
       }
+      if(!is.logical(dat$param$generic_nodal_att_prob_care)){
+        index_2 <- index[input_list$att1[index]==2]
+        total_new_2 <- length(index_2)
+        input_list$eligible_care[index_2] <- rbinom(total_new_2,1,dat$param$generic_nodal_att_prob_care)}
     }
     
     # Assign role
@@ -277,6 +297,12 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
     input_list$last_neg_test[index_male] <- sample(temp_sample_times_male, 
                                                    length(index_male), 
                                                    replace = TRUE) 
+    if(!is.logical(dat$param$generic_nodal_att_mean_test_interval_male)){
+      index_male_2 <- index[input_list$sex[index] == 'm' & input_list$att1[index]==2]
+      temp_sample_times_male_2 <- (at - dat$param$generic_nodal_att_mean_test_interval_male):at 
+      input_list$last_neg_test[index_male_2] <- sample(temp_sample_times_male_2, 
+                                                     length(index_male_2), 
+                                                     replace = TRUE)}
     
     temp_sample_times_female <- (at - dat$param$mean_test_interval_female):at
     input_list$last_neg_test[index_female] <- sample(temp_sample_times_female,

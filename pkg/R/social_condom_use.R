@@ -72,14 +72,41 @@ if(dat$param$condom_use_age){
     
     condom_prob <- condom_prob*condom_user_modifier_age
     
-  }
-  
+}
+
   #fill in "condom" column in table "discord_coital_df" (0s or 1s)
   dat$discord_coital_df$condom <- rbinom(n = nrow(dat$discord_coital_df),
                                          size = 1,
                                          prob = condom_prob)
     
-
+  #update condom_prob based on agent level condom use probability
+  if(dat$param$individual_condom_prob){
+    condom_use_vec <- c(dat$pop$individual_condom_prob[dat$discord_coital_df$agent1], dat$pop$individual_condom_prob[dat$discord_coital_df$agent2])
+    condom_use_matrix <- matrix(condom_use_vec,ncol=2,byrow = F)
+    if(dat$param$individual_condom_prob_compromise_method == "mean"){ 
+      condom_use_prob <- rowMeans(condom_use_matrix,na.rm=T)
+      condom_use <- list()
+      condom_use <- sapply(1:length(condom_use_prob), function(x) rbinom(n = 1,size = 1, prob = condom_use_prob[[x]]))
+      condom_use[condom_use < 0] = 0
+      condom_use[condom_use > 1] = 1
+      dat$discord_coital_df$condom <- condom_use}
+    if(dat$param$individual_condom_prob_compromise_method == "max"){ 
+      condom_use_prob <- apply(condom_use_matrix, 1, max)
+      condom_use <- list()
+      condom_use <- sapply(1:length(condom_use_prob), function(x) rbinom(n = 1,size = 1, prob = condom_use_prob[[x]]))
+      condom_use[condom_use < 0] = 0
+      condom_use[condom_use > 1] = 1
+      dat$discord_coital_df$condom <- condom_use}
+    if(dat$param$individual_condom_prob_compromise_method == "min"){ 
+      condom_use_prob <- apply(condom_use_matrix, 1, min)
+      condom_use <- list()
+      condom_use <- sapply(1:length(condom_use_prob), function(x) rbinom(n = 1,size = 1, prob = condom_use_prob[[x]]))
+      condom_use[condom_use < 0] = 0
+      condom_use[condom_use > 1] = 1
+      dat$discord_coital_df$condom <- condom_use}
+  }  
+  # if(max_condom_use_prob< 0) max_condom_use_prob <- 0
+  
     if(dat$param$condom_prob_change == T) {
     dat$param$condom_prob <- ((dat$param$condom_prob_max * (at^dat$param$condom_prob_pow)) /
                              ((dat$param$condom_prob_inflect^dat$param$condom_prob_pow) + (at^dat$param$condom_prob_pow))) + 0.04

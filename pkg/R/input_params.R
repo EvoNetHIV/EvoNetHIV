@@ -307,13 +307,23 @@ input_params<-function(
     mean_test_interval_male  = 365,
     mean_test_interval_female = 442,
     mean_test_interval_under25 = 365,
+  # prep  
     no_past_partners_time_prep = 365, 
+    prep_eligibility_time = 182, # default 6 monts for PrEP eligibilty
     min_past_partners_prep = 1,
     min_current_partners_prep = 1, 
     min_pos_partner_duration = 50,
     prep_recent_test = 183,
     percent_eligible_on_prep = 1,
     start_prep_campaign = 5e5,
+    prep_risk_decrease = c(0.0,0.31,0.81,0.95), # decrease in risk of acquisition by adherance category, corresponding to 0,<2,2-3,4+ doses/week, after Jenness et al JID 2016
+    prep_adherance_prob = c(0.21,0.07,0.10,0.62), # proportion in each adherance category, corresponding to 0,<2,2-3,4+ doses/week, after Jenness et al JID 2016   
+    nonadherant_rc = F, #Agents nonadherant to PrEP have higher levels of risk compensation if true
+    nonadherant_rc_condom_prob = c(NA,NA,NA,NA), #Condom use per level of PrEP adherance, ordered least to most adherant
+    risk_group_prep_adherance_link = F, #Link risk group to PrEP adherance?
+    risk_group_prep_adherance_prob = c(0.21,0.07,0.10,0.62), #PrEP adherance in risk group: proportion in each adherance category, corresponding to 0,<2,2-3,4+ doses/week, after Jenness et al JID 2016
+    main_group_prep_adherance_prob = c(0.21,0.07,0.10,0.62), #PrEP adherance in main group: proportion in each adherance category, corresponding to 0,<2,2-3,4+ doses/week, after Jenness et al JID 2016
+
     prob_tx_droput          = 0,
     compact_el_divisor=1e5,
     ave_rel_dur_start = 5*365,
@@ -400,6 +410,7 @@ input_params<-function(
     act_redux_discl          = 0.0,    # MARDHAM
  #"social_condom_use"
     condom_prob              = 0.5,
+    condom_prob_sd           = 0.0373, # standard deviation for condom prob from MARDHAM simulation
     condom_prob_change       = F,      # set to true for condom_prob to be 0 initially, and increase as a hill function governed by below parameters
     condom_prob_max          = 0.5,   # parameter used in hill function if condom_prob_change == T
 	  condom_prob_inflect      = 365*12, # parameter used in hill function if condom_prob_change == T
@@ -410,6 +421,10 @@ input_params<-function(
     condom_use_rel_dur = FALSE,
     condom_use_age = FALSE,
     age_condom_use_halves = 50, # Only used when condom_use_age is true
+    individual_condom_prob   = F, #set to T for condom probability to be at the agent level, First added for PrEP work by SES 5/2019 
+    individual_condom_prob_compromise_method = "mean", #"max" "min" #method to determine comdom use based on 2 agents with individual level condom use in relationship     
+    individual_condom_prob_var = 0.5, #Agent level condom probability, First added for PrEP work by SES 5/2019 
+    individual_condom_prob_rc = 0.5, #Agent level condom prob when using PrEP and risk compensation is in effect, no risk compensation by default 
 #sti/circumcision probabilites for agents (used in "vital new additions" fxn)  
     circum_prob              = 0.85,
     sti_prob                 = 0.0, #used in "vital_new_additions"
@@ -432,6 +447,10 @@ input_params<-function(
     generic_nodal_att_values_props_births = NA, #how new values distributed with addtns to pop
     generic_nodal_att_no_categories = NA,   # how many generic att categories
     generic_nodal_att_trans_mat     = NA,    # matrix of per timestep transition probs, each row sums to one
+    generic_nodal_att_percent_eligible_on_prep = NA,
+    generic_nodal_att_mean_test_interval_male  = NA, #only added the parameters currently need
+    generic_nodal_att_prob_care = NA,
+    generic_nodal_att_mean_trtmnt_delay = NA,
 # ----------    CD4 data   ----------------------------------------------------  
    # Probabilities for initial CD4 value (based on SPVL)
    cd4_init_probs =  structure(list(cd4_500     = c(0.88, 0.87, 0.85, 0.78, 0.73, 0.71, 0.64, 0, 0),

@@ -155,7 +155,7 @@ summary_popsumm<-function(dat,at){
 
     #prep
     prop_on_prep <- length(which(alive_index & dat$pop$prep_list == 1))/total_alive
-
+    prop_eligible_prep <- length(which(alive_index & dat$pop$prep_eligible_list == 1))/total_alive
 
     #network statistics
     # some of these can't be computed if we are in edgelist mode
@@ -374,6 +374,7 @@ summary_popsumm<-function(dat,at){
   #prep
   if (dat$param$start_prep_campaign[1] < 5e5) {
     dat$popsumm$prop_on_prep[popsumm_index] <-prop_on_prep
+    dat$popsumm$prop_eligible_prep[popsumm_index] <-prop_eligible_prep
   }
 
   #--------------------------------------------
@@ -549,7 +550,69 @@ summary_popsumm<-function(dat,at){
        }else{mean_degree_group <- NA}
        dat$popsumm[[namevec]][popsumm_index]=mean_degree_group
     }
-    
+    for(zz in 1:length(temp_match)){
+      namevec <- paste("prevalence_attr_",temp_match[zz],sep="")
+      risk_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0)
+      tot_grp <- length(risk_group)
+      inf_grp <- which(dat$pop$Status == 1 & dat$pop$att1 == temp_match[zz])
+      if(tot_grp>1){
+        prev_group   <- length(inf_grp)/length(risk_group)
+      }else{prev_group <- NA}
+      dat$popsumm[[namevec]][popsumm_index]=prev_group
+    }
+    for(zz in 1:length(temp_match)){
+      namevec <- paste("new_infections_attr_",temp_match[zz],sep="")
+      risk_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0)
+      time_inf_group <- ((dat$pop$att1 == temp_match[zz]) * dat$pop$Time_Inf)
+      time_inf_group[time_inf_group == 0] <- NA
+      tot_grp <- length(risk_group)
+      if(tot_grp>1){
+        new_inf_group   <- length(which(is.element(time_inf_group, time_index)))
+      }else{new_inf_group <- NA}
+      dat$popsumm[[namevec]][popsumm_index]=new_inf_group
+    }
+    for(zz in 1:length(temp_match)){
+      namevec <- paste("susceptibles_attr_",temp_match[zz],sep="")
+      risk_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0)
+      susceptible <- which(dat$pop$Status == 0 & dat$pop$att1 == temp_match[zz])
+      tot_grp <- length(risk_group)
+      if(tot_grp>1){
+        sus_group   <- length(susceptible) 
+      }else{sus_group <- NA}
+      dat$popsumm[[namevec]][popsumm_index]=sus_group
+    }
+    for(zz in 1:length(temp_match)){
+      namevec <- paste("mean_spvl_incident_attr_",temp_match[zz],sep="")
+      risk_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0)
+      tot_grp <- length(risk_group)
+      time_inf_group <- ((dat$pop$att1 == temp_match[zz]) * dat$pop$Time_Inf)
+      time_inf_group[time_inf_group == 0] <- NA
+      new_group_infections <- is.element(time_inf_group, time_index)
+      if(tot_grp>1){
+        mean_spvl_inf_group <- mean(dat$pop$LogSetPoint[new_group_infections])
+      }else{mean_spvl_inf_group <- NA}
+      dat$popsumm[[namevec]][popsumm_index]=mean_spvl_inf_group
+    }
+    for(zz in 1:length(temp_match)){
+      namevec <- paste("prop_on_prep_attr_",temp_match[zz],sep="")
+      risk_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0)
+      tot_grp <- length(risk_group)
+      on_prep_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0 & dat$pop$prep_list == 1)
+      if(tot_grp>1){
+        prep_group <- length(on_prep_group)/length(risk_group)
+      }else{prep_group <- NA}
+      dat$popsumm[[namevec]][popsumm_index]=prep_group
+    }
+    for(zz in 1:length(temp_match)){
+      namevec <- paste("prop_eligible_prep_attr_",temp_match[zz],sep="")
+      risk_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0)
+      eligible_prep_group <- which(dat$pop$att1 == temp_match[zz] & dat$pop$Status >=0 & dat$pop$prep_eligible_list == 1)
+      tot_grp <- length(risk_group)
+      if(tot_grp>1){
+        prep_eligible_group <- length(eligible_prep_group)/length(risk_group)
+      }else{prep_group <- NA}
+      dat$popsumm[[namevec]][popsumm_index]=prep_eligible_group
+    }
   }
   # end of calculating summary stats for generic attributes    
   #################################################

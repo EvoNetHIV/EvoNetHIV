@@ -42,14 +42,29 @@ social_treatment_module_john_v3 <- function(dat, at)
   
   if(length(which(dat$pop$Status==1))==0){return(dat)}
   
+  if(is.logical(dat$param$generic_nodal_att_mean_trtmnt_delay)){
   eligible_agents_index <- which(dat$pop$Status == 1 & 
                                    dat$pop$treated == 0 &
                                    dat$pop$eligible_care == 1 & 
-                                   dat$pop$diag_status == 1) 
+                                   dat$pop$diag_status == 1 &
+                                  ((dat$pop$Time_Inf+dat$param$mean_trtmnt_delay)<=at)) 
   
   eligible_agents_index_including_treated <- which(dat$pop$Status == 1 & 
                                               dat$pop$eligible_care == 1 & 
-                                              dat$pop$diag_status == 1) 
+                                              dat$pop$diag_status == 1 &
+                                             ((dat$pop$Time_Inf+dat$param$mean_trtmnt_delay)<=at))}
+  
+  if(!is.logical(dat$param$generic_nodal_att_mean_trtmnt_delay)){
+    eligible_agents_index <- which(dat$pop$Status == 1 & 
+                                     dat$pop$treated == 0 &
+                                     dat$pop$eligible_care == 1 & 
+                                     dat$pop$diag_status == 1 &
+                                     ((dat$pop$Time_Inf+(dat$param$mean_trtmnt_delay*(dat$pop$att1==1)+dat$param$generic_nodal_att_mean_trtmnt_delay*(dat$pop$att1==2)))<=at)) 
+    
+    eligible_agents_index_including_treated <- which(dat$pop$Status == 1 & 
+                                                       dat$pop$eligible_care == 1 & 
+                                                       dat$pop$diag_status == 1 &
+                                    ((dat$pop$Time_Inf+(dat$param$mean_trtmnt_delay*(dat$pop$att1==1)+dat$param$generic_nodal_att_mean_trtmnt_delay*(dat$pop$att1==2)))<=at))}
   
   
   
@@ -57,6 +72,9 @@ social_treatment_module_john_v3 <- function(dat, at)
   
   no_on_tx <- length(which(dat$pop$treated==1 & dat$pop$Status==1))
   
+  #is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+  #if(is.wholenumber(at/365/10)==T){browser()}
+  #{browser()}
   #------------------------------------------------------------------------  
   # this section for treatment scenarios where there is limit to number treated (max_treated)  
   if (dat$param$tx_type %in% c("VL_high","all_men","VL_low","youngest","fifo","CD4_low","generic_attr","random",
