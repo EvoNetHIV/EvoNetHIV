@@ -58,6 +58,11 @@ vaccination <- function(dat, at) {
       dat$pop$vacc_init_time[vaccinated_index] <- at
     }
   } else {
+    
+    #if designated vacc. level reached (percent of pop vaccianted), don't vacc anymore
+    if(length(which(dat$pop$vaccinated == 1 ))/length(which(dat$pop$Status>=0)) > dat$param$max_perc_vaccinated){return(dat)}
+    
+    
     # Eligible_patients: eligible for care, not vaccinated, not infected
     eligible_index <- which(dat$pop$Status == 0 & 
                               (dat$pop$vaccinated == 0 | is.na(dat$pop$vaccinated)) &
