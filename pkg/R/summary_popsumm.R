@@ -114,7 +114,7 @@ summary_popsumm<-function(dat,at){
       length(which(inf_male_index & age_35plus))
 
     new_infections <- is.element(dat$pop$Time_Inf, time_index)
-    new_infections_count <- length(which(is.element(dat$pop$Time_Inf, time_index)))
+    new_infections_count <- length(which(new_infections))
     new_infections_virus_vacc_sens_count <- length(which(is.element(dat$pop$Time_Inf, time_index)&
                                                            dat$pop$virus_sens_vacc==1))
     new_infections_virus_vacc_notsens_count <- length(which(is.element(dat$pop$Time_Inf, time_index)&
@@ -130,17 +130,22 @@ summary_popsumm<-function(dat,at){
                                                        dat$pop$virus_3_plus_drug_muts==1))
 
 
-    donor_time_inf  <- ifelse(new_infections_count>0,
-                              dat$pop$Donors_Total_Time_Inf_At_Trans[new_infections],
-                              NA)
-    donor_acute_count <- ifelse(!is.na(donor_time_inf),
-                                length(which(donor_time_inf<=dat$param$t_acute)),
-                                NA)
+ if(new_infections_count>0){
+   
+  donor_time_inf <- dat$pop$Time_Inf[which(new_infections)]-dat$pop$Donors_Total_Time_Inf_At_Trans[which(new_infections)] 
+  donor_time_inf_index <- which(donor_time_inf <= dat$param$t_acute)
+  donor_acute_count <- length(donor_time_inf_index)  
+  if(donor_acute_count>0){
+    dat$popsumm$percent_donor_acute[popsumm_index]<- donor_acute_count/new_infections_count
+  }else{
+    dat$popsumm$percent_donor_acute[popsumm_index] <- 0
+  }
+  
+ }
+        
     new_births <- is.element(dat$pop$arrival_time, time_index)
     cd4_aids <- dat$pop$CD4 == 4
     new_diagnoses <- dat$pop$diag_status == 1 &  is.element(dat$pop$diag_time,time_index)
-    acute_phase_vec <- (at-dat$pop$Time_Inf)<dat$param$t_acute
-    acute_phase <- !is.na(acute_phase_vec) & acute_phase_vec==T
     percent_virus_sensitive <- round(100*(length(which(dat$pop$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
     percentVaccinated <- round(100*(length(which(dat$pop$vaccinated == 1 & alive_index))/total_alive))
 
@@ -271,7 +276,6 @@ summary_popsumm<-function(dat,at){
   dat$popsumm$natural_deaths_infecteds[popsumm_index]<-length(which(died_non_aids_inf))
   dat$popsumm$natural_deaths_susceptibles[popsumm_index]<-length(which(died_non_aids_sus ))
   dat$popsumm$new_diagnoses[popsumm_index]<-length(which(new_diagnoses))
-  dat$popsumm$percent_donor_acute[popsumm_index]<- donor_acute_count/length(which(new_infections))
   dat$popsumm$mean_time_donor_infected_incident[popsumm_index] <- mean(dat$pop$Donors_Total_Time_Inf_At_Trans[which(new_infections)])
   dat$popsumm$mean_age_incident[popsumm_index] <- mean(dat$pop$age[which(new_infections)])
   dat$popsumm$mean_age_died_AIDS[popsumm_index]<- mean(dat$pop$age[which(died_aids)])
