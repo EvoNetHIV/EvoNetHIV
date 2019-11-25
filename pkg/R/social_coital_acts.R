@@ -9,8 +9,7 @@
 #' dat <- social_coital_acts(dat,at)
 
 #' @export
-social_coital_acts <-function(dat,at)
-{
+social_coital_acts <-function(dat,at) {
   #######################################################
   #-- takes the data.frame,discord_edgelist_df, returned from social_discord_edgelist_df
   #-- and calculates the number of acts per partnership for timestep
@@ -57,8 +56,36 @@ social_coital_acts <-function(dat,at)
                     (1 - (mean_age_vec - 19) / 
                     (dat$param$max_age_sex - 19) ), 0 )
    mean_no_acts <- prob_sex* reduction_vec
-   
-   }else{
+   }
+  
+   if(dat$param$prob_sex_func){
+  
+    if(is.null(dat$param$coital_coef_base)) stop(
+      "Setting argument prob_sex_func=TRUE in EvonetHIV requires argument coital_coef_base to also be set.")
+    if(is.null(dat$param$coital_coef_age)) stop(
+      "Setting argument prob_sex_func=TRUE in EvonetHIV requires argument coital_coef_age to also be set.")
+    if(is.null(dat$param$coital_coef_dur)) stop(
+      "Setting argument prob_sex_func=TRUE in EvonetHIV requires argument coital_coef_dur to also be set.")
+    
+    recip_age_vec <- dat$pop$age[recipient_id]
+    inf_age_vec   <- dat$pop$age[infector_id]
+    #mean_age_vec  <- rowMeans(cbind(recip_age_vec,inf_age_vec))
+    harm_mean_age_vec  <- 2/(1/recip_age_vec + 1/inf_age_vec)
+    
+    base_logodds_sex <- #dat$param$coital_coef_age*(recip_age_vec-18) + 
+                        #dat$param$coital_coef_age*(inf_age_vec-18) + 
+                        #dat$param$coital_coef_age*(mean_age_vec-18) + 
+                        dat$param$coital_coef_age*(harm_mean_age_vec-18) + 
+                        0  # relational duration will go here.
+    
+    prob_sex <- dat$param$coital_coef_base + 
+                  dat$param$coital_coef_mult*(exp(base_logodds_sex)/(1+exp(base_logodds_sex)))
+    
+    mean_no_acts <- prob_sex* reduction_vec
+  
+  }  
+  
+  if(!dat$param$prob_sex_by_age & !dat$param$prob_sex_func){
      mean_no_acts <- dat$param$mean_sex_acts_day * reduction_vec
    }
    
