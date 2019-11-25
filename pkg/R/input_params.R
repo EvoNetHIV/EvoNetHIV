@@ -398,6 +398,13 @@ input_params<-function(
     mean_sex_acts_day        = 0.2,
     disclosure_prob          = 0.9,    # PUMA - seems high and may want to revisit; also should perhaps impact condom use rather than coital freq (as per Mardham)
     act_redux_discl          = 0.0,    # MARDHAM
+
+    prob_sex_func            = FALSE, # first added by Steve Goodreau 10/2019 to allow for more complex functions
+    coital_coef_base         = 0.0,  # used when prob_sex_func=T. Asymptote for daily coital prob. (as dayds get older)e.g. for two older folks in a long relationship)  
+    coital_coef_mult         = 1.0,   # used when prob_sex_func=T. Multiplier to allow for aribtrary coital freq. at start (ie for two 18-year olds just starting relationship)
+    coital_coef_age          = 0.0,   # used when prob_sex_func=T. Change in log odds with each year increase of age for each partner
+    coital_coef_dur          = 0.0,   # used when prob_sex_func=T. Change in log odds with each year increase in relational duration.  NOT YET IMPLEMENTED. 
+
  #"social_condom_use"
     condom_prob              = 0.5,
     condom_prob_change       = F,      # set to true for condom_prob to be 0 initially, and increase as a hill function governed by below parameters
