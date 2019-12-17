@@ -201,7 +201,7 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   dat$pop$vacc_eff[recipient] <- dat$pop$vacc_eff[infector]
     dat$pop$Donors_age[recipient] <- dat$pop$age[infector]
   dat$pop$age_infection[recipient] <- dat$pop$age[recipient]
-  dat$pop$vacc_status_at_inf[recipient] <- dat$pop$Status[recipient]
+  dat$pop$vacc_status_at_inf[recipient] <- dat$pop$vaccinated[recipient]
   
   #############################################
   
