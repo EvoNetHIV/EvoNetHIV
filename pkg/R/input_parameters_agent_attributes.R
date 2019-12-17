@@ -67,7 +67,7 @@ input_parameters_agent_attributes <-function(){
     "time_init_2nd_line",
 
 # -- therapeutic vaccine --- #    
-   "LogSetPoint_genotype", 
+   "LogSetPoint_genotype",             "vacc_status_at_inf",
    
 #--  Vital dynamics /social/treatment ------------------------------ #
     "individual_condom_prob",          "susceptibility",
