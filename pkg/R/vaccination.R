@@ -64,9 +64,26 @@ vaccination <- function(dat, at) {
     
     
     # Eligible_patients: eligible for care, not vaccinated, not infected
-    eligible_index <- which(dat$pop$Status == 0 & 
-                              (dat$pop$vaccinated == 0 | is.na(dat$pop$vaccinated)) &
+    #note:dat$pop$vaccinated == 0 is an agent whose vaccine effect ended (waned)
+
+    
+    #never been vaccinated
+    eligible_index1 <- which(dat$pop$Status == 0 & 
+                              is.na(dat$pop$vaccinated) &
                               dat$pop$eligible_care == 1) 
+    
+    #previously vaccinated
+    eligible_index2 <- which(dat$pop$Status == 0 & 
+                             dat$pop$vaccinated == 0 &
+                             (at-dat$pop$vacc_init_time) > dat$param$vacc_eff_duration &
+                              dat$pop$eligible_care == 1) 
+    
+    eligible_index <- c(eligible_index1,eligible_index2)
+    
+    
+    if(any(dat$pop$vaccinated[eligible_index]==0)){
+      
+    }
     
     if(length(eligible_index) == 0) {return(dat)}  #if no agents are eligible
     
