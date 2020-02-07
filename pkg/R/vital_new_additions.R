@@ -37,8 +37,7 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   #Assume new entrants (births) and immigrants aren't treated.
   input_list$treated[index] <-  rep(0,total_new)  
   input_list$treated_2nd_line[index] <- rep(0,total_new)
-  input_list$vaccinated[index] <- rep(0, total_new)
-   
+
   #Assume new entrants (births) and immigrants don't have any drug in their system (follows from not being treated)
   input_list$Drug1[index] <- rep(0,total_new)
   input_list$Drug2[index] <- rep(0,total_new)

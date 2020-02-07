@@ -2,6 +2,9 @@ vaccination <- function(dat, at) {
   
   if(at < dat$param$start_vacc_campaign[1]) {return(dat)}
   
+  #temp qaqc
+  #if(at==dat$param$start_vacc_campaign[1]){browser()}
+  
   # off/on for preventive vaccine
   if(at > dat$param$start_vacc_campaign[1] &  dat$param$preventative_campaign == T) {
     vacc_ix <- which(dat$pop$vaccinated == 1)
@@ -60,7 +63,7 @@ vaccination <- function(dat, at) {
   } else {
     
     #if designated vacc. level reached (percent of pop vaccianted), don't vacc anymore
-    if(length(which(dat$pop$vaccinated == 1 ))/length(which(dat$pop$Status>=0)) > dat$param$max_perc_vaccinated){return(dat)}
+    if(length(which(dat$pop$vaccinated == 1 & dat$pop$Status>=0 ))/length(which(dat$pop$Status>=0)) > dat$param$max_perc_vaccinated){return(dat)}
     
     
     # Eligible_patients: eligible for care, not vaccinated, not infected
@@ -81,9 +84,6 @@ vaccination <- function(dat, at) {
     eligible_index <- c(eligible_index1,eligible_index2)
     
     
-    if(any(dat$pop$vaccinated[eligible_index]==0)){
-      
-    }
     
     if(length(eligible_index) == 0) {return(dat)}  #if no agents are eligible
     
