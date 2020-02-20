@@ -1,3 +1,5 @@
+#### Note: For summary of this vaccination branch, see notes directory
+
 # EvoNetHIV  
 
 This is the current development version of EvoNetHIV, an R package for modeling HIV epidemics and viral evolution in sexual networks. 
