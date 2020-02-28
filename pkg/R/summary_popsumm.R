@@ -141,6 +141,8 @@ summary_popsumm<-function(dat,at){
     dat$popsumm$percent_donor_acute[popsumm_index] <- 0
   }
   
+ }else{
+   dat$popsumm$percent_donor_acute[popsumm_index] <- NA
  }
         
     new_births <- is.element(dat$pop$arrival_time, time_index)
