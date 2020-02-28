@@ -1,3 +1,4 @@
+#' @export
 vaccination <- function(dat, at) {
   
   if(at < dat$param$start_vacc_campaign[1]) {return(dat)}
