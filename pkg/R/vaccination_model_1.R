@@ -4,7 +4,7 @@ update_mu.model_1 <- function(dat,at){
   if(at==2){
     #initial infecteds at model start
     inf_index <- which(dat$pop$Status==1)
-    mu_values <- rbinom(length(inf_index), 1, prob=dat$param$perc_virus_vaccine_sens)
+    mu_values <- dat$pop$virus_sens_vacc[inf_index]
     invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- mu_values[x]))
     
   }else{
