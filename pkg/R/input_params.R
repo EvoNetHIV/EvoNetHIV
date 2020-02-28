@@ -400,6 +400,9 @@ input_params<-function(
     spvl_decrement_vaccine    = 1.0,
     vacc_multi_eff           = F, # flag for vaccine model with distribution of vaccine efficacies
     vacc_multi_fxn = "function(xx,...){runif(xx)}", #function to determine values of vaccine efficacies for "vacc_mulit_eff" models, default is random 
+#vaccination, midas
+    perc_vaccinated_rate     = 0.99, # same (replacement) "perc_vaccinated", proportion of agents become vacc./day 
+    vacc_trans_prob_decrease = 0.8,  # proportion decrease in trans probs due to vaccine (midas model)
 #coital acts module
   #social_coital-acts
     prob_sex_by_age          = FALSE,
