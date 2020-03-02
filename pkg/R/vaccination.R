@@ -8,7 +8,7 @@ vaccination <- function(dat, at) {
   
   # off/on for preventive vaccine
   if(at > dat$param$start_vacc_campaign[1] &  dat$param$preventative_campaign == T) {
-    vacc_ix <- which(dat$pop$vaccinated == 1)
+    vacc_ix <- which(dat$pop$vaccinated == 1 & dat$pop$Status == 0)
     dat$pop$vaccinated[vacc_ix] <- rbinom(length(vacc_ix), 1, 1 - (1/dat$param$vacc_eff_duration))
   }
   
@@ -63,6 +63,7 @@ vaccination <- function(dat, at) {
     }
   } else {
     
+    #if(at==1460){browser()}
     #if designated vacc. level reached (percent of pop vaccianted), don't vacc anymore
     if(length(which(dat$pop$vaccinated == 1 & dat$pop$Status>=0 ))/length(which(dat$pop$Status>=0)) > dat$param$max_perc_vaccinated){return(dat)}
     
@@ -103,6 +104,15 @@ vaccination <- function(dat, at) {
     dat$pop$vacc_init_time[vaccinated_index] <- at
     
   }
+  
+  if(F){
+    #at==1469
+    print(at)
+    print(vaccinated_index)
+    print(length(eligible_index))
+    print(no_vaccinated)      
+    browser()
+    }
   
   return(dat)
 }

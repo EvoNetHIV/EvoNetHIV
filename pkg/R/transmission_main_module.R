@@ -94,12 +94,16 @@ transmission_main_module <- function(dat,at)
   #set vaccine effect to zero for all agents, but then fill in if necessary
   vacc_sens_sus <- rep(0,nrow(dat$discord_coital_df))
   
+  #note for vaccination branch, these steps were moved down to right after
+  #calcuation of "trans_probs" and adjusted a bit to make the original vaccine branch
+  #similar to the new midas format - jtm 3/1/2020
+  
   #if sus is vaccinated and infected with sensitive virus
-  if(at >=  dat$param$start_vacc_campaign[1] & dat$param$preventative_campaign==T){
-       vacc_ix <- which(dat$pop$vaccinated[sus_id]==1 & 
-                   dat$pop$virus_sens_vacc[inf_id]==1)
-      if(length(vacc_ix)>0){vacc_sens_sus[vacc_ix] <- 1}  
-  }
+  #if(at >=  dat$param$start_vacc_campaign[1] & dat$param$preventative_campaign==T){
+   #    vacc_ix <- which(dat$pop$vaccinated[sus_id]==1 & 
+  #                 dat$pop$virus_sens_vacc[inf_id]==1)
+  #    if(length(vacc_ix)>0){vacc_sens_sus[vacc_ix] <- 1}  
+  #}
   
   
   #------end of preventative vaccine--------------------
@@ -157,6 +161,37 @@ transmission_main_module <- function(dat,at)
                                                hetero_sus_male_ai, hetero_sus_male_circum_status,
                                                logV_inf, vacc_sens_sus, susceptibility)
   }
+  ########################################
+  if(at >=  dat$param$start_vacc_campaign[1] & dat$param$preventative_campaign==T){
+    vacc_ix <- which(dat$pop$vaccinated[sus_id]==1 & 
+                       dat$pop$virus_sens_vacc[inf_id]==1)
+    if(length(vacc_ix)>0){
+      trans_probs[vacc_ix] <- trans_probs[vacc_ix]*(1-dat$param$vacc_trans_prob_decrease)
+    }  
+  }
+  #############################################
+ #midas vaccine
+  if(at>  dat$param$start_vacc_campaign[1] & !is.logical(dat$param$vacc_model_id)){
+    
+    
+    
+    #this assignment must occur before draw_m call  
+    dat$infector_id <-   inf_id 
+    dat$susceptible_id <- sus_id
+    
+    #draw m, then calculate theta based on user-specified vaccine model 
+    m <- draw_m(dat)
+    #m <- do.call(eval(parse(text=dat$param$draw_m)),list(dat))
+    
+    theta <- calculate_theta(dat,m)
+    #theta <- do.call(eval(parse(text=dat$param$calculate_theta)),list(dat,m))
+    
+    #adjust raw transmission probabilities
+    trans_probs <- trans_probs*(1-theta)    
+  }
+  ###################################
+  
+  
   ###################################
   # multi-efficacy dynamics
   #multi efficacy model
@@ -199,7 +234,7 @@ transmission_main_module <- function(dat,at)
   if(length(index)>0){
     dat$discord_coital_df$infection[index] <- 1
   }
-  
+  #if(at==1460){browser()}
   return(dat)
   
 }

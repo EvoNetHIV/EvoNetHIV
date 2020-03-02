@@ -32,8 +32,8 @@ initialize_and_update_phi<-function(dat,at){
   if(at<dat$param$start_vacc_campaign[1]){return(dat)}
   if(!is.element(at,dat$param$start_vacc_campaign)){return(dat)}
   
-  dat <- initialize_phi(dat,at)
   dat <- update_phi(dat,at)
+  dat <- initialize_phi(dat,at)
   return(dat)
 }
 

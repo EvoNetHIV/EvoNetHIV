@@ -9,7 +9,7 @@ update_mu.model_1 <- function(dat,at){
     
   }else{
     #secondary infections from previous timestep
-    inf_index <- which(dat$pop$Time_Inf ==(at-1))
+    inf_index <- which(dat$pop$Time_Inf ==(at-1) & dat$pop$Status==1)
     if(length(inf_index)>0){
       donor_index <- dat$pop$Donors_Index[inf_index]
      tmp1=try( mu_values <- as.numeric(lapply(donor_index,function(x) dat$vacc_model$agents[[x]]$mu)))
@@ -32,7 +32,7 @@ update_sigma.model_1 <- function(dat,at){
     
   }else{
     #secondary infections from previous timestep
-    inf_index <- which(dat$pop$Time_Inf ==(at-1))
+    inf_index <- which(dat$pop$Time_Inf ==(at-1) )
     if(length(inf_index)>0){
       sigma_values <- 0
       invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$sigma <<- sigma_values))
@@ -47,6 +47,8 @@ initialize_phi.model_1 <- function(dat,at){
   #current phi values
    index <- 1:length(dat$vacc_model$agents)
    phi_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$phi))
+   
+   #if(at==1461){browser()}
    
   #if designated vacc. level already reached (percent of pop vaccianted), don't vacc anymore
   if(length(which(phi_values == 1 & dat$pop$Status>=0))/length(which(dat$pop$Status>=0)) > dat$param$max_perc_vaccinated){return(dat)}
@@ -86,6 +88,15 @@ initialize_phi.model_1 <- function(dat,at){
   invisible(lapply(1:length(vaccinated_index),function(x) dat$vacc_model$agents[[vaccinated_index[x]]]$phi <<- 1 ))
   dat$pop$vacc_init_time[vaccinated_index] <- at
   
+  
+  if(at==1469){
+    #at==1098
+    print(at)
+    print(vaccinated_index)
+    print(length(eligible_index))
+    print(no_vaccinated)      
+    browser()
+  }
   return(dat)
   
 }
@@ -96,7 +107,7 @@ update_phi.model_1 <- function(dat,at){
   if(at > dat$param$start_vacc_campaign[1] ) {
     index <- 1:length(dat$vacc_model$agents)
     phi_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$phi))
-    vacc_index <- which(phi_values == 1)
+    vacc_index <- which(phi_values == 1 & dat$pop$Status == 0)
     if(length(vacc_index)>0){
       new_values <-  rbinom(length(vacc_index), 1, 1 - (1/dat$param$vacc_eff_duration))
       invisible(lapply(1:length(vacc_index),function(x) dat$vacc_model$agents[[vacc_index[x]]]$phi <<- new_values[x]))
