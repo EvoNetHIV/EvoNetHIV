@@ -404,6 +404,13 @@ input_params<-function(
     vacc_model_id            = NA,
     perc_vaccinated_rate     = 0.99, # same (replacement) "perc_vaccinated", proportion of agents become vacc./day 
     vacc_trans_prob_decrease = 0.8,  # proportion decrease in trans probs due to vaccine (midas model)
+    mu_daily_mutate_rate1    = 0,  #daily probability of mu=1 -> mu=0 (model 1b)
+    mu_daily_mutate_rate0    = 0,  #daily probability of mu=0 -> mu=1 (model 1b)
+    prob_loci_1               = 0.5, #probability of mu=1 (loci 1) for initially infected agent (model 2) 
+    prob_loci_2               = 0.5,#probability of mu=1 (loci 2) for initially infected agent (model 2)
+    trans_prob_decrease_scalar_model2 = 0.5, #proportional decrease in transmission for infected agents with
+                                             # 0/1 or 1/0 mu values relative to mu=1/1 at each loci which
+                                             #is equal to param. "trans_prob_decrease_scalar_model2"
 #coital acts module
   #social_coital-acts
     prob_sex_by_age          = FALSE,

@@ -1,27 +1,28 @@
 
 
-update_mu.model_1 <- function(dat,at){
+update_mu.model_2 <- function(dat,at){
   if(at==2){
     #initial infecteds at model start
     inf_index <- which(dat$pop$Status==1)
-    mu_values <- dat$pop$virus_sens_vacc[inf_index]
-    invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- mu_values[x]))
+    total_infected<- length(inf_index)
+    mu1 <- rbinom(total_infected,1,dat$param$prob_loci_1)
+    mu2 <- rbinom(total_infected,1,dat$param$prob_loci_2)
+    invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- c(mu1[x],mu2[x])))
     
   }else{
     #secondary infections from previous timestep
     inf_index <- which(dat$pop$Time_Inf ==(at-1) & dat$pop$Status==1)
     if(length(inf_index)>0){
       donor_index <- dat$pop$Donors_Index[inf_index]
-      mu_values <- as.numeric(lapply(donor_index,function(x) dat$vacc_model$agents[[x]]$mu))
-      invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- mu_values[x]))
-    
+      mu_values <- lapply(donor_index,function(x) dat$vacc_model$agents[[x]]$mu)
+         invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- mu_values[[x]]))
     }
   }
   return( dat$vacc_model$agents )
 }
 
 #' @export
-update_sigma.model_1 <- function(dat,at){
+update_sigma.model_2 <- function(dat,at){
   if(at==2){
     #initial infecteds at model start
     inf_index <- which(dat$pop$Status==1)
@@ -40,7 +41,7 @@ update_sigma.model_1 <- function(dat,at){
 }
 
 #' @export
-initialize_phi.model_1 <- function(dat,at){
+initialize_phi.model_2 <- function(dat,at){
   
   #current phi values
    index <- 1:length(dat$vacc_model$agents)
@@ -85,12 +86,12 @@ initialize_phi.model_1 <- function(dat,at){
   invisible(lapply(1:length(vaccinated_index),function(x) dat$vacc_model$agents[[vaccinated_index[x]]]$phi <<- 1 ))
   dat$pop$vacc_init_time[vaccinated_index] <- at
   
-    return(dat)
+  return(dat)
   
 }
 
 #' @export
-update_phi.model_1 <- function(dat,at){
+update_phi.model_2 <- function(dat,at){
   # off/on for already vaccinated
   if(at > dat$param$start_vacc_campaign[1] ) {
     index <- 1:length(dat$vacc_model$agents)
@@ -105,24 +106,25 @@ update_phi.model_1 <- function(dat,at){
 }
 
 #' @export
-draw_m.model_1 <- function(dat,at,...){
+draw_m.model_2 <- function(dat,at,...){
   index <- dat$infector_id
-  mu_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$mu))
-  return(mu_values)
+  mu_values <- lapply(index,function(x) dat$vacc_model$agents[[x]]$mu)
+  sum_mu <- rowSums(do.call(rbind,mu_values))
+  return(sum_mu)
 }
 
 
 #' @export
-calculate_theta.model_1 <- function(dat,m){
+calculate_theta.model_2 <- function(dat,m){
 
   theta <- rep(0,length(dat$susceptible_id))
   #of susceptibles, which are vaccinated
   phi_values <- as.numeric(lapply(dat$susceptible_id,function(x) dat$vacc_model$agents[[x]]$phi))
   index <- which(phi_values==1 & m==1)
-  if(length(index)>0){
-    #theta[index]  <- phi_values[index]*m[index]*dat$param$vacc_trans_prob_decrease
-    theta[index]  <- dat$param$vacc_trans_prob_decrease
-  }
+  mu_vector <- rep(1,length(dat$susceptible_id) )
+  mu_vector[which(m==0 )] <- 0
+  mu_vector[which(m==1)] <- dat$param$trans_prob_decrease_scalar_model2
+    theta  <- phi_values*mu_vector*dat$param$vacc_trans_prob_decrease
   return(theta)
 }
 
