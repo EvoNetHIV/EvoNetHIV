@@ -89,8 +89,7 @@ transmission_main_module <- function(dat,at)
   #on prep
   
   #--------- preventative vaccine dynamics -----------------
-   #note: multi-efficacy-dynanmics are after calculation of transmission probs ~ line
-  
+
   #set vaccine effect to zero for all agents, but then fill in if necessary
   vacc_sens_sus <- rep(0,nrow(dat$discord_coital_df))
   

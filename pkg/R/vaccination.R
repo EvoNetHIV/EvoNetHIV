@@ -53,7 +53,7 @@ vaccination <- function(dat, at) {
       
       if(length(eligible_index) == 0) {next}
       
-      no_vaccinated <- sum(rbinom(length(eligible_index), 1, dat$param$perc_vaccinated[i])) #denominator is eligible people
+      no_vaccinated <- sum(rbinom(length(eligible_index), 1, dat$param$perc_vaccinated_rate[i])) #denominator is eligible people
       if(no_vaccinated == 0) {next}
       
       vaccinated_index <- sample(eligible_index, no_vaccinated)
@@ -89,7 +89,7 @@ vaccination <- function(dat, at) {
     
     if(length(eligible_index) == 0) {return(dat)}  #if no agents are eligible
     
-    no_vaccinated <- sum(rbinom(length(which(dat$pop$Status>=0)), 1, dat$param$perc_vaccinated)) #denominator is total population alive 
+    no_vaccinated <- sum(rbinom(length(which(dat$pop$Status>=0)), 1, dat$param$perc_vaccinated_rate)) #denominator is total population alive 
     if(no_vaccinated == 0) {return(dat)}
     
     
