@@ -45,7 +45,7 @@ initialize_vaccine_agents <- function(dat,at){
   #at=2 is first time step after model setup/initialization
   if(at==2){
     #create agent object (list of lists attached to dat)
-    agent_list <- list(phi=NA,mu=NA,sigma=NA)
+    agent_list <- list(phi=NA,mu=NA,mu_orig=NA,sigma=NA)
     no_current_agents <- length(dat$pop$Status)
     dat$vacc_model$agents <- vector('list',length=no_current_agents)
     #add class 'dat$param$vacc_model' to ojects to trigger appropriate model fxn method

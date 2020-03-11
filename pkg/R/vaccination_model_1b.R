@@ -4,46 +4,36 @@ update_mu.model_1b <- function(dat,at){
   if(at==2){
     #initial infecteds at model start
     inf_index <- which(dat$pop$Status==1)
-    mu_values <- dat$pop$virus_sens_vacc[inf_index]
+    mu_values <- runif(length(inf_index),dat$param$vacc_model_min_mu,dat$param$vacc_model_max_mu)
     #note 0 value indicates hasn't changed/mutated (2nd mu value)
-    invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- c(mu_values[x],0)))
+    invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<-mu_values[x] ))
+    invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu_orig <<-mu_values[x] ))
+    
     
   }else{
-    #Check to see if "mu" values change, then update if necessary
-    #note: first value of "mu" is "mark" and 2nd value is whether it has already mutated (0=no,1=yes)
-    #so for example, if agent 1 is infected but mu hasn't changed, dat$vacc_agents[[1]]$mu == c(1,0)
-    inf_index <- which(dat$pop$Status==1)
-    mu_values <- as.numeric(lapply(inf_index,function(x) dat$vacc_model$agents[[x]]$mu[1]))
-    mutate_values <- as.numeric(lapply(inf_index,function(x) dat$vacc_model$agents[[x]]$mu[2]))
-    non_mutate_index1 <- which(mutate_values==0 & mu_values==1)
-    non_mutate_index2 <- which(mutate_values==0 & mu_values==0)
-    #see if any mu values go from 1 ->0
-    if(length(non_mutate_index1)>0){
-      new_values <- rbinom(length(non_mutate_index1),1,1-dat$param$mu_daily_mutate_rate1)
-      change_index1 <- which(new_values==0)
-      if(length(change_index1)>0){
-        final_index1 <- inf_index[non_mutate_index1[change_index1]]
-        invisible(lapply(1:length(final_index1),function(x) dat$vacc_model$agents[[final_index1[x]]]$mu <<- c(0,1)))
-      }
-    }
-    #see if any mu values go from 0 -> 1
-    if(length(non_mutate_index2)>0){
-      new_values2 <- rbinom(length(non_mutate_index2),1,dat$param$mu_daily_mutate_rate0)
-      change_index2 <- which(new_values2==1)
-      if(length(change_index2)>0){
-        final_index2 <- inf_index[non_mutate_index2[change_index2]]
-        invisible(lapply(1:length(final_index2),function(x) dat$vacc_model$agents[[final_index2[x]]]$mu <<- c(1,1)))
-      }
-    }
-    
     #update mu values from NA for agents just infected in previous timestep
     #secondary infections from previous timestep
     inf_index <- which(dat$pop$Time_Inf ==(at-1) & dat$pop$Status==1)
     if(length(inf_index)>0){
       donor_index <- dat$pop$Donors_Index[inf_index]
-      mu_values <- as.numeric(lapply(donor_index,function(x) dat$vacc_model$agents[[x]]$mu[1]))
-      invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- c(mu_values[x],0)))
+      mu_values <- as.numeric(lapply(donor_index,function(x) dat$vacc_model$agents[[x]]$mu))
+      invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- mu_values[x] ))
+      invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu_orig <<- mu_values[x] ))
+      
     }
+
+    mu_index <- which(dat$pop$Status==1)
+    inf_time <- dat$pop$Time_Inf[mu_index]
+    inf_time[which(inf_time<0)] <- 0 #for initially infected agents, their inf. time can be set a couple 
+                                    #years prior to the start of the model
+    mu_values_orig <- as.numeric(lapply(mu_index,function(x) dat$vacc_model$agents[[x]]$mu_orig))
+    mu_values_current <- as.numeric(lapply(mu_index,function(x) dat$vacc_model$agents[[x]]$mu))
+    
+    mu_change_values <- (dat$param$mu_mean - mu_values_orig)/dat$param$vacc_time_to_mu_mean
+    new_mu_values <- mu_values_current+mu_change_values
+    new_mu_values[which((at-inf_time)>dat$param$vacc_time_to_mu_mean)] <- dat$param$mu_mean
+    invisible(lapply(1:length(mu_index),function(x) dat$vacc_model$agents[[mu_index[x]]]$mu <<- new_mu_values[x] ))
+    
   }
   return( dat$vacc_model$agents )
 }
@@ -64,6 +54,7 @@ update_sigma.model_1b <- function(dat,at){
       invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$sigma <<- sigma_values))
     }
   }
+  
   return( dat$vacc_model$agents )
 }
 
@@ -137,14 +128,17 @@ update_phi.model_1b <- function(dat,at){
 #' @export
 draw_m.model_1b <- function(dat,at,...){
   index <- dat$infector_id
-  mu_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$mu[1]))
-  return(mu_values)
+  mu_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$mu))
+  m <- rbinom(length(index),1,prob=mu_values)
+  return(m)
 }
 
 
 #' @export
-calculate_theta.model_1b <- function(dat,m){
 
+#' @export
+calculate_theta.model_1b <- function(dat,m){
+#note, same as "model_1"  
   theta <- rep(0,length(dat$susceptible_id))
   #of susceptibles, which are vaccinated
   phi_values <- as.numeric(lapply(dat$susceptible_id,function(x) dat$vacc_model$agents[[x]]$phi))
@@ -155,4 +149,3 @@ calculate_theta.model_1b <- function(dat,m){
   }
   return(theta)
 }
-
