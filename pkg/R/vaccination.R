@@ -87,7 +87,28 @@ vaccination <- function(dat, at) {
     
     if(length(eligible_index) == 0) {return(dat)}  #if no agents are eligible
     
-    no_vaccinated <- sum(rbinom(length(which(dat$pop$Status>=0)), 1, dat$param$perc_vaccinated)) #denominator is total population alive 
+    #default  
+    #no_vaccinated <- sum(rbinom(length(which(dat$pop$Status>=0)), 1, dat$param$perc_vaccinated)) #denominator is total population alive 
+    #test 3/27/20
+    #no_vaccinated <- rbinom(1,length(which(dat$pop$Status>=0)), dat$param$perc_vaccinated) #denominator is total population alive 
+    #no_vaccinated <- sum(rbinom(length(which(dat$pop$Status==0)), 1, dat$param$perc_vaccinated)) #denominator is total population alive 
+    
+    #test 3/27/20
+    #if(at==1828){browser()}
+    
+    if(dat$param$vacc_per_day<1){
+       vacc_scalar <- round(1/dat$param$vacc_per_day)
+       if((at%%vacc_scalar)==0){
+         no_vaccinated <- 1
+       }else{no_vaccinated <- 0}
+    }else{
+      if((at%%2)==0){
+        no_vaccinated <- floor(dat$param$vacc_per_day) 
+      }else{
+        no_vaccinated <- ceiling(dat$param$vacc_per_day) 
+      }
+    }
+    
     if(no_vaccinated == 0) {return(dat)}
     
     
