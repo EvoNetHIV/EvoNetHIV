@@ -390,8 +390,8 @@ input_params<-function(
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.99,
     max_perc_vaccinated  =       1.0, #maximum proportion of alive pop to vaccinate
-    vacc_per_day             = 0, #alternative parameterization for how many agents will be vaccinated per day
-                                   #  = (max_perc_vaccinated*initial_pop)/(years_to_max_coverage*365)
+    vacc_per_day             = 0,  #used internally to calibrate vaccination rollout (vaccination.R file)
+    vacc_rollout_dur           =1*365, #desired time (in days) to reach "max_perc_vaccinated"
     target_vacc_att          = FALSE,
     vacc_eff_duration        =  365*3,
     risk_comp_cond           = F,    # Set to T to induce reduction in condom use among vaccinated susceptibles and vaccinated, infected, undiagnosed individuals.

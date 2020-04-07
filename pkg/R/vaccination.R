@@ -1,7 +1,6 @@
 vaccination <- function(dat, at) {
   
   if(at < dat$param$start_vacc_campaign[1]) {return(dat)}
-  
   #temp qaqc
   #if(at==dat$param$start_vacc_campaign[1]){browser()}
   
@@ -20,17 +19,19 @@ vaccination <- function(dat, at) {
   #off/on for disease-modifying (therapeutic) vaccine
   #differs from others by resetting spvl/vl
   if(at > dat$param$start_vacc_campaign[1] &  dat$param$vacc_therapeutic_campaign==T) {
-    vacc_ix <- which(dat$pop$vaccinated == 1)
-    vacc_on_off_ix <- rbinom(length(vacc_ix), 1, 1 - (1/dat$param$vacc_eff_duration))
-    dat$pop$vaccinated[vacc_ix] <- vacc_on_off_ix
-    vacc_off_ix <- which(vacc_on_off_ix==0)
+    vacc_off_ix <- which(dat$pop$vaccinated == 1 & 
+                        ((at - dat$pop$vacc_init_time)> dat$param$vacc_eff_duration ))
+    
     
     #if any agents go off vaccine, revert to "genotypic" spvl (and for VL)
     if(length(vacc_off_ix)>0){
+      
+      #reset vaccination status
+      dat$pop$vaccinated[vacc_off_ix] <- 0
+      
       #resetting spvl and vl
-      vacc_inf_terminate_ix <- vacc_ix[vacc_off_ix]
-      dat$pop$LogSetPoint[vacc_inf_terminate_ix] <- dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix]
-      dat$pop$SetPoint[vacc_inf_terminate_ix] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_inf_terminate_ix])
+      dat$pop$LogSetPoint[vacc_off_ix] <- dat$pop$LogSetPoint_genotype[vacc_off_ix]
+      dat$pop$SetPoint[vacc_off_ix] <- "^"(10.0,dat$pop$LogSetPoint_genotype[vacc_off_ix])
       
       #temp qaqc check
       #if(any(is.na(dat$pop$LogSetPoint_genotype[vacc_terminate_ix]))){browser()}
@@ -63,8 +64,30 @@ vaccination <- function(dat, at) {
   } else {
     
     #if designated vacc. level reached (percent of pop vaccianted), don't vacc anymore
-    if(length(which(dat$pop$vaccinated == 1 & dat$pop$Status>=0 ))/length(which(dat$pop$Status>=0)) > dat$param$max_perc_vaccinated){return(dat)}
+    proportion_vacc <- length(which(dat$pop$vaccinated == 1 & dat$pop$Status>=0 ))/length(which(dat$pop$Status>=0))
+                                                                       
+    if(proportion_vacc > dat$param$max_perc_vaccinated){return(dat)}
     
+    #dat$param$vacc_per_day <- dat$param$vacc_per_day+((dat$param$max_perc_vaccinated)*length(which(dat$pop$Status>=0)) )/(5*365)
+     vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(5*365)
+    
+     time_index <- (dat$param$start_vacc_campaign[1]+dat$param$vacc_rollout_dur) - at
+     if(time_index>0){
+       vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(time_index)
+       
+     }else{
+        target <- dat$param$max_perc_vaccinated- proportion_vacc
+        vacc_rate <- target*length(which( dat$pop$Status>=0 ))
+     }
+     
+    dat$param$vacc_per_day <- dat$param$vacc_per_day+vacc_rate
+    
+    if(dat$param$vacc_per_day>=1){
+      no_vaccinated <- round(dat$param$vacc_per_day)
+      dat$param$vacc_per_day <- 0
+    }else{
+      return(dat)
+      }
     
     # Eligible_patients: eligible for care, not vaccinated, not infected
     #note:dat$pop$vaccinated == 0 is an agent whose vaccine effect ended (waned)
@@ -96,18 +119,18 @@ vaccination <- function(dat, at) {
     #test 3/27/20
     #if(at==1828){browser()}
     
-    if(dat$param$vacc_per_day<1){
-       vacc_scalar <- round(1/dat$param$vacc_per_day)
-       if((at%%vacc_scalar)==0){
-         no_vaccinated <- 1
-       }else{no_vaccinated <- 0}
-    }else{
-      if((at%%2)==0){
-        no_vaccinated <- floor(dat$param$vacc_per_day) 
-      }else{
-        no_vaccinated <- ceiling(dat$param$vacc_per_day) 
-      }
-    }
+    # if(dat$param$vacc_per_day<1){
+    #    vacc_scalar <- round(1/dat$param$vacc_per_day)
+    #    if((at%%vacc_scalar)==0){
+    #      no_vaccinated <- 1
+    #    }else{no_vaccinated <- 0}
+    # }else{
+    #   if((at%%2)==0){
+    #     no_vaccinated <- floor(dat$param$vacc_per_day) 
+    #   }else{
+    #     no_vaccinated <- ceiling(dat$param$vacc_per_day) 
+    #   }
+    # }
     
     if(no_vaccinated == 0) {return(dat)}
     

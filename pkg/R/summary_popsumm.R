@@ -425,6 +425,19 @@ summary_popsumm<-function(dat,at){
     dat$popsumm$mean_ispvl_intrinsic_all[popsumm_index]<-mean(ispvl_all) #mean of all spvls of agents infected during this time window, provides mean incident SPVL
     dat$popsumm$mean_ispvl_intrinsic_nonvacc[popsumm_index]<-mean(ispvl_nonvacc)  #mean of nonvaccinated spvls of agents infected during this time window, provides mean incident SPVL
     dat$popsumm$mean_ispvl_instrinsic_vacc[popsumm_index]<-mean(ispvl_vacc)  #mean of vaccinated spvls of agents infected during this time window, provides mean incident SPVL
+    
+    eligible_index1 <- which(dat$pop$Status == 0 & 
+                               is.na(dat$pop$vaccinated) &
+                               dat$pop$eligible_care == 1) 
+    
+    #previously vaccinated
+    eligible_index2 <- which(dat$pop$Status == 0 & 
+                               dat$pop$vaccinated == 0 &
+                               (at-dat$pop$vacc_init_time) > dat$param$vacc_eff_duration &
+                               dat$pop$eligible_care == 1) 
+    
+    eligible_index <- c(eligible_index1,eligible_index2)
+    dat$popsumm$perc_eligible_vacc[popsumm_index] <- length(eligible_index)/total_alive
   }
     
   
