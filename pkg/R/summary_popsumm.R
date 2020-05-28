@@ -150,7 +150,9 @@ summary_popsumm<-function(dat,at){
     new_diagnoses <- dat$pop$diag_status == 1 &  is.element(dat$pop$diag_time,time_index)
     percent_virus_sensitive <- round(100*(length(which(dat$pop$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
     percentVaccinated <- round(100*(length(which(dat$pop$vaccinated == 1 & alive_index))/total_alive))
-
+    dat$popsumm$percentAliveVaccinated[popsumm_index]<- percentVaccinated
+    
+    
     #deaths
     just_died <- is.element(dat$pop$Time_Death,time_index)
     died_aids <- dat$pop$Status == -2 & just_died

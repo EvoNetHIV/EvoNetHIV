@@ -178,10 +178,12 @@ transmission_main_module <- function(dat,at)
     dat$infector_id <-   inf_id 
     dat$susceptible_id <- sus_id
     
+    
     #draw m, then calculate theta based on user-specified vaccine model 
     m <- draw_m(dat)
     #m <- do.call(eval(parse(text=dat$param$draw_m)),list(dat))
     
+    dat$at <- at
     theta <- calculate_theta(dat,m)
     #theta <- do.call(eval(parse(text=dat$param$calculate_theta)),list(dat,m))
     

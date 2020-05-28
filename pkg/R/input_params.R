@@ -389,9 +389,16 @@ input_params<-function(
     preventative_campaign    = F,
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.99,
-    max_perc_vaccinated  =       1.0, #maximum proportion of alive pop to vaccinate
+    max_perc_vaccinated      = 1.0, #maximum proportion of alive pop to vaccinate
+    vacc_per_day             = 0,  #used internally to calibrate vaccination rollout (vaccination.R file)
+    vacc_rollout_dur         = 1*365, #desired time (in days) to reach "max_perc_vaccinated"
     target_vacc_att          = FALSE,
     vacc_eff_duration        =  365*3,
+    init_ab_conc             = 1000, #placeholder 5/22/20, initial antibody [ ] at infusion
+    ab_half_life            = 30, # half-life (days) antibody
+    ab_trans_rate           =  0.002,
+    ab_infusion_interval    = 7*8 ,#how often agents re-infused (days)
+    ab_max_no_infusions     = 8, # max infusions per agent
     risk_comp_cond           = F,    # Set to T to induce reduction in condom use among vaccinated susceptibles and vaccinated, infected, undiagnosed individuals.
     risk_comp_cond_rr        = 0.70,
     risk_comp_degree         = F,    # Set to T to induce increase in degree among vaccinated susceptible and vaccinated, infected, undiagnosed individuals
