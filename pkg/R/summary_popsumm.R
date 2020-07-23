@@ -356,9 +356,9 @@ summary_popsumm<-function(dat,at){
   #treatment (msm and hetero models)
   if (dat$param$start_treatment_campaign[1] < 5e5) {
   dat$popsumm$no_treated[popsumm_index]<-length(which(inf_index & treated_index))
-  dat$popsumm$percent_suppressed[popsumm_index]<-(length(which(treated_index &
-          ((at-dat$pop$tx_init_time)>100) &(log10(dat$pop$V)< dat$pop$LogSetPoint/10) &
-            length(inf_index))) / length(inf_index) )
+  dat$popsumm$percent_suppressed[popsumm_index]<-((length(which(treated_index &
+                       (log10(dat$pop$V)< dat$param$vl_full_supp ) )))/ total_alive )
+          
   }
 
   #--------------------------------------------
