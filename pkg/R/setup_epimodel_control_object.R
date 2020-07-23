@@ -41,7 +41,7 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
                                        module.order  = names(module_list)[-c(1,length(names(module_list)))],
                                        save.other    = c("attr","pop","param","nw","coital_acts_list",
                                                          "popsumm","vl_list","InfMat","age_list","el",
-                                                         "sessionInfo","partner_list"))
+                                                         "sessionInfo","partner_list","vacc_model"))
 
   control <- do.call(EpiModel::control.net,  
                      c(module_list,control_epimodel_params_list) )
