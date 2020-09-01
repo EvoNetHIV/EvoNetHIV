@@ -25,25 +25,59 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
   #input: evoparams "save_network","nsims","n_steps"
   #output: EpiModel "control" object (used in EpiModel netsim fxn)
   
-  control_epimodel_params_list <- list(ncores=evonet_params$ncores,
-                                       type   = "SI",
-                                       nsims  = evonet_params$nsims,
-                                       nsteps = evonet_params$n_steps,  #set in parameter_list.R
-                                        start  = evonet_params$start_timestep,
-                                       depend = TRUE,
-                                       use.pids = FALSE,
-                                       tea.status    = FALSE,
-                                       save.transmat = FALSE,
-                                       save.nwstats  = FALSE,
-                                       save.network  = evonet_params$save_network,
-                                       delete.nodes  = !evonet_params$save_network,
-                                       fast.edgelist = evonet_params$fast_edgelist,
-                                       module.order  = names(module_list)[-c(1,length(names(module_list)))],
-                                       save.other    = c("attr","pop","param","nw","coital_acts_list",
-                                                         "popsumm","vl_list","InfMat","age_list","el",
-                                                         "sessionInfo","partner_list"))
-
-  control <- do.call(EpiModel::control.net,  
+  ####################################################
+  #function for original epimodel
+  # control_epimodel_params_list <- list(ncores=evonet_params$ncores,
+  #                                      type   = NULL,
+  #                                      nsims  = evonet_params$nsims,
+  #                                      nsteps = evonet_params$n_steps,  #set in parameter_list.R
+  #                                       start  = evonet_params$start_timestep,
+  #                                      depend = TRUE,
+  #                                      use.pids = FALSE,
+  #                                      tea.status    = FALSE,
+  #                                      save.transmat = FALSE,
+  #                                      save.nwstats  = FALSE,
+  #                                      save.network  = evonet_params$save_network,
+  #                                      delete.nodes  = !evonet_params$save_network,
+  #                                      tergmLite = TRUE,
+  #                                      module.order  = names(module_list)[-c(1,length(names(module_list)))],
+  #                                      save.other    = c("attr","pop","param","nw","coital_acts_list",
+  #                                                        "popsumm","vl_list","InfMat","age_list","el",
+  #                                                        "sessionInfo","partner_list"))
+  #############################################################
+  
+  f1=function(x,type="hello",s=1,at=2){invisible()}
+  
+  control_epimodel_params_list <- list(type=NULL,
+              nsteps=evonet_params$n_steps,
+              start = 1,
+              nsims =  evonet_params$nsims,
+              ncores =  1,
+              resimulate.network = TRUE,
+              tergmLite = TRUE,
+              save.nwstats = TRUE,
+              nwstats.formula = "formation",
+              verbose = F,
+              verbose.int = 1e6,
+              skip.check = TRUE,
+              raw.output = FALSE,
+              initialize.FUN = initialize_module,
+              resim_nets.FUN = resim_nets,
+              nwupdate.FUN = evo_nwupdate,
+              verbose.FUN = f1,
+              module.order  = c(names(module_list),"nwupdate.FUN","resim_nets.FUN"),
+              save.other    = c("attr","pop","param","nw","coital_acts_list",
+                           "popsumm","vl_list","InfMat","age_list","el",
+                           "sessionInfo","partner_list"))   
+  
+  
+  
+ 
+  #base EpiModel, do. call wasn't working, replaced with "invoke"
+  #control <- do.call(EpiModel::control.net,  
+   #                  control_epimodel_params_list )
+  
+  control <- rlang::invoke(EpiModel::control.net,  
                      c(module_list,control_epimodel_params_list) )
   
   return(control)
