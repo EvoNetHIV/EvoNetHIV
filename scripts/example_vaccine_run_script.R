@@ -17,7 +17,8 @@ set.seed(123)
 #-----------------------------------
 
 #what vaccine model?
-vacc_model_id <- "model_1" #"model_1b","model_2","model_2b"
+#vacc_model_id <- "model_1" #"model_1b","model_2","model_2b"
+vacc_model_id <- "model_2"
 
 #-----------------------------------
 
@@ -30,16 +31,16 @@ max_perc_vaccinated =0.80   #maximum proportion of population eligible for vacci
 
 #specify  parameters to change from default or that are frequently changed
 param_list=list(
-  nsims            = 1,
-  ncores           = 1,
+  nsims            = 4,
+  ncores           = 4,
   popsumm_frequency  = 30,   #frequency of timesteps (days) to calculate summrary stats
   fast_edgelist      = TRUE,
   min_spvl_allowed = .5,
   n_steps           = 365*15,
   initial_pop       = initial_pop,
   initial_infected  = initial_pop*.10,
-  target_stats         = initial_pop*0.7/2,
-  vl_peak_agent_flag   = TRUE,   #default FALSE
+  target_stats         = initial_pop*0.7/2, # network edge density parameter
+  vl_peak_agent_flag   = TRUE,   #default FALSE; if TRUE, allow cor bn spvl and pvl.
   plot_nw            = FALSE, #speed things up a bit for single sim/core runs
   
   #Vaccine parameters ----------------------------------------- #
@@ -70,7 +71,7 @@ param_list=list(
 #---------------------
 
 #what vaccine model to implement?
-param_list$vacc_model_id <- "model_1b"
+param_list$vacc_model_id <- vacc_model_id
 
 #---------------------
 #turn parameter list into "epimodel" parameter object 
