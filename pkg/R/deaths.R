@@ -18,12 +18,6 @@ evo_departures <- function(dat,at){
   dat<- vital_death_aged_out(dat,at)
   dat <- vital_death_non_aids(dat,at)
   
-  #This is necessary step for epimodel's edges_correct(), a subfxn
-  #in resim_nets(); dat$epi$num is a vector that stores how many agents alive each 
-  #timestep. This fxn call normall occurs in epimodel's "prevalence.net", which evonet
-  #doesn't use
-  dat <- set_epi(dat, "num", at, sum(dat$attr$active))
-  
   return(dat)
 
 }

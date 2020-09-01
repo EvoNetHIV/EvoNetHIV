@@ -2,16 +2,17 @@
 
 evorun <- function(modules,params,nw=NULL){
 
-  
-  
 params <-  input_parameters_derived(params)
   
 module_list <-lapply(modules,get)
 names(module_list) <- paste(modules,".FUN",sep="")
 
 evo_module_list<- c(
-  list("plot_network.FUN"=plot_network_fxn),  
-  module_list)
+  list("initialize.FUN"= initialize_module,
+       "plot_network.FUN"=plot_network_fxn),  
+  module_list,
+  list("evo_resim_nets.FUN" = evo_resim_nets,
+  "verbose.FUN"= NULL))
 
 
 #--- call epimodel's control fxn (load evonet modules into epimodel)
@@ -21,15 +22,8 @@ evocontrol <- setup_epimodel_control_object(evonet_params = params,
 
 
 #-- create initial vector of infection status as an epimodel object
-#original epimodel
-#infected_list <- EpiModel::init.net(i.num=params$initial_infected,
-#                                    status.rand = FALSE)
-#new epimodel
-status <- rep("s",params$initial_pop)
-status[sample(1:params$initial_pop,size=params$initial_infected)]<- "i"
-infected_list <- EpiModel::init.net(status.vector = status)
-
-
+infected_list <- EpiModel::init.net(i.num=params$initial_infected,
+                                    status.rand = FALSE)
 
 if(!params$hyak_par){
   
