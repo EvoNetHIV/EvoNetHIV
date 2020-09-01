@@ -13,7 +13,7 @@
 input_parameters_agent_attributes <-function(){
   
   #Description:
-  # Vector of the individual agent attributes that populate the “pop” list
+  # Vector of the individual agent attributes that populate the "pop" list
   
   list( popVariables= c(
     

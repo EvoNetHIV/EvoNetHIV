@@ -1,6 +1,6 @@
 #' @title CD4 progression data
 #'
-#' @description Returns Two tables that describe CD4+ T cell decline over time in untreated infectionns, as based on Cori, Pickles, et al (AIDS, 2015):  i) cd4_init_probs is a 9x3 table that gives the probability of a newly infected agent starting with one of the first three cd4 categories base on agents SPVL; ii) CD4_lookup is a 9x4 table that contains the mean expected passage time in each of the 4 CD4 categories based on agent’s SPVL.
+#' @description Returns Two tables that describe CD4+ T cell decline over time in untreated infectionns, as based on Cori, Pickles, et al (AIDS, 2015):  i) cd4_init_probs is a 9x3 table that gives the probability of a newly infected agent starting with one of the first three cd4 categories base on agents SPVL; ii) CD4_lookup is a 9x4 table that contains the mean expected passage time in each of the 4 CD4 categories based on agent's SPVL.
 #'
 #' @return List of 2 elements, one table per element: 'cd4_init_probs' table and 
 #' 'CD4_lookup' table 

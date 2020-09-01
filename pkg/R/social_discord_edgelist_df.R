@@ -5,7 +5,7 @@
 #' @param at timestep
 #' @return 'dat' object with 'discord_edgelist_df' table appended.
 #' @details
-#' Subfunction in 'social_coital_acts_module'. Creates table of discordonant couples with their relevant attributes (e.g., sex, infection status, role): “discord_edgelist_df”. This dataframe is main input into transmission functions. Couples with the infected agent past the specified threshold time in AIDS are not included (assumes no sex for these couples). Raw table of discordonant couple IDs is created with call to social_discord_edgelist, then attributes are appended to table to create a data.frame object.
+#' Subfunction in 'social_coital_acts_module'. Creates table of discordonant couples with their relevant attributes (e.g., sex, infection status, role): "discord_edgelist_df". This dataframe is main input into transmission functions. Couples with the infected agent past the specified threshold time in AIDS are not included (assumes no sex for these couples). Raw table of discordonant couple IDs is created with call to social_discord_edgelist, then attributes are appended to table to create a data.frame object.
 #' @examples
 #' dat <- social_discord_edgelist_df(dat,at)
 

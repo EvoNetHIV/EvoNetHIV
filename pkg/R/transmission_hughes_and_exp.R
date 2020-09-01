@@ -24,7 +24,7 @@ transmission_hughes_and_exp<-function(dat, acute_phase_status, sti_status_sus, c
   
   if(dat$param$transmission_model=="exponential"){
     generic_exp = dat$param$BaselineRisk_SimpleExp*logV_inf *log(dat$param$RR_LogV_Simple_Exp)
-    xB_vl = log(generic_exp)  # To accommodate Hughes et al’.s ln-transformed risk factors
+    xB_vl = log(generic_exp)  # To accommodate Hughes et al'.s ln-transformed risk factors
   }
   
   # If Hughes or exponential apply Hughes' double exponential strategy for RR (adding the xB terms and exponentiating)

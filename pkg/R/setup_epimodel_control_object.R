@@ -17,7 +17,7 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
 { 
 
   #Description:
-  # Helper function to fill in and run EpiModel’s control.net(); 
+  # Helper function to fill in and run EpiModel's control.net(); 
   # of minor utility, maybe should be removed and control.net just called straight from master_script.
   # Called in master_script
   #calls epimodel::control.net, ?EpiModel::control.net for details

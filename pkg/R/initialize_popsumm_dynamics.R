@@ -14,7 +14,7 @@
 initialize_popsumm_dynamics <- function(dat,at)
 {
   #Description:
-  # Sets up “popsumm” list and fills in default value of NA or 0 for all elements 
+  # Sets up "popsumm" list and fills in default value of NA or 0 for all elements 
   # Then fills in the initial value
   # Popsumm is list of various statistics calculated each timestep to describe network/population/epidemic
   # Inputs: param$initial_infected, param$initial_pop, pop$Time_Inf, pop$RandomTimeToAIDS,

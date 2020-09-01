@@ -21,7 +21,7 @@ transmission_main_module <- function(dat,at)
   # Processes main output of social_coital_acts_module: dat$discord_coital_df 
   # Calculates infection probability of susceptible partner based on who is receptive/insertive, 
   # and condom use, STI status (randomly assigned 0/1 to agents), age, VL, and transmission model 
-  # (e.g., “hughes”,”exponential”); after infection probability assigned to susceptible, 
+  # (e.g., "hughes","exponential"); after infection probability assigned to susceptible, 
   # infection determined by random draw.
   
   #input: dat$discord_coital_df (sex/transmission covariates) and relative risk

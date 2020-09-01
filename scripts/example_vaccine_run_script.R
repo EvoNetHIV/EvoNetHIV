@@ -1,4 +1,7 @@
 #---------------------
+# library(devtools)
+# install_github("EvoNetHIV/EvoNet",subdir="pkg",ref="vaccination")
+
 library(evonet)
 
 options(error=recover)

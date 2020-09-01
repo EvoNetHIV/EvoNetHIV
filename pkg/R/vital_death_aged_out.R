@@ -15,7 +15,7 @@ vital_death_aged_out <- function(dat,at)
 {
   #Description: 
   # identifies agents that have reached maximum age (para$max_age) and 
-  # does necessary “pop” list and network bookkeeping
+  # does necessary "pop" list and network bookkeeping
   # Inputs: dat$attr$active, dat$pop$Status, dat$param$max_age
   # Outputs: dat$popsumm$aged_out, dat$pop$treated, dat$pop$Status, dat$attr$status_evo,
   # dat$attr$active, dat$pop$Time_Death, dat$nw

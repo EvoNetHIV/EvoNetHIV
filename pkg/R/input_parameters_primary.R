@@ -90,7 +90,7 @@ list(
     V0                    = 1e-4,
     vl_peak_acute         = 7.7e6,            # Average viral load during primary infection; from Little et al 1999
     vl_max_aids           = 2.4e6,            # Piatak 1993
-    vl_increase_AIDS      = 1.0041122,         #determines slope of vl increase after aids onset; defaault value implies 400-fold increase over 4 years. E.g. O’Brien and Hendrickson 2013.
+    vl_increase_AIDS      = 1.0041122,         #determines slope of vl increase after aids onset; defaault value implies 400-fold increase over 4 years. E.g. O'Brien and Hendrickson 2013.
     t_peak                = 21.0,
     t_acute               = 90,
     t_acute_phase2        = 32,       # Changed on 3/29/16 to give more realistic acute phase dynamics with the revised acute phase code

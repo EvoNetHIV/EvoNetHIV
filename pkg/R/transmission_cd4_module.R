@@ -14,7 +14,7 @@ transmission_cd4_module <- function(dat,at)
 {  
   #Descritpion:
   # add cd4 info to newly infected, exit if none
-  # if infections occur in timestep, once SPVL determined in “transmission_bookkeeping_module”, 
+  # if infections occur in timestep, once SPVL determined in "transmission_bookkeeping_module", 
   # then initial CD4 values and waiting times per CD4 categories can be calculated. 
   # main input: dat$pop$LogSetPoint
   # outputs:CD4,

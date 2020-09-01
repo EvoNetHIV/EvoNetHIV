@@ -22,7 +22,7 @@ initialize_evonet_misc <- function(dat)
   
   #3) Creates "role","sex","att1" vectors which store agent info for three variables on network
    #att1 variable is generic variable that can be used to group agents (eg, risk group, geography)
-  # Creates "dat$attr$evo_status” vector for status of agents on network 
+  # Creates "dat$attr$evo_status" vector for status of agents on network 
   # Sets "agent id" nodal attribute on network
   #Sets sex on network
   # VL list (if flagged): save VL/CD4 data for each agent per timestep

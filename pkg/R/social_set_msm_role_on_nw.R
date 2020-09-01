@@ -17,7 +17,7 @@ social_set_msm_role_on_nw <- function(params,init_nw)
   #Assign role values to network nodes for msm model
   # Helper function that sets role attribute value (I, R, or V for MSM) on network
   # based on proportion of individuals in each role category from params$role_props from "input_paramters_primary"
-  # needed for estimation/simulation; called from “setup_nodal_attributes”
+  # needed for estimation/simulation; called from "setup_nodal_attributes"
   #input: "role_props",dat$nw
   #output: vertex attribute on network
   

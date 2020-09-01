@@ -14,11 +14,11 @@
 social_set_generic_attribute_on_nw <- function(params,init_nw){
 
   #Description:
-  # Helper function that sets “att1”, generic attribute values on network
+  # Helper function that sets "att1", generic attribute values on network
   # based on user set generic nodal attributes from "input_paramters_primary"
   # includes generic_nodal_att_values (names of generic attributes (eg, 1:5)) and 
   # generic_nodal_att_values_props (proportions of each attribute in initial pop)
-  # needed for estimation/simulation; called from “setup_nodal_attributes”
+  # needed for estimation/simulation; called from "setup_nodal_attributes"
   #fxn to set initial generic att values on initial network
   #input:generic_nodal_att_values, generic_nodal_att_values_props, dat$nw
   #output: vertex attribute for dat$nw

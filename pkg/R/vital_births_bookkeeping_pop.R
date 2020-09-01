@@ -13,7 +13,7 @@
 vital_births_bookkeeping_pop <- function(no_births,dat,timestep)
 {
   #Description: 
-  # Expand “pop” list based on number of new births and fill in default values with “new_additions_fxn” 
+  # Expand "pop" list based on number of new births and fill in default values with "new_additions_fxn" 
   # note: fxn only called in nbirths>=1
   # Inputs: dat$param$no_loci, no_births, dat$pop
   # Outputs: tempList

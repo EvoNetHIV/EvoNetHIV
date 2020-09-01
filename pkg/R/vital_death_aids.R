@@ -14,9 +14,9 @@
 vital_death_aids <-function(dat,at)
 {
   #Description: identifies agents that have died of aids based on arguments to param$aids_death_model: 
-  # 1) “gamma death”: pop$RandomTimeToAids + +dat$param$time_in_aids where param$time_in_aids 
+  # 1) "gamma death": pop$RandomTimeToAids + +dat$param$time_in_aids where param$time_in_aids 
   #   is user specified value (default is 720); 
-  # 2) “daily probability”: daily probability of death as function of viral load; 
+  # 2) "daily probability": daily probability of death as function of viral load; 
   # 3) CD4: after agents exit CD4 category 4, they are dead (4 represents aids).
   
   #from John, 3-10-2015

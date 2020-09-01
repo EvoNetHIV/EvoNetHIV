@@ -17,7 +17,7 @@ vital_initial_age_dist <- function(age.range,popsize,age_dist)
   #called in new_additions_fxn() for initial model setup
   
   #determines distribution of ages across initial population,
-  #based on “initial_age_dist_method” parameter value:
+  #based on "initial_age_dist_method" parameter value:
   #input variables: min_age max_age,initial_pop, male_age_dist   
   
   #output variables: age_vec
