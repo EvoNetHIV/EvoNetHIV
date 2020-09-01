@@ -25,16 +25,16 @@ vacc_model_id <- "model_2"
 #initial values needed to calculate other parameter values
 initial_pop       = 500
 years_to_max_coverage = 1  #how long (years) to all eligible are vaccinated
-max_perc_vaccinated =0.80   #maximum proportion of population eligible for vaccination (.99 upper limit)
+max_perc_vaccinated = 0.60   #maximum proportion of population eligible for vaccination (.99 upper limit)
 
 #-----------------------------------
 
 #specify  parameters to change from default or that are frequently changed
-param_list=list(
-  nsims            = 4,
-  ncores           = 4,
-  popsumm_frequency  = 30,   #frequency of timesteps (days) to calculate summrary stats
-  fast_edgelist      = TRUE,
+param_list = list(
+  nsims            = 1,   #number of simulations (replicates)
+  ncores           = 1,
+  popsumm_frequency  = 30,   #frequency of timesteps (days) to calculate summary stats
+  fast_edgelist      = TRUE,  #no longer needed as of EpiModel v 2.0
   min_spvl_allowed = .5,
   n_steps           = 365*15,
   initial_pop       = initial_pop,
@@ -75,7 +75,7 @@ param_list$vacc_model_id <- vacc_model_id
 
 #---------------------
 #turn parameter list into "epimodel" parameter object 
-evoparams <- do.call(evonet_setup,param_list)
+evoparams <- do.call(evonet_setup, param_list)
 
 #---------------------
 
@@ -99,7 +99,7 @@ modules <- c(
 nw <- nw_setup(evoparams) # Sets up the initial network
 
 #run model
-evomodel <- evorun(modules,evoparams,nw)
+evomodel <- evorun(modules, evoparams, nw)
 
 #assign model names
 model_name = paste("vaccine_model.RData",sep="")
