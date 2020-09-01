@@ -27,7 +27,7 @@ initialize_module <- function(x, param, init, control, s)
   
 
     #sets up basic EpiModel structure
-  dat  <-  evo_initialize(x, param, init, control,s)
+  dat  <-  initialize.net(x, param, init, control,s)
 
   ## Remove relationships specified as prohibited in network formation terms
   if(dat$param$rm_offset_rel) {

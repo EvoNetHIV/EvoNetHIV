@@ -67,7 +67,7 @@ param_list=list(
 #---------------------
 
 #what vaccine model to implement?
-param_list$vacc_model_id <- "model_1"
+param_list$vacc_model_id <- "model_1b"
 
 #---------------------
 #turn parameter list into "epimodel" parameter object 
