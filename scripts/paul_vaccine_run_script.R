@@ -1,5 +1,9 @@
+#### 
+# To use the new factory fns you have to remove the file pkg/R/vaccination_model_generics.R -- you can just move it to a different place outside of the package, or I think you can also just rename it to not end in .R.
+
 #-----------------------------------
 #--- Quick-set params.
+#### TODO/NOTE: TEMPORARILY THESE PARAMS ARE NOT PROPAGATING TO THE NEW FACTORY FN; SEE BELOW.
 #-----------------------------------
 THE.SEED <- 123;
 THE.MODEL.ID <- "model_1" #"model_1b","model_2","model_2b";
@@ -22,6 +26,7 @@ VACCINE.EFFICACY.YEARS <- 3;
 source( "pkg/R/vaccination_model_creator.R" );
 .e <- create.basic.vaccination.model();
 attach( .e, name = "vaccination" )
+rm( "create.basic.vaccination.model" );
 
 #---------------------
 # library(devtools)
