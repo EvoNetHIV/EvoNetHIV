@@ -8,14 +8,14 @@ create.basic.vaccination.model <- function (
   vaccine.rollout.duration.years = 1,
   vaccine.efficacy.years = 3,
 
-  ## TODO: It looks like we can remove this datum. .. maybe the idea is that for each person it stores when they started .. but don't we use phi for that?
-  start_vacc_campaign = (vaccine.rollout.year*365):(num.years*365),    # all vaccine models ### (50 is any number larger than NUM.YEARS -- it is NUMBER OF TIME STEPS.).
+  ## TODO: It looks like we can remove this datum. .. maybe the idea is that for each person it stores when they started .. but don't we use phi for that? [UPDATE This will be phi[2], or maybe something new about intervention_strategy_parameters, see below.]
+  start_vacc_campaign = (vaccine.rollout.year*365):(num.years*365),    # all vaccine models
   max_perc_vaccinated = fraction.vaccinated, #all vacc. models, maximum percent/proportion of population to be vaccinated
-  perc_vaccinated_rate = (max_perc_vaccinated /(1-max_perc_vaccinated ))/(years_to_max_coverage*365),
+  perc_vaccinated_rate = (max_perc_vaccinated /(1-max_perc_vaccinated ))/(years_to_max_coverage*365), ### NOTE I think this is a bug; why is this dividing by 1-max_perc_vacccinated? I think we just remove that to fix this.
   vacc_eff_duration = 365*vaccine.efficacy.years,
 
   vaccine.efficacy.by.mark = c( "sensitive" = 0.8 ),  #models 1/1b/2/2b, proportion (percentage) decrease in trans probs due to vaccine for vaccine model "1" (baseline vaccine model),
-  mark.distribution = c( "sensitive" = 1 ),
+  mark.distribution = c( "sensitive" = 1 ), ## TODO: This is an idea I'm working on, so I can make one constructor for all existing models 1,1a,2,and 2a, and any discrete-mark variant of that.
 
   vacc_trans_prob_decrease = vaccine.efficacy.by.mark[ "sensitive" ]
 ) {
@@ -97,7 +97,7 @@ n
 
 
        ### NOTE: It's not clear what 
-       ### NOTE: vacc_eff_duration seems to be used both as the _mean_ time to efficacy ending, and the time at which a person becomes eligible to become revaccinated. These seem to not be the same thing and I recommend that we have two parameters for this; one for the mean time to the vaccine waning to non-efficacy, and the other is eligibility for revaccination -- for one thing, in a vaccine trial nobody is eligible for revaccination; in a post-rollout setting, it's not clear what the recommendation would be but I don't think we can assume it's the mean duration of efficacy. For instance, it might be the _minimum_ duration of efficacy, or something calculated to minimize population-level risk. I AM STILL DECIDING WHETHER TO STORE vacc_init_time in phi. I THINK NOT. But there's nothing prohibiting it! Eg the model could use calendar time.  But if it is just for keeping track of eligibility for revaccination, we can handle that with a count-down instead of a count-up. Eg phi[2] could store a countter set to the guidelines eg "2 years" for revaccination, and then the update could decrement it.  The diff is that storing the calendar time is more versatile and informative for documentation purposes. So if I'm going to do that, I might as well store it in phi. OK. Hmm. Another notion is that phi should store the immune status... hmm. but I guess it can store everything relevant to agent.  Or .. can we add another named parameter subset like phi, for things like vacc_start_date that could be more relevant to the machinery controlling the vaccination? I guess here they are interdependent - but if I make separate factories for altering vaccination strategies, I'll want this to be not tied too tightly.  So I'll go with something like divvying up the parameters to what the modules will want to work with. phi can be the vaccine response parameters, whereas something else can store the vaccination strategy parameters, and these need not be tied. Let's do that, and name things better. phi can be parameters_modifying_infection_probability_and_post_infection_evolutionary_dynamics.
+       ### NOTE: vacc_eff_duration seems to be used both as the _mean_ time to efficacy ending, and the time at which a person becomes eligible to become revaccinated. These seem to not be the same thing and I recommend that we have two parameters for this; one for the mean time to the vaccine waning to non-efficacy, and the other is eligibility for revaccination -- for one thing, in a vaccine trial nobody is eligible for revaccination; in a post-rollout setting, it's not clear what the recommendation would be but I don't think we can assume it's the mean duration of efficacy. For instance, it might be the _minimum_ duration of efficacy, or something calculated to minimize population-level risk. I AM STILL DECIDING WHETHER TO STORE vacc_init_time in phi. I THINK NOT. But there's nothing prohibiting it! Eg the model could use calendar time.  But if it is just for keeping track of eligibility for revaccination, we can handle that with a count-down instead of a count-up. Eg phi[2] could store a countter set to the guidelines eg "2 years" for revaccination, and then the update could decrement it.  The diff is that storing the calendar time is more versatile and informative for documentation purposes. So if I'm going to do that, I might as well store it in phi. OK. Hmm. Another notion is that phi should store the immune status... hmm. but I guess it can store everything relevant to agent.  Or .. can we add another named parameter subset like phi, for things like vacc_start_date that could be more relevant to the machinery controlling the vaccination? I guess here they are interdependent - but if I make separate factories for altering vaccination strategies, I'll want this to be not tied too tightly.  So I'll go with something like divvying up the parameters to what the modules will want to work with. phi can be the vaccine response parameters, whereas something else can store the vaccination strategy parameters, and these need not be tied. Let's do that, and name things better. phi can be parameters_modifying_infection_probability_and_post_infection_evolutionary_dynamics. But maybe that's not a distinction worth making? I think that's it. We do need to support modularity. Hmm. mu/sigma is stored separately.  Hmm. ... but still that's the typical "covariate" vs "mark" distinction, which is reasonable, and the type constraints of mu/sigma guided that decision to keep it separate; really it could be a component of phi, it doesn't matter. It's more like "agent" is a list with a bunch of stuff, including a vector of immune status parameters, phi, and a vector of other parameters.
 
       #previously vaccinated
       eligible_index2 <- which(dat$pop$Status == 0 &
@@ -191,7 +191,7 @@ n
       if(at<dat$param$start_vacc_campaign[1]){return(dat)}
       if(!is.element(at,dat$param$start_vacc_campaign)){return(dat)}
     
-      ## PAUL NOTES that this will clobber phi every time (by initializing it again after updating it)!
+      ## PAUL NOTES that this will clobber phi every time (by initializing it again after updating it)! ACTUALLY not -- this "initialize" (and update) are both vector functions, so you initialize some folks and update other folks -- it's not actually contradictory.
       dat <- update_phi(dat,at)
       ## TODO: FIX!
       dat <- initialize_phi(dat,at)
@@ -215,10 +215,12 @@ n
         dat$vacc_model$agents <- update_sigma(dat,at) 
       }
       
+      ### This is assuming that new agents are always indexed after pre-existing agents, which sounds reasonable.
+
       #if start of model initialize mu/sigma or initialize for new agents   
       if(at>2 & length(dat$pop$Status) > length(dat$vacc_model$agents)){
         #if(at>500) browser()
-        agent_list <- list(phi=NA,mu=NA,sigma=NA)
+        agent_list <- list(phi=NA,mu=NA,sigma=NA) # See there's a problem here -- we need to use a constructor concept I think, so we don't have type mismatch issues downstream. eg make_agent_list_template (since this is actually a template for the list). A different, maybe safer way to do this is just glean the columns (the template) by taking a row from the existing agent_list.  It seems like we should do all this with functions to ensure extensibility, eg add_new_agents_to_agent_list(..)
         total_new_agents <- length(dat$pop$Status)- length(dat$vacc_model$agents)
         new_agents_index <- (length(dat$vacc_model$agents)+1):(length(dat$vacc_model$agents) + total_new_agents)
         invisible(lapply(new_agents_index,function(x) dat$vacc_model$agents[[x]] <<- agent_list ))
