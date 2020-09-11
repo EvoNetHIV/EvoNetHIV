@@ -23,7 +23,17 @@ create.basic.vaccination.model <- function (
       if(at==2){
         #initial infecteds at model start
         inf_index <- which(dat$pop$Status==1)
-        mu_values <- dat$pop$virus_sens_vacc[inf_index] ## TODO: This is tying us to the underlying / older vaccine model which had hardcoded the concept of "sensitive" and "resistant"
+        ## NOTE: THIS USED TO BE based on dat$pop$virus_sens_vacc, which was the old vaccination model.
+        ## OLD
+        # mu_values <- dat$pop$virus_sens_vacc[inf_index] ## TODO: This is tying us to the underlying / older vaccine model which had hardcoded the concept of "sensitive" and "resistant"
+        if( mark.distribution[ "sensitive" ] == 1.0 ) {
+            mu_values <- rep( 1, length( inf_index ) );
+        } else if( mark.distribution[ "sensitive" ] == 0.0 ) {
+            mu_values <- rep( 0, length( inf_index ) );
+        } else {
+            mu_values <- rbinom( length( inf_index ), 1,
+                                prob=mark.distribution[ "sensitive" ] );
+        }
         invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- mu_values[x]))
         
       }else{
@@ -47,35 +57,48 @@ create.basic.vaccination.model <- function (
         invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$sigma <<- sigma_values))
         
       }else{
-        #secondary infections from previous timestep
-        inf_index <- which(dat$pop$Time_Inf ==(at-1) )
-        if(length(inf_index)>0){
-          sigma_values <- 0
-          invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$sigma <<- sigma_values))
-        }
+          # Do nothing.
       }
       return( dat$vacc_model$agents )
     } # update_sigma (..)
-    
+
+    ## PAUL NOTES: This should be setting phi, but it is accessing it, set elsewhere!
     initialize_phi <- function ( dat, at ) {
-      
-      #current phi values
+      #current phi values. For model 1 these are just "vaccinated" or not.
+
+        ## PAUL ASKS: Is this different from some other length of vectors in dat? If so, why?
        index <- 1:length(dat$vacc_model$agents)
-       phi_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$phi))
+
+       ## Here phi for each person is just 1 or 0 (1 is vaccinated) so this as.numeric operation is safe. For more complex phi structures, this could lose structural integrity.
+       phi_values <-
+           as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$phi))
        
-    
+       ### "Status" records "infected" status, which seems to be the case, see just above where inf_index is defined as which( Status == 1 ). But also it seems to have a negative value for folks not in the population -- maybe these are dead or not yet living folks?
+
+       ## HERE we are relying on dat$param$max_perc_vaccinated where I think we should not -- that's part of the old model. BUT we apparently are here using phi == 1 to mean "vaccinated".
+
       #if designated vacc. level already reached (percent of pop vaccianted), don't vacc anymore
       if(length(which(phi_values == 1 & dat$pop$Status>=0))/length(which(dat$pop$Status>=0)) > dat$param$max_perc_vaccinated){return(dat)}
-      
+n      
       # Identify eligible_patients: eligible for care, not vaccinated, not infected
       # by default, all agents eligible for care, unless specified otw
       #note:dat$pop$phi == 0 is an agent whose vaccine effect ended (waned)
       
+       ## HERE we are relying on dat$param$eligible_care and dat$pop$vacc_init_time and dat$param$vacc_eff_duration where I think we should not -- that's part of the old model.
+
+### YOINKS. It does look as if using eligible_care could keep some other things possible, so we might as well -- but that would go into determining whether someone is vaccinated, only, correct?
+
+       ## WOAH, new info: phi is NA for never been vaccinated, and 0 for previously vaccinated... ok.
+
       #never been vaccinated
       eligible_index1 <- which(dat$pop$Status == 0 &
                                  is.na(phi_values) &
                                  dat$pop$eligible_care == 1)
-      
+
+
+       ### NOTE: It's not clear what 
+       ### NOTE: vacc_eff_duration seems to be used both as the _mean_ time to efficacy ending, and the time at which a person becomes eligible to become revaccinated. These seem to not be the same thing and I recommend that we have two parameters for this; one for the mean time to the vaccine waning to non-efficacy, and the other is eligibility for revaccination -- for one thing, in a vaccine trial nobody is eligible for revaccination; in a post-rollout setting, it's not clear what the recommendation would be but I don't think we can assume it's the mean duration of efficacy. For instance, it might be the _minimum_ duration of efficacy, or something calculated to minimize population-level risk. I AM STILL DECIDING WHETHER TO STORE vacc_init_time in phi. I THINK NOT. But there's nothing prohibiting it! Eg the model could use calendar time.  But if it is just for keeping track of eligibility for revaccination, we can handle that with a count-down instead of a count-up. Eg phi[2] could store a countter set to the guidelines eg "2 years" for revaccination, and then the update could decrement it.  The diff is that storing the calendar time is more versatile and informative for documentation purposes. So if I'm going to do that, I might as well store it in phi. OK. Hmm. Another notion is that phi should store the immune status... hmm. but I guess it can store everything relevant to agent.  Or .. can we add another named parameter subset like phi, for things like vacc_start_date that could be more relevant to the machinery controlling the vaccination? I guess here they are interdependent - but if I make separate factories for altering vaccination strategies, I'll want this to be not tied too tightly.  So I'll go with something like divvying up the parameters to what the modules will want to work with. phi can be the vaccine response parameters, whereas something else can store the vaccination strategy parameters, and these need not be tied. Let's do that, and name things better. phi can be parameters_modifying_infection_probability_and_post_infection_evolutionary_dynamics.
+
       #previously vaccinated
       eligible_index2 <- which(dat$pop$Status == 0 &
                                  phi_values == 0 &
@@ -87,7 +110,11 @@ create.basic.vaccination.model <- function (
       #if no agents eligible, end fxn
       if(length(eligible_index)==0){return(dat)}
       
+       ## HERE we are relying on dat$param$perc_vaccinated_rate where I think we should not -- that's part of the old model.
+
       #calculate how many agents can be vaccinated, based on user-specified vaccination rate
+
+       ## This is using the calculuated per-day rate. [ONLY THERE'S A BUG: It's using the per-day odds!] -- but ok if that were the per-day rate, then this is a small number of people.. it's the per-day number being vaccinated, which is correct.
       no_vaccinated <- sum(rbinom(length(which(dat$pop$Status>=0)), 1, dat$param$perc_vaccinated_rate)) #denominator is total population alive 
       if(no_vaccinated == 0) {return(dat)}
       
@@ -109,10 +136,21 @@ create.basic.vaccination.model <- function (
     ### ?? This seems to be about the vaccine efficacy duration being actually random.
     update_phi <- function ( dat, at ) {
       # off/on for already vaccinated
-      if(at > dat$param$start_vacc_campaign[1] ) {
+      if(at > dat$param$start_vacc_campaign[1] ) { ## this seems unnecessary but ok, maybe for speed?
         index <- 1:length(dat$vacc_model$agents)
         phi_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$phi))
-        vacc_index <- which(phi_values == 1 & dat$pop$Status == 0)
+
+        ## This builds in that they are not already infected; later we
+        ## might consider that there is some state of knowledge of infected
+        ## status, which might differ from actual infected status (eg
+        ## when enrollment is within the window period of the
+        ## diagnostic assay; this is a common enough occurrance it's
+        ## important in our downstream work to distinguish sometimes
+        ## -- probably not important here, but just noting this for
+        ## the record). For preserving existing code it'd probably be better to keep Status meaning known-status, and add some delay from exposure to the time at which you update to Status==1.
+
+        # Here phi is just turning from 1 to 0 with some small probability; I like that, as it is Markov and should obviate the need to store the date of vaccination.
+        vacc_index <- which(phi_values == 1 & dat$pop$Status == 0);
         if(length(vacc_index)>0){
           new_values <-  rbinom(length(vacc_index), 1, 1 - (1/dat$param$vacc_eff_duration))
           invisible(lapply(1:length(vacc_index),function(x) dat$vacc_model$agents[[vacc_index[x]]]$phi <<- new_values[x]))
@@ -127,8 +165,9 @@ create.basic.vaccination.model <- function (
       mu_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$mu))
       return(mu_values)
     }
-    
-    calculate_theta <- function ( dat, m ) {
+
+    # theta is the vaccine-induced probability of avoiding an otherwise-infecting exposure
+    calculate_theta <- function ( dat, m ) { # m is mark, which here is ignored.
     
       theta <- rep(0,length(dat$susceptible_id))
       #of susceptibles, which are vaccinated
@@ -147,7 +186,7 @@ create.basic.vaccination.model <- function (
       return(dat)
     } # update_mu_and_sigma (..)
     
-    initialize_and_update_phi<-function ( dat, at ) {
+    initialize_and_update_phi <- function ( dat, at ) {
       
       if(at<dat$param$start_vacc_campaign[1]){return(dat)}
       if(!is.element(at,dat$param$start_vacc_campaign)){return(dat)}

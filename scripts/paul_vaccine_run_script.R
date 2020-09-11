@@ -70,7 +70,8 @@ param_list = list(
   initial_infected  = initial_pop*START.PREVALENCE,
   target_stats         = initial_pop*0.7/2, # network edge density parameter
   vl_peak_agent_flag   = TRUE,   #default FALSE; if TRUE, allow cor bn spvl and pvl.
-  plot_nw            = FALSE
+  plot_nw            = FALSE,
+  perc_virus_vaccine_sens = 1 ###### THIS MUST BE 1 to turn off the old/underlying vaccination model and replace it with our new one.
 ); #speed things up a bit for single sim/core runs
   
 #   #Vaccine parameters ----------------------------------------- #
@@ -83,6 +84,7 @@ param_list = list(
 #   vacc_trans_prob_decrease = 0.8,  #models 1/1b/2/2b, proportion (percentage) decrease in trans probs due to vaccine for vaccine model "1" (baseline vaccine model),
 #  
 #    #model 1 specific
+###### ARGH. THIS IS UNIVERSAL AND GOVERNS THE OLD MODEL STILL. MUST BE 1 [except in original (presently current) model 1 which relied on this intact underlying system.]
 #    perc_virus_vaccine_sens = 0.5, #model 1, proportion of initial viruses/marks that are sensitive to vaccine 
 #   
 #   #model 1b specific

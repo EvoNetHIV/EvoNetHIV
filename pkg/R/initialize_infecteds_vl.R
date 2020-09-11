@@ -126,8 +126,13 @@ initialize_infecteds_vl <- function(dat,at)
 
   #for model runs with vaccination campaigns,
   #assigns sensitivity status of virus (0/1) to vaccine
-  pop$virus_sens_vacc[ind] <- rbinom(length(ind),1,
-                              prob=dat$param$perc_virus_vaccine_sens)
+  if( dat$param$perc_virus_vaccine_sens == 1 ) {
+      ## All are sensitive.
+      pop$virus_sens_vacc[ind] <- rep( 1, length( ind ) );
+  } else {
+      pop$virus_sens_vacc[ind] <- rbinom(length(ind),1,
+                                         prob=dat$param$perc_virus_vaccine_sens)
+  }
   
   if(dat$param$vacc_multi_eff){
     pop$vacc_eff[ind] <- do.call(eval(parse(text=dat$param$vacc_multi_fxn)),list(length(ind)))
