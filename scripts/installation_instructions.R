@@ -1,23 +1,23 @@
 ##########################################
 #install evonet as a regular package 
 
-if (!require("devtools")) {
-  install.packages("devtools")
-  library(devtools)}
+if(!require("devtools")){
+    install.packages("devtools")
+    library(devtools)
+ }
 install_github("EvoNetHIV/EvoNet",subdir="pkg")
-devtools::install_github( "statnet/tergmLite",force=T)
 library(evonet)
 
 ##########################################
 #install as RStudio project
 
 # 1)install necessary dependencies
-install.packages("devtools")
-install.packages("EpiModel")
-install.packages("data.table")
-install.packages("plotrix")
-install.packages("testthat")
-devtools::install_github( "statnet/tergmLite",force=T)
+if(!require("devtools")){install.packages("devtools")}
+if(!require("EpiModel")){install.packages("EpiModel")}
+if(!require("data.table")){install.packages("data.table")}
+if(!require("plotrix")){install.packages("plotrix")}
+if(!require("testthat")){install.packages("testthat")}
+
 
 #2) In Rstudio, choose "new project", then "version control", then "git"
 #3) url: https://github.com/EvoNetHIV/EvoNetHIV/
@@ -27,17 +27,13 @@ devtools::install_github( "statnet/tergmLite",force=T)
 #4) Build tab -> Build and Reload
 
 #############################################
-#When working with evonet as RStudio project, may need to 
-#install the following packages when using new computer or 
-#if R on CSDE server was updated.# 
-#If evonet or EpiModel is loaded, close RStudio and start fresh
+#install older evonet (Release 1, uses EpiModel versions <= 1.8) 
 
-install.packages("devtools")
-install.packages("EpiModel")
-install.packages("data.table")
-install.packages("plotrix")
-install.packages("testthat")
-devtools::install_github( "statnet/tergmLite",force=T)
+#go to:
+# https://github.com/EvoNetHIV/EvoNetHIV/releases/tag/v1.0
+#download appropriate version (e.g., zip for windows)
+#use install.packages("evonet",repos= PATH/TO/FILE)
+#see ?install.packages for  details
 
 ##########################################
 #install absdiffby branch as package
