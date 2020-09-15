@@ -2,144 +2,192 @@
 
 ## Basic; to add variations, you can modify the result. For now this doesn't create any mark variation (mu,sigma). TODO: ADD THAT STUFF. FOR NOW THIS IS MODEL 1.
 create.basic.vaccination.model <- function (
-  num.years = 15, # Could we instead get dat passed in and glean the number of years from it?
   fraction.vaccinated = 0.60,
   vaccine.rollout.year = 5,
   vaccine.rollout.duration.years = 1,
   vaccine.efficacy.years = 3,
-
-  ## TODO: It looks like we can remove this datum. .. maybe the idea is that for each person it stores when they started .. but don't we use phi for that? [UPDATE This will be phi[2], or maybe something new about intervention_strategy_parameters, see below.]
-  start_vacc_campaign = (vaccine.rollout.year*365):(num.years*365),    # all vaccine models
-  max_perc_vaccinated = fraction.vaccinated, #all vacc. models, maximum percent/proportion of population to be vaccinated
-  perc_vaccinated_rate = (max_perc_vaccinated /(1-max_perc_vaccinated ))/(years_to_max_coverage*365), ### NOTE I think this is a bug; why is this dividing by 1-max_perc_vacccinated? I think we just remove that to fix this.
-  vacc_eff_duration = 365*vaccine.efficacy.years,
+  revaccination.eligibility.years = 3,
 
   vaccine.efficacy.by.mark = c( "sensitive" = 0.8 ),  #models 1/1b/2/2b, proportion (percentage) decrease in trans probs due to vaccine for vaccine model "1" (baseline vaccine model),
-  mark.distribution = c( "sensitive" = 1 ), ## TODO: This is an idea I'm working on, so I can make one constructor for all existing models 1,1a,2,and 2a, and any discrete-mark variant of that.
+  initial.mark.distribution = c( "sensitive" = 1 ) ## TODO: This is an idea I'm working on, so I can make one constructor for all existing models 1,1a,2,and 2a, and any discrete-mark variant of that.
 
-  vacc_trans_prob_decrease = vaccine.efficacy.by.mark[ "sensitive" ]
 ) {
+    ## mark.distribtion is a simplex for the parameters of the categorical distribution, and has the same entries as vacine.efficacy.by.mark, to denote their starting distributions.
+    stopifnot( length( vaccine.efficacy.by.mark ) == length( initial.mark.distribution ) );
+    stopifnot( all( sort( names( vaccine.efficacy.by.mark ) ) = sort( names( initial.mark.distribution ) ) ) );
+
+    ### NOTE I think this was a bug; why was this dividing by 1-max_perc_vacccinated? I just removed that to fix this.
+    daily.vaccination.rate <- fraction.vaccinated / ( vaccine.rollout.duration.years * 365 );
+    vaccine.efficacy.days <- 365*vaccine.efficacy.years;
+    # Note that this makes vaccine.efficacy.years the _average_ duration of efficacy; it is negative-binomial/geometric.
+    daily.vaccine.reversion.rate <- 1 / ( vaccine.efficacy.years * 365 );
+    revaccination.eligibility.days <- 365*revaccination.eligibility.years;
+
+    evonet.initialization.timestep <- 2;
+    isEvonetInitializationTimestep <- function ( at ) { at == evonet.initialization.timestep }
+    isInfectedByAgent <- function ( dat ) { ( dat$pop$Status == 1 ) };
+    isUninfectedByAgent <- function ( dat ) { ( dat$pop$Status == 0 ) };
+
+    isEligibleByAgent <- function ( dat ) { ( dat$pop$eligible_care == 1 ) }
+
+    getInfectedAgents <- function ( dat ) { which( dat$pop$Status == 1 ) };
+    getAliveAgents <- function ( dat ) { which( dat$pop$Status >= 0 ) };
+
+    getAgentsJustInfectedLastTimestep <- function ( dat, at ) { which( dat$pop$Time_Inf ==(at-1) & ( dat$pop$Status == 1 ) ) }
+    getTransmittingPartners <- function ( dat, inf_indices ) { dat$pop$Donors_Indices[ inf_indices ] }
+
+    getMu <- function ( dat, indices = 1:length( dat$vacc_model$agents ) ) { as.numeric(lapply(indices,function(x) dat$vacc_model$agents[[x]]$mu)) }
+    setMu <- function ( dat, indices, mu_values ) { invisible(lapply(1:length(indices),function(x) dat$vacc_model$agents[[indices[x]]]$mu <<- mu_values[x])) }
+    getSigma <- function ( dat, indices = 1:length( dat$vacc_model$agents ) ) { as.numeric(lapply(indices,function(x) dat$vacc_model$agents[[x]]$sigma)) }
+    setSigma <- function ( dat, indices, sigma_values ) { invisible(lapply(1:length(indices),function(x) dat$vacc_model$agents[[indices[x]]]$sigma <<- sigma_values[x])) }
+    ## Here phi for each person is just 1 or 0 (1 is vaccinated) so this as.numeric operation is safe. For more complex phi structures, this could lose structural integrity.
+    getPhi <- function ( dat, indices = 1:length( dat$vacc_model$agents ) ) { as.numeric(lapply(indices,function(x) dat$vacc_model$agents[[x]]$phi)) }
+    setPhi <- function ( dat, indices, phi_values ) { invisible(lapply(1:length(indices),function(x) dat$vacc_model$agents[[indices[x]]]$phi <<- phi_values[x])) }
+
+    getMostRecentVaccinationDate <- function ( dat, indices = 1:length( dat$vacc_model$agents ) ) {
+        ## We store vaccination dates as a stack (last in, first out, so the first element is always the most recent one).
+        lapply(indices, function(x) { dat$vacc_model$agents[[x]]$vaccination.dates.stack[1] } );
+    } # getMostRecentVaccinationDate (..)
+
+    addVaccinationDate <- function ( dat, indices, vaccination_dates ) {
+        ## We store vaccination dates as a stack (last in, first out, so the first element is always the most recent one).
+        invisible(lapply(1:length(indices),function(x) { dat$vacc_model$agents[[indices[x]]]$vaccination.dates.stack <<- c( vaccination_dates[ x ], dat$vacc_model$agents[[indices[x]]]$vaccination.dates.stack ) } ))
+    } # addVaccinationDate (..)
+
+    createAgent <- function () {
+        the.agent <- list(
+            phi=NA,
+            mu=NA,
+            mu_orig=NA,
+            sigma=NA,
+            vaccination.dates.stack=list()
+                          );
+        return( the.agent );
+    } # createAgent ()
+
+    # This is set up to work for our default configuration, which is the one-mark or two-mark models, with "sensitive" always present, and maybe a second option (its name doesn't matter here).
     update_mu <- function ( dat, at ) {
-      if(at==2){
-        #initial infecteds at model start
-        inf_index <- which(dat$pop$Status==1)
-        ## NOTE: THIS USED TO BE based on dat$pop$virus_sens_vacc, which was the old vaccination model.
-        ## OLD
-        # mu_values <- dat$pop$virus_sens_vacc[inf_index] ## TODO: This is tying us to the underlying / older vaccine model which had hardcoded the concept of "sensitive" and "resistant"
-        if( mark.distribution[ "sensitive" ] == 1.0 ) {
-            mu_values <- rep( 1, length( inf_index ) );
-        } else if( mark.distribution[ "sensitive" ] == 0.0 ) {
-            mu_values <- rep( 0, length( inf_index ) );
+      if( isEvonetInitializationTimestep( at ) ) {
+        # initial infecteds at model start
+        inf_indices <- getInfectedAgents( dat );
+
+        first.mark.name <- names( vaccine.efficacy.by.mark );
+
+        if( initial.mark.distribution[ first.mark.name ] == 1.0 ) {
+            mu_values <- rep( 1, length( inf_indices ) );
+        } else if( initial.mark.distribution[ first.mark.name ] == 0.0 ) {
+            mu_values <- rep( 0, length( inf_indices ) );
         } else {
-            mu_values <- rbinom( length( inf_index ), 1,
-                                prob=mark.distribution[ "sensitive" ] );
+            ## TODO: expand to allow more than two marks by modifying this:
+            mu_values <- rbinom( length( inf_indices ), 1,
+                                prob = initial.mark.distribution[ first.mark.name ] );
         }
-        invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- mu_values[x]))
-        
-      }else{
-        #secondary infections from previous timestep
-        inf_index <- which(dat$pop$Time_Inf ==(at-1) & dat$pop$Status==1)
-        if(length(inf_index)>0){
-          donor_index <- dat$pop$Donors_Index[inf_index]
-          mu_values <- as.numeric(lapply(donor_index,function(x) dat$vacc_model$agents[[x]]$mu))
-          invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$mu <<- mu_values[x]))
-        
+        setMu( dat, inf_indices, mu_values );
+      } else {
+        # secondary infections from previous timestep
+        inf_indices <- getAgentsJustInfectedLastTimestep( dat, at );
+
+        if( length( inf_indices ) > 0 ) {
+          donor_indices <- getTransmittingPartners( dat, inf_indices );
+          mu_values <- getMu( dat, donor_indices );
+          setMu( dat, inf_indices, mu_values );
         }
       }
-      return( dat$vacc_model$agents )
+      return( dat$vacc_model$agents );
     } # update_mu (..)
 
     update_sigma <- function ( dat, at ) {
-      if(at==2){
+      if( isEvonetInitializationTimestep( at ) ){
         #initial infecteds at model start
-        inf_index <- which(dat$pop$Status==1)
-        sigma_values <- 0
-        invisible(lapply(1:length(inf_index),function(x) dat$vacc_model$agents[[inf_index[x]]]$sigma <<- sigma_values))
-        
-      }else{
+        inf_indices <- getInfectedAgents( dat );
+        sigma_values <- rep( 0, length( inf_indices ) );
+        setSigma( dat, inf_indices, sigma_values );
+      } else {
           # Do nothing.
       }
-      return( dat$vacc_model$agents )
+      return( dat$vacc_model$agents );
     } # update_sigma (..)
 
-    ## PAUL NOTES: This should be setting phi, but it is accessing it, set elsewhere!
+    # This and the other functions are presently vectorized.
+    # This is run daily to vaccinate new people.
     initialize_phi <- function ( dat, at ) {
-      #current phi values. For model 1 these are just "vaccinated" or not.
+        all.agent.indices <- 1:length( dat$vacc_model$agents );
 
-        ## PAUL ASKS: Is this different from some other length of vectors in dat? If so, why?
-       index <- 1:length(dat$vacc_model$agents)
+        phi.values <- getPhi( dat, all.agent.indices );
 
-       ## Here phi for each person is just 1 or 0 (1 is vaccinated) so this as.numeric operation is safe. For more complex phi structures, this could lose structural integrity.
-       phi_values <-
-           as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$phi))
-       
-       ### "Status" records "infected" status, which seems to be the case, see just above where inf_index is defined as which( Status == 1 ). But also it seems to have a negative value for folks not in the population -- maybe these are dead or not yet living folks?
+        # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
+        is.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 1 ) );
+        is.unvaccinated.by.agent <- is.na( phi.values );
+        is.previously.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 0 ) );
+        stopifnot( all( as.numeric( is.vaccinated.by.agent + is.unvaccinated.by.agent + is.previously.vaccinated.by.agent ) == 1 ) )
 
-       ## HERE we are relying on dat$param$max_perc_vaccinated where I think we should not -- that's part of the old model. BUT we apparently are here using phi == 1 to mean "vaccinated".
+        num.alive.and.vaccinated <
+            sum( is.vaccinated.by.agent & ( isInfectedByAgent( dat ) | isUninfectedByAgent( dat ) ) );
+        num.alive <-
+            sum( ( isInfectedByAgent( dat ) | isUninfectedByAgent( dat ) ) );
+        stopifnot( num.alive == length( getAliveAgents( dat ) ) );
 
-      #if designated vacc. level already reached (percent of pop vaccianted), don't vacc anymore
-      if(length(which(phi_values == 1 & dat$pop$Status>=0))/length(which(dat$pop$Status>=0)) > dat$param$max_perc_vaccinated){return(dat)}
-n      
-      # Identify eligible_patients: eligible for care, not vaccinated, not infected
-      # by default, all agents eligible for care, unless specified otw
-      #note:dat$pop$phi == 0 is an agent whose vaccine effect ended (waned)
-      
-       ## HERE we are relying on dat$param$eligible_care and dat$pop$vacc_init_time and dat$param$vacc_eff_duration where I think we should not -- that's part of the old model.
+        #  if designated vacc. level already reached (percent of pop vaccianted), don't vacc anymore
+        if( ( num.alive.and.vaccinated / num.alive ) > fraction.vaccinated ) { return( dat$vacc_model$agents ) };
 
-### YOINKS. It does look as if using eligible_care could keep some other things possible, so we might as well -- but that would go into determining whether someone is vaccinated, only, correct?
+        is.too.recently.vaccinated <- ( ( at - getMostRecentVaccinationDate( dat ) ) > revaccination.eligibility.days );
 
-       ## WOAH, new info: phi is NA for never been vaccinated, and 0 for previously vaccinated... ok.
+        #  Identify eligible_patients: eligible for care, not vaccinated, not infected
+        #  by default, all agents eligible for care, unless specified otw
+        # never been vaccinated
+        eligible_indices1 <- which( isUninfectedByAgent( dat ) &
+                                   !is.vaccinated.by.agent &
+                                   isEligibleByAgent( dat ) );
+        # previously vaccinated
+        eligible_indices2 <- which( isUninfectedByAgent( dat ) &
+                                   is.previously.vaccinated.by.agent &
+                                   !is.too.recently.vaccinated &
+                                   isEligibleByAgent( dat ) )
+        
+        eligible_indices <- c( eligible_indices1, eligible_indices2 );
+        
+        # if no agents eligible, end fxn
+        if( length( eligible_indices ) == 0 ) { return( dat$vacc_model$agents ) };
+        
+        #  calculate how many agents should be newly vaccinated at this time, based on user-specified vaccination rate
 
-      #never been vaccinated
-      eligible_index1 <- which(dat$pop$Status == 0 &
-                                 is.na(phi_values) &
-                                 dat$pop$eligible_care == 1)
+        ## This is using the calculuated per-day rate. [NOTE THERE WAS A BUG: It was using the per-day odds!] -- but ok now that this is the per-day rate, then this is a small number of people.. it's the per-day number being vaccinated, which is correct.
+        num.newly.vaccinated.today <- sum( rbinom( length( getAliveAgents( dat ) ), 1, daily.vaccination.rate ) );
 
+        if( num.newly.vaccinated.today == 0 ) { return( dat$vacc_model$agents ) };
+        
+        # if number of eligible agents exceeds number permissible, randomly choose subset
+        # if the %coverage in total population alive exceeds #eligible, vaccinate all eligible
+        if( num.newly.vaccinated.today < length( eligible_indices ) ) {
+            vaccinated_indices <- sample( eligible_indices, num.newly.vaccinated.today );
+        } else {
+            vaccinated_indices <- eligible_indices;
+        }
 
-       ### NOTE: It's not clear what 
-       ### NOTE: vacc_eff_duration seems to be used both as the _mean_ time to efficacy ending, and the time at which a person becomes eligible to become revaccinated. These seem to not be the same thing and I recommend that we have two parameters for this; one for the mean time to the vaccine waning to non-efficacy, and the other is eligibility for revaccination -- for one thing, in a vaccine trial nobody is eligible for revaccination; in a post-rollout setting, it's not clear what the recommendation would be but I don't think we can assume it's the mean duration of efficacy. For instance, it might be the _minimum_ duration of efficacy, or something calculated to minimize population-level risk. I AM STILL DECIDING WHETHER TO STORE vacc_init_time in phi. I THINK NOT. But there's nothing prohibiting it! Eg the model could use calendar time.  But if it is just for keeping track of eligibility for revaccination, we can handle that with a count-down instead of a count-up. Eg phi[2] could store a countter set to the guidelines eg "2 years" for revaccination, and then the update could decrement it.  The diff is that storing the calendar time is more versatile and informative for documentation purposes. So if I'm going to do that, I might as well store it in phi. OK. Hmm. Another notion is that phi should store the immune status... hmm. but I guess it can store everything relevant to agent.  Or .. can we add another named parameter subset like phi, for things like vacc_start_date that could be more relevant to the machinery controlling the vaccination? I guess here they are interdependent - but if I make separate factories for altering vaccination strategies, I'll want this to be not tied too tightly.  So I'll go with something like divvying up the parameters to what the modules will want to work with. phi can be the vaccine response parameters, whereas something else can store the vaccination strategy parameters, and these need not be tied. Let's do that, and name things better. phi can be parameters_modifying_infection_probability_and_post_infection_evolutionary_dynamics. But maybe that's not a distinction worth making? I think that's it. We do need to support modularity. Hmm. mu/sigma is stored separately.  Hmm. ... but still that's the typical "covariate" vs "mark" distinction, which is reasonable, and the type constraints of mu/sigma guided that decision to keep it separate; really it could be a component of phi, it doesn't matter. It's more like "agent" is a list with a bunch of stuff, including a vector of immune status parameters, phi, and a vector of other parameters.
+        setPhi( dat, vaccinated_indices, 1 );
+        addVaccinationDate( dat, vaccinated_indices, at );
 
-      #previously vaccinated
-      eligible_index2 <- which(dat$pop$Status == 0 &
-                                 phi_values == 0 &
-                                 (at-dat$pop$vacc_init_time) > dat$param$vacc_eff_duration &
-                                 dat$pop$eligible_care == 1)
-      
-      eligible_index <- c(eligible_index1,eligible_index2)
-      
-      #if no agents eligible, end fxn
-      if(length(eligible_index)==0){return(dat)}
-      
-       ## HERE we are relying on dat$param$perc_vaccinated_rate where I think we should not -- that's part of the old model.
-
-      #calculate how many agents can be vaccinated, based on user-specified vaccination rate
-
-       ## This is using the calculuated per-day rate. [ONLY THERE'S A BUG: It's using the per-day odds!] -- but ok if that were the per-day rate, then this is a small number of people.. it's the per-day number being vaccinated, which is correct.
-      no_vaccinated <- sum(rbinom(length(which(dat$pop$Status>=0)), 1, dat$param$perc_vaccinated_rate)) #denominator is total population alive 
-      if(no_vaccinated == 0) {return(dat)}
-      
-      #if number of eligible agents exceeds number permissible, randomly choose subset
-      if(no_vaccinated <length(eligible_index)){
-        vaccinated_index <- sample(eligible_index, no_vaccinated)
-      }else{
-        vaccinated_index <- eligible_index
-        #if the %coverage in total population alive exceeds #eligible, vaccinate all eligible
-      }
-      
-      invisible(lapply(1:length(vaccinated_index),function(x) dat$vacc_model$agents[[vaccinated_index[x]]]$phi <<- 1 ))
-      dat$pop$vacc_init_time[vaccinated_index] <- at
-      
-        return(dat)
-      
+        return( dat$vacc_model$agents );
     } # initialize_phi (..)
 
-    ### ?? This seems to be about the vaccine efficacy duration being actually random.
+    ## This is run daily to check if the vaccine efficacy wanes
+    ## (presently we have efficacy fixed for all vaccinated persons
+    ## for whom it has not waned). Note that right now this should be
+    ## run before initialize_phi, because we do not check that the
+    ## person was vaccinated today; TODO: Add that check so this can
+    ## be run before or after initialize_phi in either order.
     update_phi <- function ( dat, at ) {
-      # off/on for already vaccinated
-      if(at > dat$param$start_vacc_campaign[1] ) { ## this seems unnecessary but ok, maybe for speed?
-        index <- 1:length(dat$vacc_model$agents)
-        phi_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$phi))
+        all.agent.indices <- 1:length( dat$vacc_model$agents );
 
+        phi.values <- getPhi( dat, all.agent.indices );
+
+        # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
+        is.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 1 ) );
+        is.unvaccinated.by.agent <- is.na( phi.values );
+        is.previously.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 0 ) );
+        stopifnot( all( as.numeric( is.vaccinated.by.agent + is.unvaccinated.by.agent + is.previously.vaccinated.by.agent ) == 1 ) )
+
+        ## NOTE/THOUGHT:
         ## This builds in that they are not already infected; later we
         ## might consider that there is some state of knowledge of infected
         ## status, which might differ from actual infected status (eg
@@ -150,85 +198,91 @@ n
         ## the record). For preserving existing code it'd probably be better to keep Status meaning known-status, and add some delay from exposure to the time at which you update to Status==1.
 
         # Here phi is just turning from 1 to 0 with some small probability; I like that, as it is Markov and should obviate the need to store the date of vaccination.
-        vacc_index <- which(phi_values == 1 & dat$pop$Status == 0);
-        if(length(vacc_index)>0){
-          new_values <-  rbinom(length(vacc_index), 1, 1 - (1/dat$param$vacc_eff_duration))
-          invisible(lapply(1:length(vacc_index),function(x) dat$vacc_model$agents[[vacc_index[x]]]$phi <<- new_values[x]))
+        vacc_indices <- which( is.vaccinated.by.agent & isUninfectedByAgent( dat ) );
+        if( length( vacc_indices ) > 0 ) {
+          # With a small probability each day we might switch a person to being (effectively) not vaccinated (aka no vaccine-induced protection).
+          new_values <- rbinom( length( vacc_indices ), 1, 1 - daily.vaccine.reversion.rate );
+          setPhi( dat, vacc_indices, new_values );
         }
       }
-      return(dat)
+      return( dat$vacc_model$agents );
     } # update_phi (..)
 
-    ## This for now doesn't actually draw anything. For the basic model there's no within-host evolution. m = mu = { 1 for sensitive, 0 for resistant } -- see above.
-    draw_m <- function ( dat, at, ... ) {
-      index <- dat$infector_id
-      mu_values <- as.numeric(lapply(index,function(x) dat$vacc_model$agents[[x]]$mu))
-      return(mu_values)
+
+    draw_m <- function ( dat, at, infector.ids, ... ) {
+     transmitter.mu <- getMu( dat, infector.ids );
+
+      ## No variation in this default method: ignore sigma, don't draw anything.
+      return( c( m = transmitter.mu ) );
     }
 
     # theta is the vaccine-induced probability of avoiding an otherwise-infecting exposure
-    calculate_theta <- function ( dat, m ) { # m is mark, which here is ignored.
-    
-      theta <- rep(0,length(dat$susceptible_id))
-      #of susceptibles, which are vaccinated
-      phi_values <- as.numeric(lapply(dat$susceptible_id,function(x) dat$vacc_model$agents[[x]]$phi))
-      index <- which(phi_values==1 & m==1)
-      if(length(index)>0){
-        #theta[index]  <- phi_values[index]*m[index]*dat$param$vacc_trans_prob_decrease
-        theta[index]  <- dat$param$vacc_trans_prob_decrease
-      }
-      return(theta)
+    calculate_theta <- function ( dat, at, m ) { # m is mark, eg "sensitive"
+      # For vaccinated folks, it's the vaccine efficacy for the mark.
+      stopifnot( m %in% names( vaccine.efficacy.by.mark ) );
+
+        all.agent.indices <- 1:length( dat$vacc_model$agents );
+
+        phi.values <- getPhi( dat, all.agent.indices );
+
+        # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
+        is.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 1 ) );
+
+        num.alive.and.vaccinated <
+            sum( is.vaccinated.by.agent & ( isInfectedByAgent( dat ) | isUninfectedByAgent( dat ) ) );
+        num.alive <-
+            sum( ( isInfectedByAgent( dat ) | isUninfectedByAgent( dat ) ) );
+        stopifnot( num.alive == length( getAliveAgents( dat ) ) );
+
+        # By default for unvaccinated folks, we will multiply the infection probability by 1 == 1 - 0:
+        theta <- rep( 0, length( all.agent.indices ) );
+        theta[ is.vaccinated.by.agent ] <- vaccine.efficacy.by.mark[ m ];
+  
+        return( theta );
     } # calculate_theta (..)
 
     update_mu_and_sigma <- function ( dat, at ) {
-      dat$vacc_model$agents <- update_mu(dat,at)
-      dat$vacc_model$agents <- update_sigma(dat,at)
-      return(dat)
+      update_mu( dat, at );
+      update_sigma( dat, at );
+      return( dat$model$agents );
     } # update_mu_and_sigma (..)
     
     initialize_and_update_phi <- function ( dat, at ) {
       
-      if(at<dat$param$start_vacc_campaign[1]){return(dat)}
-      if(!is.element(at,dat$param$start_vacc_campaign)){return(dat)}
-    
-      ## PAUL NOTES that this will clobber phi every time (by initializing it again after updating it)! ACTUALLY not -- this "initialize" (and update) are both vector functions, so you initialize some folks and update other folks -- it's not actually contradictory.
-      dat <- update_phi(dat,at)
-      ## TODO: FIX!
-      dat <- initialize_phi(dat,at)
-      return(dat)
-    }
-    
-    initialize_vaccine_agents <- function ( dat, at ) {
-      
-      #at=2 is first time step after model setup/initialization
-      if(at==2){
-        #create agent object (list of lists attached to dat)
-        agent_list <- list(phi=NA,mu=NA,mu_orig=NA,sigma=NA)
-        no_current_agents <- length(dat$pop$Status)
-        dat$vacc_model$agents <- vector('list',length=no_current_agents)
-        #add class 'dat$param$vacc_model' to ojects to trigger appropriate model fxn method
-        class(dat$vacc_model$agents)<- c("list",dat$param$vacc_model_id)
-        class(dat)<- c("list",dat$param$vacc_model_id)
-        dat$vacc_model$agents <- lapply(dat$vacc_model$agents, function(x) x <- agent_list)
-        #if start of model initialize mu/sigma or initialize for new agents  
-        dat$vacc_model$agents <- update_mu(dat,at)
-        dat$vacc_model$agents <- update_sigma(dat,at) 
-      }
-      
-      ### This is assuming that new agents are always indexed after pre-existing agents, which sounds reasonable.
+      if( at < ( vaccine.rollout.year * 365 ) ) { return( dat ) };
 
-      #if start of model initialize mu/sigma or initialize for new agents   
-      if(at>2 & length(dat$pop$Status) > length(dat$vacc_model$agents)){
-        #if(at>500) browser()
-        agent_list <- list(phi=NA,mu=NA,sigma=NA) # See there's a problem here -- we need to use a constructor concept I think, so we don't have type mismatch issues downstream. eg make_agent_list_template (since this is actually a template for the list). A different, maybe safer way to do this is just glean the columns (the template) by taking a row from the existing agent_list.  It seems like we should do all this with functions to ensure extensibility, eg add_new_agents_to_agent_list(..)
-        total_new_agents <- length(dat$pop$Status)- length(dat$vacc_model$agents)
-        new_agents_index <- (length(dat$vacc_model$agents)+1):(length(dat$vacc_model$agents) + total_new_agents)
-        invisible(lapply(new_agents_index,function(x) dat$vacc_model$agents[[x]] <<- agent_list ))
-      }
-      
-      return(dat)
-      
+      # Note this looks odd, but these are vectorized functions and so we first update those already initialized at a previous time step, then we initialize those newly vaccinated. We could have done it either way 'round, but these fns are presently written to not check that the update is not applying to someone just vaccinated. So for now this has to be done in this order:
+      update_phi( dat, at );
+      initialize_phi( dat, at );
+
+      return( dat$vacc_model$agents );
     }
+    
+      initialize_vaccine_agents <- function ( dat, at ) {
+      
+      if( isEvonetInitializationTimestep( at ) ) {
+        #create agent object (list of lists attached to dat)
+        agent_template <- createAgent();
+        num.current_agents <- length( dat$pop$Status );
+        dat$vacc_model$agents <<- vector( 'list', length = num.current_agents );
+        dat$vacc_model$agents <- lapply(dat$vacc_model$agents, function(x) x <- agent_template );
+        #if start of model initialize mu/sigma or initialize for new agents  
+        update_mu_and_sigma( dat, at );
+      } else {
+          # Detect that new agents need to be added to the agents list.
+          if( length( dat$pop$Status ) > length( dat$vacc_model$agents ) ) {
+            #if(at>500) browser()
+            agent_list <- createAgent();
+            total_new_agents <- length( dat$pop$Status ) - length( dat$vacc_model$agents );
+            new_agents_indices <- (length(dat$vacc_model$agents)+1):(length(dat$vacc_model$agents) + total_new_agents)
+            
+            invisible(lapply(new_agents_indices,function(x) dat$vacc_model$agents[[x]] <<- agent_list ));
+          }
+      }  
+
+      stopifnot( length( dat$pop$Status ) == length( dat$vacc_model$agents ) );
+      return( dat$vacc_model$agents );
+    } # initialize_vaccine_agents (..)
 
     return( environment() );
 } # create.basic.vaccination.model (..)

@@ -170,25 +170,20 @@ transmission_main_module <- function(dat,at)
   }
   #############################################
  #midas vaccine
-  if(at>  dat$param$start_vacc_campaign[1] & !is.logical(dat$param$vacc_model_id)){
+  if(!is.logical(dat$param$vacc_model_id)){ ## TODO: Add new test of vaccination framework being in effect.
+    # based on user-specified vaccine model 
+
+    # Keep the agents list up to date.
+    ## TODO: decide whether we can do it this way, or should do either dat <- init_.. or dat$vacc_model$agents <- init_...; if the <<- operator is working as I believe it should, dat will be modified in place along the way. Really only dat$vacc_model$agents gets modified. That's why we insist the signatures return that (to indicate that only that has changed) -- but really these are "methods" not "functions" since they modify "dat" in place.
+    initialize_vaccine_agents( dat, at );
+
+    # draw m, then calculate theta
+    m <- draw_m( dat, at, inf_id );
     
+    theta <- calculate_theta( dat, at, m );
     
-    
-    #this assignment must occur before draw_m call  
-    dat$infector_id <-   inf_id 
-    dat$susceptible_id <- sus_id
-    
-    
-    #draw m, then calculate theta based on user-specified vaccine model 
-    m <- draw_m(dat)
-    #m <- do.call(eval(parse(text=dat$param$draw_m)),list(dat))
-    
-    dat$at <- at
-    theta <- calculate_theta(dat,m)
-    #theta <- do.call(eval(parse(text=dat$param$calculate_theta)),list(dat,m))
-    
-    #adjust raw transmission probabilities
-    trans_probs <- trans_probs*(1-theta)    
+    # adjust raw transmission probabilities
+    trans_probs <- trans_probs * ( 1 - theta );
   }
   ###################################
   
