@@ -15,8 +15,10 @@ create.basic.vaccination.model <- function (
     ## mark.distribtion is a simplex for the parameters of the categorical distribution, and has the same entries as vacine.efficacy.by.mark, to denote their starting distributions.
     stopifnot( length( vaccine.efficacy.by.mark ) == length( initial.mark.distribution ) );
     stopifnot( all( sort( names( vaccine.efficacy.by.mark ) ) = sort( names( initial.mark.distribution ) ) ) );
+    # Distribution of marks must sum to 1.
+    stopifnot( all.equal( sum( initial.mark.distribution ), 1, tol = 1E-8 ) ); # TODO: Replace magic # for tolerance, maybe, using machine epsilon.
 
-    ### NOTE I think this was a bug; why was this dividing by 1-max_perc_vacccinated? I just removed that to fix this.
+    ### NOTE I think this was previously a bug; it was dividing by 1-max_perc_vacccinated, making it an odds, not a probability.
     daily.vaccination.rate <- fraction.vaccinated / ( vaccine.rollout.duration.years * 365 );
     vaccine.efficacy.days <- 365*vaccine.efficacy.years;
     # Note that this makes vaccine.efficacy.years the _average_ duration of efficacy; it is negative-binomial/geometric.
