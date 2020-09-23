@@ -175,15 +175,15 @@ transmission_main_module <- function(dat,at)
 
     # Keep the agents list up to date.
     ## TODO: decide whether we can do it this way, or should do either dat <- init_.. or dat$vacc_model$agents <- init_...; if the <<- operator is working as I believe it should, dat will be modified in place along the way. Really only dat$vacc_model$agents gets modified. That's why we insist the signatures return that (to indicate that only that has changed) -- but really these are "methods" not "functions" since they modify "dat" in place.
-    initialize_vaccine_agents( dat, at );
+    dat <- initialize_vaccine_agents( dat, at );
 
-    # draw m, then calculate theta
-    m <- draw_m( dat, at, inf_id );
+    # draw m, then calculate theta. ## TODO: use a getter for getting inf_id, instead.
+    dat <- draw_m( dat, at, dat$discord_coital_df$inf_id );
     
-    theta <- calculate_theta( dat, at, m );
+    dat <- calculate_theta( dat, at );
     
     # adjust raw transmission probabilities
-    trans_probs <- trans_probs * ( 1 - theta );
+    trans_probs <- trans_probs * ( 1 - dat$vacc_model$theta );
   }
   ###################################
   

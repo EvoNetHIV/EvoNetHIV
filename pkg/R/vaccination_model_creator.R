@@ -25,6 +25,7 @@ create.basic.vaccination.model <- function (
     daily.vaccine.reversion.rate <- 1 / ( vaccine.efficacy.years * 365 );
     revaccination.eligibility.days <- 365*revaccination.eligibility.years;
 
+    ## Evonet Values.
     evonet.initialization.timestep <- 2;
     isEvonetInitializationTimestep <- function ( at ) { at == evonet.initialization.timestep }
     isInfectedByAgent <- function ( dat ) { ( dat$pop$Status == 1 ) };
@@ -36,36 +37,84 @@ create.basic.vaccination.model <- function (
     getAliveAgents <- function ( dat ) { which( dat$pop$Status >= 0 ) };
 
     getAgentsJustInfectedLastTimestep <- function ( dat, at ) { which( dat$pop$Time_Inf ==(at-1) & ( dat$pop$Status == 1 ) ) }
+
+    getAgentsPotentiallyInfectedThisTimestep <- function ( dat, at ) { dat$discord_coital_df$inf_id }
     getTransmittingPartners <- function ( dat, inf_indices ) { dat$pop$Donors_Indices[ inf_indices ] }
 
-    getMu <- function ( dat, indices = 1:length( dat$vacc_model$agents ) ) { as.numeric(lapply(indices,function(x) dat$vacc_model$agents[[x]]$mu)) }
-    setMu <- function ( dat, indices, mu_values ) { invisible(lapply(1:length(indices),function(x) dat$vacc_model$agents[[indices[x]]]$mu <<- mu_values[x])) }
-    getSigma <- function ( dat, indices = 1:length( dat$vacc_model$agents ) ) { as.numeric(lapply(indices,function(x) dat$vacc_model$agents[[x]]$sigma)) }
-    setSigma <- function ( dat, indices, sigma_values ) { invisible(lapply(1:length(indices),function(x) dat$vacc_model$agents[[indices[x]]]$sigma <<- sigma_values[x])) }
-    ## Here phi for each person is just 1 or 0 (1 is vaccinated) so this as.numeric operation is safe. For more complex phi structures, this could lose structural integrity.
-    getPhi <- function ( dat, indices = 1:length( dat$vacc_model$agents ) ) { as.numeric(lapply(indices,function(x) dat$vacc_model$agents[[x]]$phi)) }
-    setPhi <- function ( dat, indices, phi_values ) { invisible(lapply(1:length(indices),function(x) dat$vacc_model$agents[[indices[x]]]$phi <<- phi_values[x])) }
-
-    getMostRecentVaccinationDate <- function ( dat, indices = 1:length( dat$vacc_model$agents ) ) {
-        ## We store vaccination dates as a stack (last in, first out, so the first element is always the most recent one).
-        lapply(indices, function(x) { dat$vacc_model$agents[[x]]$vaccination.dates.stack[1] } );
-    } # getMostRecentVaccinationDate (..)
-
-    addVaccinationDate <- function ( dat, indices, vaccination_dates ) {
-        ## We store vaccination dates as a stack (last in, first out, so the first element is always the most recent one).
-        invisible(lapply(1:length(indices),function(x) { dat$vacc_model$agents[[indices[x]]]$vaccination.dates.stack <<- c( vaccination_dates[ x ], dat$vacc_model$agents[[indices[x]]]$vaccination.dates.stack ) } ))
-    } # addVaccinationDate (..)
-
+    ## Vacc Model Agents Values.
     createAgent <- function () {
         the.agent <- list(
-            phi=NA,
-            mu=NA,
-            mu_orig=NA,
-            sigma=NA,
-            vaccination.dates.stack=list()
-                          );
+            phi = NA,
+            mu = NA,
+            sigma = NA,
+            m = NA, # formerly known as mu_orig
+            theta = 0, # By default for unvaccinated folks, we will multiply the infection probability by 1 == (1 - theta)
+            vaccination.dates.stack = list()
+        );
         return( the.agent );
     } # createAgent ()
+    ## Vacc Model Agents Values getters/setters:
+    getVaccModelAgentsValue <- function ( dat, key, indices = NULL ) {
+        stopifnot( key %in% names( dat$vacc_model$agents ) );
+        if( is.null( indices ) || ( length( indices ) == 0 ) || ( ( length( indices ) == 1 ) && is.na( indices ) ) ) {
+            indices <- 1:length( dat$vacc_model$agents );
+        }
+        rv <- rep( 0, length( dat$vacc_model$agents ) );
+        for( x in seq_along( indices ) ) { rv[ x ] <- dat$vacc_model$agents[[ indices[ x ] ]]$mu }
+        return( rv );
+    } # getVaccModelAgentsValue(..)
+    setVaccModelAgentsValue <- function ( dat, key, value, indices = NULL ) {
+        stopifnot( key %in% names( dat$vacc_model$agents ) );
+        if( is.null( indices ) || ( length( indices ) == 0 ) || ( ( length( indices ) == 1 ) && is.na( indices ) ) ) {
+            indices <- 1:length( dat$vacc_model$agents );
+        }
+        for( x in seq_along( indices ) ) { dat$vacc_model$agents[[ indices[ x ] ] ][[ key ]] <- value[ x ]; }
+        return( dat );
+    } # setVaccModelAgentsValue(..)
+    getMu <- function ( dat, indices = NULL ) {
+        getVaccModelAgentsValue( dat, "mu", indices )
+    }
+    setMu <- function ( dat, mu_values, indices = NULL ) {
+        setVaccModelAgentsValue( dat, "mu", mu_values, indices )
+    }
+    getSigma <- function ( dat, indices = NULL ) {
+        getVaccModelAgentsValue( dat, "sigma", indices )
+    }
+    setSigma <- function ( dat, sigma_values, indices = NULL ) {
+        setVaccModelAgentsValue( dat, "sigma", sigma_values, indices )
+    }
+    getPhi <- function ( dat, indices = NULL ) {
+        getVaccModelAgentsValue( dat, "phi", indices )
+    }
+    setPhi <- function ( dat, phi_values, indices = NULL ) {
+        setVaccModelAgentsValue( dat, "phi", phi_values, indices )
+    }
+    getM <- function ( dat, indices = NULL ) {
+        getVaccModelAgentsValue( dat, "m", indices )
+    }
+    setM <- function ( dat, m_values, indices = NULL ) {
+        setVaccModelAgentsValue( dat, "m", m_values, indices )
+    }
+    getTheta <- function ( dat, indices = NULL ) {
+        getVaccModelAgentsValue( dat, "theta", indices )
+    }
+    setTheta <- function ( dat, theta_values, indices = NULL ) {
+        setVaccModelAgentsValue( dat, "theta", theta_values, indices )
+    }
+    getMostRecentVaccinationDate <- function ( dat, indices = seq_along( dat$vacc_model$agents ) ) {
+        ## We store vaccination dates as a stack (last in, first out, so the first element is always the most recent one).
+        vaccination.dates.stack <- getVaccModelAgentsValue( dat, "vaccination.dates.stack", indices );
+        return( vaccination.dates.stack[ 1 ] );
+    } # getMostRecentVaccinationDate (..)
+    addVaccinationDate <- function ( dat, vaccination_dates, indices = seq_along( dat$vacc_model$agents ) ) {
+        ## We store vaccination dates as a stack (last in, first out, so the first element is always the most recent one).
+        for( x in seq_along( indices ) ) {
+            vaccination.dates.stack.x <-
+                c( vaccination_dates[ x ], dat$vacc_model$agents[[ indices[ x ] ] ][[ "vaccination.dates.stack" ]] );
+            dat$vacc_model$agents[[ indices[ x ] ] ][[ "vaccination.dates.stack" ]] <- vaccination.dates.stack.x;
+        }
+        return( dat );
+    } # addVaccinationDate (..)
 
     # This is set up to work for our default configuration, which is the one-mark or two-mark models, with "sensitive" always present, and maybe a second option (its name doesn't matter here).
     update_mu <- function ( dat, at ) {
@@ -84,7 +133,7 @@ create.basic.vaccination.model <- function (
             mu_values <- rbinom( length( inf_indices ), 1,
                                 prob = initial.mark.distribution[ first.mark.name ] );
         }
-        setMu( dat, inf_indices, mu_values );
+        setMu( dat, mu_values, inf_indices );
       } else {
         # secondary infections from previous timestep
         inf_indices <- getAgentsJustInfectedLastTimestep( dat, at );
@@ -92,10 +141,10 @@ create.basic.vaccination.model <- function (
         if( length( inf_indices ) > 0 ) {
           donor_indices <- getTransmittingPartners( dat, inf_indices );
           mu_values <- getMu( dat, donor_indices );
-          setMu( dat, inf_indices, mu_values );
+          dat <- setMu( dat, mu_values, inf_indices );
         }
       }
-      return( dat$vacc_model$agents );
+      return( dat );
     } # update_mu (..)
 
     update_sigma <- function ( dat, at ) {
@@ -103,19 +152,17 @@ create.basic.vaccination.model <- function (
         #initial infecteds at model start
         inf_indices <- getInfectedAgents( dat );
         sigma_values <- rep( 0, length( inf_indices ) );
-        setSigma( dat, inf_indices, sigma_values );
+        dat <- setSigma( dat, sigma_values, inf_indices );
       } else {
           # Do nothing.
       }
-      return( dat$vacc_model$agents );
+      return( dat );
     } # update_sigma (..)
 
     # This and the other functions are presently vectorized.
     # This is run daily to vaccinate new people.
     initialize_phi <- function ( dat, at ) {
-        all.agent.indices <- 1:length( dat$vacc_model$agents );
-
-        phi.values <- getPhi( dat, all.agent.indices );
+        phi.values <- getPhi( dat );
 
         # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
         is.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 1 ) );
@@ -149,14 +196,14 @@ create.basic.vaccination.model <- function (
         eligible_indices <- c( eligible_indices1, eligible_indices2 );
         
         # if no agents eligible, end fxn
-        if( length( eligible_indices ) == 0 ) { return( dat$vacc_model$agents ) };
+        if( length( eligible_indices ) == 0 ) { return( dat ) };
         
         #  calculate how many agents should be newly vaccinated at this time, based on user-specified vaccination rate
 
         ## This is using the calculuated per-day rate. [NOTE THERE WAS A BUG: It was using the per-day odds!] -- but ok now that this is the per-day rate, then this is a small number of people.. it's the per-day number being vaccinated, which is correct.
         num.newly.vaccinated.today <- sum( rbinom( length( getAliveAgents( dat ) ), 1, daily.vaccination.rate ) );
 
-        if( num.newly.vaccinated.today == 0 ) { return( dat$vacc_model$agents ) };
+        if( num.newly.vaccinated.today == 0 ) { return( dat ) };
         
         # if number of eligible agents exceeds number permissible, randomly choose subset
         # if the %coverage in total population alive exceeds #eligible, vaccinate all eligible
@@ -166,10 +213,10 @@ create.basic.vaccination.model <- function (
             vaccinated_indices <- eligible_indices;
         }
 
-        setPhi( dat, vaccinated_indices, 1 );
-        addVaccinationDate( dat, vaccinated_indices, at );
+        dat <- setPhi( dat, 1, vaccinated_indices );
+        dat <- addVaccinationDate( dat, at, vaccinated_indices );
 
-        return( dat$vacc_model$agents );
+        return( dat );
     } # initialize_phi (..)
 
     ## This is run daily to check if the vaccine efficacy wanes
@@ -179,9 +226,7 @@ create.basic.vaccination.model <- function (
     ## person was vaccinated today; TODO: Add that check so this can
     ## be run before or after initialize_phi in either order.
     update_phi <- function ( dat, at ) {
-        all.agent.indices <- 1:length( dat$vacc_model$agents );
-
-        phi.values <- getPhi( dat, all.agent.indices );
+        phi.values <- getPhi( dat );
 
         # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
         is.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 1 ) );
@@ -204,28 +249,32 @@ create.basic.vaccination.model <- function (
         if( length( vacc_indices ) > 0 ) {
           # With a small probability each day we might switch a person to being (effectively) not vaccinated (aka no vaccine-induced protection).
           new_values <- rbinom( length( vacc_indices ), 1, 1 - daily.vaccine.reversion.rate );
-          setPhi( dat, vacc_indices, new_values );
+          dat <- setPhi( dat, new_values, vacc_indices );
         }
       }
-      return( dat$vacc_model$agents );
+      return( dat );
     } # update_phi (..)
 
+    draw_m <- function ( dat, at, ... ) {
+        inf_indices <- getAgentsPotentiallyInfectedThisTimestep( dat, at );
+        transmitter.mu <- getMu( dat, inf_indices );
 
-    draw_m <- function ( dat, at, infector.ids, ... ) {
-     transmitter.mu <- getMu( dat, infector.ids );
+        ## transmitter.mu for the basic model is an index into names( vaccine.efficacy.by.mark ) (0-indexed, so add 1). That is, 0 means sensitive, and 1 means resistant.
+        mark.index <- round( transmitter.mu ) + 1;
+        stopifnot( mark.index %in% seq_along( names( vaccine.efficacy.by.mark ) ) );
 
-      ## No variation in this default method: ignore sigma, don't draw anything.
-      return( c( m = transmitter.mu ) );
-    }
+        dat$vacc_model$agents[[ "m" ]][ inf_indices ] <- names( vaccine.efficacy.by.mark )[ mark.index ];
+
+        dat$vacc_model$agents[[ "mu" ]][ inf_indices ] <- transmitter.mu;
+        dat$vacc_model$agents[[ "sigma" ]][ inf_indices ] <- 0;
+
+        return( dat );
+    } # draw_m (..)
 
     # theta is the vaccine-induced probability of avoiding an otherwise-infecting exposure
-    calculate_theta <- function ( dat, at, m ) { # m is mark, eg "sensitive"
-      # For vaccinated folks, it's the vaccine efficacy for the mark.
-      stopifnot( m %in% names( vaccine.efficacy.by.mark ) );
-
-        all.agent.indices <- 1:length( dat$vacc_model$agents );
-
-        phi.values <- getPhi( dat, all.agent.indices );
+    calculate_theta <- function ( dat, at ) {
+        # For vaccinated folks, it's the vaccine efficacy for the exposing/potentially infecting mark.
+        phi.values <- getPhi( dat );
 
         # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
         is.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 1 ) );
@@ -236,17 +285,21 @@ create.basic.vaccination.model <- function (
             sum( ( isInfectedByAgent( dat ) | isUninfectedByAgent( dat ) ) );
         stopifnot( num.alive == length( getAliveAgents( dat ) ) );
 
-        # By default for unvaccinated folks, we will multiply the infection probability by 1 == 1 - 0:
-        theta <- rep( 0, length( all.agent.indices ) );
-        theta[ is.vaccinated.by.agent ] <- vaccine.efficacy.by.mark[ m ];
-  
-        return( theta );
+        m <- getM( dat, at );
+
+        # Set theta for everyone, to ensure that no-longer-vaccinated folks get it set back to 0.
+        theta <- rep( 0, length( is.vaccinated.by.agent ) );
+        theta[ is.vaccinated.by.agent ] <- vaccine.efficacy.by.mark[ m[ is.vaccinated.by.agent ] ];
+        dat <- setTheta( dat, at, theta );
+
+        return( dat );
     } # calculate_theta (..)
 
     update_mu_and_sigma <- function ( dat, at ) {
-      update_mu( dat, at );
-      update_sigma( dat, at );
-      return( dat$model$agents );
+      dat <- update_mu( dat, at );
+      dat <- update_sigma( dat, at );
+
+      return( dat );
     } # update_mu_and_sigma (..)
     
     initialize_and_update_phi <- function ( dat, at ) {
@@ -254,36 +307,37 @@ create.basic.vaccination.model <- function (
       if( at < ( vaccine.rollout.year * 365 ) ) { return( dat ) };
 
       # Note this looks odd, but these are vectorized functions and so we first update those already initialized at a previous time step, then we initialize those newly vaccinated. We could have done it either way 'round, but these fns are presently written to not check that the update is not applying to someone just vaccinated. So for now this has to be done in this order:
-      update_phi( dat, at );
-      initialize_phi( dat, at );
+      dat <- update_phi( dat, at );
+      dat <- initialize_phi( dat, at );
 
-      return( dat$vacc_model$agents );
+      return( dat );
     }
     
-      initialize_vaccine_agents <- function ( dat, at ) {
+    initialize_vaccine_agents <- function ( dat, at ) {
       
       if( isEvonetInitializationTimestep( at ) ) {
         #create agent object (list of lists attached to dat)
         agent_template <- createAgent();
         num.current_agents <- length( dat$pop$Status );
-        dat$vacc_model$agents <<- vector( 'list', length = num.current_agents );
-        dat$vacc_model$agents <- lapply(dat$vacc_model$agents, function(x) x <- agent_template );
+        dat$vacc_model$agents <- vector( 'list', length = num.current_agents );
+        for( x in seq_along( dat$vacc_model$agents ) ) { dat$vacc_model$agents[[ x ]] <- agent_template }
+
         #if start of model initialize mu/sigma or initialize for new agents  
-        update_mu_and_sigma( dat, at );
+        dat <- update_mu_and_sigma( dat, at );
       } else {
           # Detect that new agents need to be added to the agents list.
           if( length( dat$pop$Status ) > length( dat$vacc_model$agents ) ) {
             #if(at>500) browser()
-            agent_list <- createAgent();
+            agent_template <- createAgent();
             total_new_agents <- length( dat$pop$Status ) - length( dat$vacc_model$agents );
             new_agents_indices <- (length(dat$vacc_model$agents)+1):(length(dat$vacc_model$agents) + total_new_agents)
-            
-            invisible(lapply(new_agents_indices,function(x) dat$vacc_model$agents[[x]] <<- agent_list ));
+            for( x in seq_along( new_agents_indices ) ) { dat$vacc_model$agents[[ x ]] <- agent_template }
           }
-      }  
+      }
 
       stopifnot( length( dat$pop$Status ) == length( dat$vacc_model$agents ) );
-      return( dat$vacc_model$agents );
+
+      return( dat );
     } # initialize_vaccine_agents (..)
 
     return( environment() );
