@@ -288,7 +288,10 @@ create.basic.vaccination.model <- function (
 
         # Set theta for everyone, to ensure that no-longer-vaccinated folks get it set back to 0.
         theta <- rep( 0, length( is.vaccinated.by.agent ) );
+
+        # Note m is a string index into names( vaccine.efficacy.by.mark ).
         theta[ is.vaccinated.by.agent ] <- vaccine.efficacy.by.mark[ m[ is.vaccinated.by.agent ] ];
+
         dat <- setTheta( dat, at, theta );
 
         return( dat );
@@ -330,7 +333,7 @@ create.basic.vaccination.model <- function (
             agent_template <- createAgent();
             total_new_agents <- length( dat$pop$Status ) - length( dat$vacc_model$agents );
             new_agents_indices <- (length(dat$vacc_model$agents)+1):(length(dat$vacc_model$agents) + total_new_agents)
-            for( x in seq_along( new_agents_indices ) ) { dat$vacc_model$agents[[ x ]] <- agent_template }
+            for( x in new_agents_indices ) { dat$vacc_model$agents[[ x ]] <- agent_template }
           }
       }
 
