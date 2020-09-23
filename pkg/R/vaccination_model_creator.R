@@ -14,7 +14,7 @@ create.basic.vaccination.model <- function (
 ) {
     ## mark.distribtion is a simplex for the parameters of the categorical distribution, and has the same entries as vacine.efficacy.by.mark, to denote their starting distributions.
     stopifnot( length( vaccine.efficacy.by.mark ) == length( initial.mark.distribution ) );
-    stopifnot( all( sort( names( vaccine.efficacy.by.mark ) ) = sort( names( initial.mark.distribution ) ) ) );
+    stopifnot( all( sort( names( vaccine.efficacy.by.mark ) ) == sort( names( initial.mark.distribution ) ) ) );
     # Distribution of marks must sum to 1.
     stopifnot( all.equal( sum( initial.mark.distribution ), 1, tol = 1E-8 ) ); # TODO: Replace magic # for tolerance, maybe, using machine epsilon.
 
@@ -250,7 +250,6 @@ create.basic.vaccination.model <- function (
           # With a small probability each day we might switch a person to being (effectively) not vaccinated (aka no vaccine-induced protection).
           new_values <- rbinom( length( vacc_indices ), 1, 1 - daily.vaccine.reversion.rate );
           dat <- setPhi( dat, new_values, vacc_indices );
-        }
       }
       return( dat );
     } # update_phi (..)
