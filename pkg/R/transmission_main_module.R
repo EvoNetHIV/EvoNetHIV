@@ -177,8 +177,8 @@ transmission_main_module <- function(dat,at)
     ## TODO: decide whether we can do it this way, or should do either dat <- init_.. or dat$vacc_model$agents <- init_...; if the <<- operator is working as I believe it should, dat will be modified in place along the way. Really only dat$vacc_model$agents gets modified. That's why we insist the signatures return that (to indicate that only that has changed) -- but really these are "methods" not "functions" since they modify "dat" in place.
     dat <- initialize_vaccine_agents( dat, at );
 
-    # draw m, then calculate theta. ## TODO: use a getter for getting inf_id, instead.
-    dat <- draw_m( dat, at, dat$discord_coital_df$inf_id );
+    # draw m, then calculate theta.
+    dat <- draw_m( dat, at );
     
     dat <- calculate_theta( dat, at );
     
