@@ -52,7 +52,7 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
               nsteps=evonet_params$n_steps,
               start = 1,
               nsims =  evonet_params$nsims,
-              ncores =  1,
+              ncores =  evonet_params$ncores,
               resimulate.network = TRUE,
               tergmLite = TRUE,
               save.nwstats = TRUE,
