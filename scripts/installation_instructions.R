@@ -35,6 +35,14 @@ if(!require("testthat")){install.packages("testthat")}
 #use install.packages("evonet",repos= PATH/TO/FILE)
 #see ?install.packages for  details
 
+#then, for epimodel version that works with evonet "release 1"
+#1
+install.packages("remotes")
+ #2 
+library(remotes)
+ #3 
+install_version("EpiModel",version = "1.8.0")
+
 ##########################################
 #install absdiffby branch as package
 library(devtools)
