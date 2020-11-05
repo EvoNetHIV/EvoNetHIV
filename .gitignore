@@ -13,3 +13,4 @@ include_stubs.o
 modified_logistic_V5.o
 vaccine_model.RData
 vaccine_model.RData.pdf
+pkg/src/
