@@ -33,8 +33,8 @@ createAgent <- function() {
     m = NA, # formerly known as mu_orig
     theta = 0, # By default for unvaccinated folks, we will multiply the infection probability by 1 == (1 - theta)
     vaccination.dates.stack = list()
-  );
-  return(the.agent);
+  )
+  return(the.agent)
 }
 
 ## Vacc Model Agents Values getters/setters:
@@ -182,15 +182,16 @@ initialize_phi <- function(dat, at) {
   phi.values <- getPhi(dat);
   
   # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
-  is.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 1 ) );
+  is.vaccinated.by.agent <- (!is.na(phi.values) & (phi.values == 1));
   is.unvaccinated.by.agent <- is.na( phi.values );
-  is.previously.vaccinated.by.agent <- ( !is.na( phi.values ) & ( phi.values == 0 ) );
-  stopifnot( all( as.numeric( is.vaccinated.by.agent + is.unvaccinated.by.agent + is.previously.vaccinated.by.agent ) == 1 ) )
+  is.previously.vaccinated.by.agent <- (!is.na( phi.values ) & (phi.values == 0))
+  stopifnot( all( as.numeric(is.vaccinated.by.agent + is.unvaccinated.by.agent + 
+                               is.previously.vaccinated.by.agent) == 1))
   
-  num.alive.and.vaccinated <-
-    sum( is.vaccinated.by.agent & ( isInfectedByAgent( dat ) | isUninfectedByAgent( dat ) ) );
+  num.alive.and.vaccinated <-             ## CHECK: this was < (LT) and not assignment
+    sum( is.vaccinated.by.agent & (isInfectedByAgent(dat) | isUninfectedByAgent(dat)));
   num.alive <-
-    sum( ( isInfectedByAgent( dat ) | isUninfectedByAgent( dat ) ) );
+    sum((isInfectedByAgent(dat) | isUninfectedByAgent(dat)));
   stopifnot( num.alive == length( getAliveAgents( dat ) ) );
   
   #  if designated vacc. level already reached (percent of pop vaccianted), don't vacc anymore
@@ -221,9 +222,10 @@ initialize_phi <- function(dat, at) {
   ## This is using the calculuated per-day rate. [NOTE THERE WAS A BUG: It was using the per-day odds!] -- 
   ## but ok now that this is the per-day rate, then this is a small number of people.. it's the per-day number 
   ##being vaccinated, which is correct.
-  num.newly.vaccinated.today <- sum( rbinom( length( getAliveAgents( dat ) ), 1, dat$param$daily.vaccination.rate ) );
+  num.newly.vaccinated.today <- sum(rbinom(length(getAliveAgents(dat)), 1, 
+                                           dat$param$daily.vaccination.rate))
   
-  if (num.newly.vaccinated.today == 0) { return( dat ) };
+  if (num.newly.vaccinated.today == 0) return(dat)
   
   # if number of eligible agents exceeds number permissible, randomly choose subset
   # if the %coverage in total population alive exceeds #eligible, vaccinate all eligible
@@ -253,7 +255,8 @@ update_phi <- function(dat, at) {
   is.vaccinated.by.agent <- (!is.na(phi.values) & (phi.values == 1))
   is.unvaccinated.by.agent <- is.na( phi.values )
   is.previously.vaccinated.by.agent <- (!is.na(phi.values) & (phi.values == 0))
-  stopifnot( all( as.numeric( is.vaccinated.by.agent + is.unvaccinated.by.agent + is.previously.vaccinated.by.agent ) == 1 ) )
+  stopifnot(all(as.numeric(is.vaccinated.by.agent + is.unvaccinated.by.agent + 
+                             is.previously.vaccinated.by.agent) == 1))
   
   ## NOTE/THOUGHT:
   ## This builds in that they are not already infected; later we
@@ -277,11 +280,11 @@ update_phi <- function(dat, at) {
     dat <- setPhi( dat, new_values, vacc_indices );
   }
   return( dat );
-} # update_phi (..)
+}
 
 #' @export
 draw_m <- function(dat, at, ...) {
-  inf_indices <- getAgentsPotentiallyInfectedThisTimestep( dat, at );
+  inf_indices <- getAgentsPotentiallyInfectedThisTimestep(dat, at);
   transmitter.mu <- getMu( dat, inf_indices );
   
   ## transmitter.mu for the basic model is an index into 
@@ -307,11 +310,11 @@ calculate_theta <- function(dat, at) {
   # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
   is.vaccinated.by.agent <- (!is.na(phi.values) & (phi.values == 1));
   
-  num.alive.and.vaccinated <-
+  num.alive.and.vaccinated <-    ## CHECK: defined but not used
     sum(is.vaccinated.by.agent & (isInfectedByAgent(dat) | isUninfectedByAgent(dat)));
   num.alive <-
     sum((isInfectedByAgent(dat) | isUninfectedByAgent(dat)));
-  stopifnot( num.alive == length( getAliveAgents( dat ) ) );
+  stopifnot( num.alive == length(getAliveAgents(dat)));
   
   m <- getM( dat, at );
   
@@ -357,9 +360,10 @@ initialize_vaccine_agents <- function(dat, at) {
     #create agent object (list of lists attached to dat)
     agent_template <- createAgent();
     num.current_agents <- length( dat$pop$Status );
-    dat$vacc_model$agents <- vector( 'list', length = num.current_agents );
+    dat$vacc_model$agents <- vector('list', length = num.current_agents)
     
     ## CHECK: why use this instead of dat$attr?
+    ##        what is relationship of vacc_model$agents to dat$attr and dat$pop
     for (x in seq_along(dat$vacc_model$agents)) { dat$vacc_model$agents[[x]] <- agent_template }
     
     #if start of model initialize mu/sigma or initialize for new agents  
@@ -377,5 +381,5 @@ initialize_vaccine_agents <- function(dat, at) {
   
   stopifnot(length( dat$pop$Status) == length(dat$vacc_model$agents));
   
-  return( dat );
+  return(dat);
 }
