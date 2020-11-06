@@ -1,14 +1,27 @@
-#### 
-# To use the new factory fns you have to remove the file pkg/R/vaccination_model_generics.R -- you can just move it to a different place outside of the package, or I think you can also just rename it to not end in .R.
 
-#-----------------------------------
-#--- Quick-set params.
-#### TODO/NOTE: TEMPORARILY THESE PARAMS ARE NOT PROPAGATING TO THE NEW FACTORY FN; SEE BELOW.
-#-----------------------------------
+##
+## MIDAS Vaccine Run Script
+##
+##
+
+
+
+# 1. Setup ----------------------------------------------------------------
+
+library("evonet")
+require("parallel")
+
+# options(error=recover)
+# devtools::load_all("pkg") #if local changes made
+
+
+
+# 2. Parameterization -----------------------------------------------------
+
+## Quick-set params
 THE.SEED <- 123;
 THE.MODEL.ID <- "model_1" #"model_1b","model_2","model_2b";
 NUM.SIMS <- 1;
-require( "parallel" )
 NUM.CORES <- parallel::detectCores();
 NUM.YEARS <- 15;
 
@@ -21,102 +34,63 @@ FRACTION.VACCINATED <- 0.60;
 
 VACCINE.EFFICACY.YEARS <- 3;
 
-## NEW: add the fns for implementing the new vaccination approach.
-## ERE I AM. TODO: send parameters to the fn too
-source( "pkg/R/vaccination_model_creator.R" );
-.e <- create.basic.vaccination.model();
-attach( .e, name = "vaccination" )
-rm( "create.basic.vaccination.model" );
+set.seed(THE.SEED)
 
-#---------------------
-# library(devtools)
-# install_github("EvoNetHIV/EvoNet",subdir="pkg",ref="vaccination")
-
-library(evonet)
-
-options(error=recover)
-
-devtools::load_all("pkg") #if local changes made
-
-#if new functions added, export to namespace
-#devtools::document(file.path(getwd(),"pkg"))
-
-#---------------------
-
-set.seed( THE.SEED )
-#-----------------------------------
-
-#what vaccine model?
 vacc_model_id <- THE.MODEL.ID;
 
-#-----------------------------------
+# initial values needed to calculate other parameter values
+initial_pop = START.POPULATION.N
 
-#initial values needed to calculate other parameter values
-initial_pop       = START.POPULATION.N;
-years_to_max_coverage = VACCINE.ROLLOUT.YEARS.DURATION;  #how long (years) to all eligible are vaccinated
-max_perc_vaccinated = FRACTION.VACCINATED;   #maximum proportion of population eligible for vaccination (.99 upper limit)
+# how long (years) to all eligible are vaccinated
+years_to_max_coverage = VACCINE.ROLLOUT.YEARS.DURATION
 
-#-----------------------------------
+# maximum proportion of population eligible for vaccination (.99 upper limit)
+max_perc_vaccinated = FRACTION.VACCINATED
+vaccine.efficacy.years = 3
+revaccination.eligibility.years = 3
 
-#specify  parameters to change from default or that are frequently changed
-param_list = list(
-  nsims            = NUM.SIMS,   #number of simulations (replicates)
-  ncores           = NUM.CORES,
-  popsumm_frequency  = 30,   #frequency of timesteps (days) to calculate summary stats
-  fast_edgelist      = TRUE,  #no longer needed as of EpiModel v 2.0
-  min_spvl_allowed = .5,
-  n_steps           = 365*NUM.YEARS,
-  initial_pop       = initial_pop,
-  initial_infected  = initial_pop*START.PREVALENCE,
-  target_stats         = initial_pop*0.7/2, # network edge density parameter
-  vl_peak_agent_flag   = TRUE,   #default FALSE; if TRUE, allow cor bn spvl and pvl.
-  plot_nw            = FALSE,
-  perc_virus_vaccine_sens = 1 ###### THIS MUST BE 1 to turn off the old/underlying vaccination model and replace it with our new one.
-); #speed things up a bit for single sim/core runs
-  
-#   #Vaccine parameters ----------------------------------------- #
-# #### PAULS QUESTION: WHERE IS "50" COMING FROM? WOULD 15 (aka NUM.YEARS) SUFFICE?
-#   start_vacc_campaign = (VACCINE.ROLLOUT.YEAR*365):(50*365),    # all vaccine models ### (50 is any number larger than NUM.YEARS -- it is NUMBER OF TIME STEPS.).
-#   max_perc_vaccinated = max_perc_vaccinated , #all vacc. models, maximum percent/proportion of population to be vaccinated
-#   perc_vaccinated_rate = (max_perc_vaccinated /(1-max_perc_vaccinated ))/(years_to_max_coverage*365), #all vacc.models, prob of daily vaccination
-#   vacc_eff_duration = 365*VACCINE.EFFICACY.YEARS, #all vacc models
-# 
-#   vacc_trans_prob_decrease = 0.8,  #models 1/1b/2/2b, proportion (percentage) decrease in trans probs due to vaccine for vaccine model "1" (baseline vaccine model),
-#  
-#    #model 1 specific
-###### ARGH. THIS IS UNIVERSAL AND GOVERNS THE OLD MODEL STILL. MUST BE 1 [except in original (presently current) model 1 which relied on this intact underlying system.]
-#    perc_virus_vaccine_sens = 0.5, #model 1, proportion of initial viruses/marks that are sensitive to vaccine 
-#   
-#   #model 1b specific
-#   mu_mean  = 0.5, #model 1b, equilibrium mu value 
-#   vacc_time_to_mu_mean  = 365, # model 1b, days to reach mu_mean for infected agents (equilibrium value)
-#   vacc_model_min_mu = 0.01, #model 1b, lower bound of uniform dist. for initial dist. of mu values for model 1b
-#   vacc_model_max_mu = 0.99, #model 1b, upper bound of uniform dist. for initial dist. of mu values for model 1b
-#   
-#   #model 2 specific
-#   prob_loci_1               = 0.5, #probability of mu=1 (loci 1) for initially infected agent (model 2) 
-#   prob_loci_2               = 0.5,#probability of mu=1 (loci 2) for initially infected agent (model 2)
-#   trans_prob_decrease_scalar_model2 = 0.5 #proportional decrease in transmission for infected agents with
-#   # 0/1 or 1/0 mu values relative to mu=1/1 at each loci which
-#   #is equal to param. "trans_prob_decrease_scalar_model2"
-# ) #end of parameter list
+# models 1/1b/2/2b, proportion (percentage) decrease in trans probs due 
+# to vaccine for vaccine model "1" (baseline vaccine model),
+vaccine.efficacy.by.mark = c("sensitive" = 0.8)
+initial.mark.distribution = c("sensitive" = 1) 
+
+## Built-in EvoNet parameterization functions
+##  Wrapping evonet_setup
+##  TODO (SJ): rewrite this as param_evonet
+params <- input_params(nsims            = NUM.SIMS,   #number of simulations (replicates)
+                       ncores           = NUM.CORES,
+                       popsumm_frequency  = 30,   #frequency of timesteps (days) to calculate summary stats
+                       fast_edgelist      = TRUE,  #no longer needed as of EpiModel v 2.0
+                       min_spvl_allowed = .5,
+                       n_steps           = 365*NUM.YEARS,
+                       initial_pop       = initial_pop,
+                       initial_infected  = initial_pop*START.PREVALENCE,
+                       target_stats         = initial_pop*0.7/2, # network edge density parameter
+                       vl_peak_agent_flag   = TRUE,   #default FALSE; if TRUE, allow cor bn spvl and pvl.
+                       plot_nw            = FALSE,
+                       perc_virus_vaccine_sens = 1)
+params <- input_parameters_derived(params)
+
+params$evonet.initialization.timestep = 2
+params$fraction.vaccinated = FRACTION.VACCINATED
+params$vaccine.rollout.year = VACCINE.ROLLOUT.YEAR
+params$daily.vaccination.rate = FRACTION.VACCINATED / (VACCINE.ROLLOUT.YEARS.DURATION * 365)
+params$vaccine.efficacy.days = 365*vaccine.efficacy.years
+params$daily.vaccine.reversion.rate = 1 / (vaccine.efficacy.years * 365)
+params$revaccination.eligibility.days = 365*revaccination.eligibility.years
+params$vaccine.efficacy.by.mark = vaccine.efficacy.by.mark
+params$initial.mark.distribution = initial.mark.distribution
+
+
+evoparams <- params
 
 #---------------------
 
-#what vaccine model to implement?
-#param_list$vacc_model_id <- vacc_model_id
-
-#---------------------
-#turn parameter list into "epimodel" parameter object 
-evoparams <- do.call(evonet_setup, param_list)
-
-#---------------------
-
-#specify which processes/modules to be run
+# specify which processes/modules to be run
 modules <- c(
-#  "initialize_vaccine_agents",
-#  "update_mu_and_sigma",
-#  "initialize_and_update_phi",
+  "initialize_vaccine_agents",
+  "update_mu_and_sigma",
+  "initialize_and_update_phi",
   "aging",
   "testing",
   "treatment",
@@ -127,11 +101,35 @@ modules <- c(
   "evo_arrivals",
   "summary_module")
 
-#estimate network
+## TODO (SJ): unpack nw_setup to allow for flexible ERGM parameterization
+# estimate network
 nw <- nw_setup(evoparams) # Sets up the initial network
 
-#run model
+# run model
 evomodel <- evorun(modules, evoparams, nw)
+
+
+## Below is unpacked version of evorun
+## TODO (SJ): rewrite this as init_evonet and control_evonet
+module_list <- lapply(modules, get)
+names(module_list) <- paste(modules, ".FUN", sep = "")
+
+evo_module_list <- c(
+  list("plot_network.FUN" = plot_network_fxn),  
+  module_list)
+
+evocontrol <- setup_epimodel_control_object(evonet_params = params,
+                                            module_list   = evo_module_list)
+
+status <- rep("s", params$initial_pop)
+status[sample(1:params$initial_pop,size=params$initial_infected)]<- "i"
+infected_list <- EpiModel::init.net(status.vector = status)
+    
+evomodel  <- netsim(x = nw, 
+                    param = params,
+                    init = infected_list,
+                    control = evocontrol)
+
 
 #assign model names
 model_name = paste("vaccine_model.RData",sep="")
