@@ -84,7 +84,14 @@ params$initial.mark.distribution = initial.mark.distribution
 
 evoparams <- params
 
-#---------------------
+
+# 3.  ERGM Specification --------------------------------------------------
+
+## TODO (SJ): unpack nw_setup to allow for flexible ERGM parameterization
+# estimate network
+nw <- nw_setup(evoparams) # Sets up the initial network
+
+
 
 # specify which processes/modules to be run
 modules <- c(
@@ -101,9 +108,9 @@ modules <- c(
   "evo_arrivals",
   "summary_module")
 
-## TODO (SJ): unpack nw_setup to allow for flexible ERGM parameterization
-# estimate network
-nw <- nw_setup(evoparams) # Sets up the initial network
+
+
+# 4. Epidemic Simulation --------------------------------------------------
 
 # run model
 evomodel <- evorun(modules, evoparams, nw)
@@ -122,7 +129,7 @@ evocontrol <- setup_epimodel_control_object(evonet_params = params,
                                             module_list   = evo_module_list)
 
 status <- rep("s", params$initial_pop)
-status[sample(1:params$initial_pop,size=params$initial_infected)]<- "i"
+status[sample(1:params$initial_pop, size = params$initial_infected)] <- "i"
 infected_list <- EpiModel::init.net(status.vector = status)
     
 evomodel  <- netsim(x = nw, 
@@ -132,10 +139,8 @@ evomodel  <- netsim(x = nw,
 
 
 #assign model names
-model_name = paste("vaccine_model.RData",sep="")
+model_name = paste("vaccine_model.RData",sep = "")
 #save model
-save(evomodel,file=model_name)
+save(evomodel, file = model_name)
 #plot results, prints to screen and saves pdf to working directory, getwd() to see
-evoplot(evomodel,name=model_name) #plot to screen (if single sim/core) and write to pdf
-
-detach( "vaccination" )
+evoplot(evomodel, name = model_name) #plot to screen (if single sim/core) and write to pdf
