@@ -148,7 +148,7 @@ update_mu <- function(dat, at) {
       mu_values <- rbinom( length( inf_indices ), 1,
                            prob = dat$param$initial.mark.distribution[ first.mark.name ] );
     }
-    dat <- setMu(dat, mu_values, inf_indices);   ## CHECK: this not assigned back to dat
+    dat <- setMu(dat, mu_values, inf_indices);
   } else {
     # secondary infections from previous timestep
     inf_indices <- getAgentsJustInfectedLastTimestep( dat, at );
@@ -188,7 +188,7 @@ initialize_phi <- function(dat, at) {
   stopifnot( all( as.numeric(is.vaccinated.by.agent + is.unvaccinated.by.agent +
                                is.previously.vaccinated.by.agent) == 1))
 
-  num.alive.and.vaccinated <-             ## CHECK: this was < (LT) and not assignment
+  num.alive.and.vaccinated <-
     sum( is.vaccinated.by.agent & (isInfectedByAgent(dat) | isUninfectedByAgent(dat)));
   num.alive <-
     sum((isInfectedByAgent(dat) | isUninfectedByAgent(dat)));
