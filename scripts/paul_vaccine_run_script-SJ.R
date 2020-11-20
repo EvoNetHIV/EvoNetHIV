@@ -53,8 +53,6 @@ evoparams <- param_evonet(evonet.initialization.timestep = 2,
 
 # 3.  ERGM Specification --------------------------------------------------
 
-## TODO (SJ): unpack nw_setup to allow for flexible ERGM parameterization
-# estimate network
 nw <- nw_setup(evoparams) # Sets up the initial network
 
 nw <- setup_initialize_network(evoparams)
