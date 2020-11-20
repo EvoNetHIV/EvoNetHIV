@@ -4,8 +4,6 @@
 ##
 ##
 
-
-
 # 1. Setup ----------------------------------------------------------------
 
 library("evonet")
@@ -13,7 +11,6 @@ require("parallel")
 
 # options(error=recover)
 # devtools::load_all("pkg") #if local changes made
-
 
 
 # 2. Parameterization -----------------------------------------------------
@@ -39,8 +36,6 @@ vacc_model_id <- THE.MODEL.ID
 vaccine.efficacy.years <- 3
 revaccination.eligibility.years <- 3
 
-# models 1/1b/2/2b, proportion (percentage) decrease in trans probs due
-# to vaccine for vaccine model "1" (baseline vaccine model),
 vaccine.efficacy.by.mark = c("sensitive" = 0.8)
 initial.mark.distribution = c("sensitive" = 1)
 
@@ -62,7 +57,20 @@ evoparams <- param_evonet(evonet.initialization.timestep = 2,
 # estimate network
 nw <- nw_setup(evoparams) # Sets up the initial network
 
+nw <- setup_initialize_network(evoparams)
 
+est <- netest(nw            =  nw,
+              formation     =  as.formula(evoparams$nw_form_terms),
+              target.stats  =  evoparams$target_stats,
+              coef.form     =  evoparams$nw_coef_form,
+              constraints   =  as.formula(evoparams$nw_constraints),
+              verbose       =  FALSE,
+              coef.diss     =  dissolution_coefs( dissolution =  as.formula(evoparams$dissolution),
+                                                  duration    =  evoparams$relation_dur,
+                                                  d.rate      =  evoparams$d_rate))
+
+
+# 4. Module Settings ------------------------------------------------------
 
 # specify which processes/modules to be run
 modules <- c(
@@ -81,10 +89,10 @@ modules <- c(
 
 
 
-# 4. Epidemic Simulation --------------------------------------------------
+# 5. Epidemic Simulation --------------------------------------------------
 
 # run model
-evomodel <- evorun(modules, evoparams, nw)
+evomodel <- evorun(modules, evoparams, est)
 
 
 ## Below is unpacked version of evorun
