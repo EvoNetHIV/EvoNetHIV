@@ -16,10 +16,12 @@ Network object
 Create initial network for EvoNet simulation
 }
 \details{
-Creates initial network and sets network attributes "age","sqrt_age", "sex", "role", and "att1" for each node (agent) on the network,
-which is required for estimation of networks using these attributes. Wrapper function for "network.initialize" and 
-"set.vertex.attribute" functions from "network" package.
-If additional attributes are desired, they can be added following the template within the function.
+Creates initial network and sets network attributes "age","sqrt_age", "sex",
+"role", and "att1" for each node (agent) on the network, which is required
+for estimation of networks using these attributes. Wrapper function for
+"network.initialize" and "set.vertex.attribute" functions from "network"
+package. If additional attributes are desired, they can be added following
+the template within the function.
 }
 \examples{
 nw <- setup_initialize_network(evoparams)
