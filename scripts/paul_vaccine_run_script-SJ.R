@@ -2,12 +2,10 @@
 ##
 ## MIDAS Vaccine Run Script
 ##
-##
 
 # 1. Setup ----------------------------------------------------------------
 
 library("evonet")
-require("parallel")
 
 # options(error=recover)
 # devtools::load_all("pkg") #if local changes made
@@ -39,85 +37,61 @@ revaccination.eligibility.years <- 3
 vaccine.efficacy.by.mark = c("sensitive" = 0.8)
 initial.mark.distribution = c("sensitive" = 1)
 
-evoparams <- param_evonet(evonet.initialization.timestep = 2,
-                          initial_pop = START.POPULATION.N,
-                          fraction.vaccinated = FRACTION.VACCINATED,
-                          vaccine.rollout.year = VACCINE.ROLLOUT.YEAR,
-                          daily.vaccination.rate = FRACTION.VACCINATED / (VACCINE.ROLLOUT.YEARS.DURATION * 365),
-                          vaccine.efficacy.days = 365*vaccine.efficacy.years,
-                          daily.vaccine.reversion.rate = 1 / (vaccine.efficacy.years * 365),
-                          revaccination.eligibility.days = 365*revaccination.eligibility.years,
-                          vaccine.efficacy.by.mark = vaccine.efficacy.by.mark,
-                          initial.mark.distribution = initial.mark.distribution)
+params <- param_evonet(evonet.initialization.timestep = 2,
+                       initial_pop = START.POPULATION.N,
+                       fraction.vaccinated = FRACTION.VACCINATED,
+                       vaccine.rollout.year = VACCINE.ROLLOUT.YEAR,
+                       daily.vaccination.rate = FRACTION.VACCINATED /
+                                               (VACCINE.ROLLOUT.YEARS.DURATION * 365),
+                       vaccine.efficacy.days = 365*vaccine.efficacy.years,
+                       daily.vaccine.reversion.rate = 1 / (vaccine.efficacy.years * 365),
+                       revaccination.eligibility.days = 365*revaccination.eligibility.years,
+                       vaccine.efficacy.by.mark = vaccine.efficacy.by.mark,
+                       initial.mark.distribution = initial.mark.distribution)
 
 
 # 3.  ERGM Specification --------------------------------------------------
 
-nw <- nw_setup(evoparams) # Sets up the initial network
+nw <- setup_initialize_network(params)
 
-nw <- setup_initialize_network(evoparams)
+formation <- ~edges + offset(nodematch("role", diff = TRUE, levels = 1:2))
+target.stats <- START.POPULATION.N*0.7/2
 
-est <- netest(nw            =  nw,
-              formation     =  as.formula(evoparams$nw_form_terms),
-              target.stats  =  evoparams$target_stats,
-              coef.form     =  evoparams$nw_coef_form,
-              constraints   =  as.formula(evoparams$nw_constraints),
-              verbose       =  FALSE,
-              coef.diss     =  dissolution_coefs( dissolution =  as.formula(evoparams$dissolution),
-                                                  duration    =  evoparams$relation_dur,
-                                                  d.rate      =  evoparams$d_rate))
+coef.diss <- dissolution_coefs(dissolution = ~offset(edges),
+                               duration = 50,
+                               d.rate = 3e-05)
+
+est <- netest(nw = nw,
+              formation = formation,
+              target.stats = target.stats,
+              coef.form = c(-Inf, -Inf),
+              coef.diss = coef.diss)
 
 
-# 4. Module Settings ------------------------------------------------------
 
-# specify which processes/modules to be run
-modules <- c(
-  "initialize_vaccine_agents",
-  "update_mu_and_sigma",
-  "initialize_and_update_phi",
-  "aging",
-  "testing",
-  "treatment",
-  "viral_update",
-  "coital_acts",
-  "transmission",
-  "evo_departures",
-  "evo_arrivals",
-  "summary_module")
+# 4. Initial Conditions ---------------------------------------------------
 
+initial_infected <- 20
+
+status <- rep("s", START.POPULATION.N)
+status[sample(1:START.POPULATION.N, size = initial_infected)] <- "i"
+init <- init.net(status.vector = status)
+
+
+
+# 5. Control Settings ------------------------------------------------------
+
+# Adds three new module/fx pairs to defaults
+control <- control_evonet(nsteps = 730,
+                          initialize_vaccine_agents.FUN = initialize_vaccine_agents,
+                          update_mu_and_sigma.FUN = update_mu_and_sigma,
+                          initialize_and_update_phi.FUN = initialize_and_update_phi)
 
 
 # 5. Epidemic Simulation --------------------------------------------------
 
-# run model
-evomodel <- evorun(modules, evoparams, est)
+evomodel <- netsim(x = est,
+                   param = params,
+                   init = init,
+                   control = control)
 
-
-## Below is unpacked version of evorun
-## TODO (SJ): rewrite this as init_evonet and control_evonet
-module_list <- lapply(modules, get)
-names(module_list) <- paste(modules, ".FUN", sep = "")
-
-evo_module_list <- c(
-  list("plot_network.FUN" = plot_network_fxn),
-  module_list)
-
-evocontrol <- setup_epimodel_control_object(evonet_params = params,
-                                            module_list   = evo_module_list)
-
-status <- rep("s", params$initial_pop)
-status[sample(1:params$initial_pop, size = params$initial_infected)] <- "i"
-infected_list <- EpiModel::init.net(status.vector = status)
-
-evomodel  <- netsim(x = nw,
-                    param = params,
-                    init = infected_list,
-                    control = evocontrol)
-
-
-#assign model names
-model_name = paste("vaccine_model.RData",sep = "")
-#save model
-save(evomodel, file = model_name)
-#plot results, prints to screen and saves pdf to working directory, getwd() to see
-evoplot(evomodel, name = model_name) #plot to screen (if single sim/core) and write to pdf
