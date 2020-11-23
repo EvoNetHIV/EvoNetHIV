@@ -10,13 +10,10 @@ param_evonet <- function(
   cp_int        = NULL, #checpoint save interval on nestim_hpc hyak runs
   output_path  =  getwd(),
   fast_edgelist = FALSE,
-  nsims        = 1,
   initial_pop  = 100, #initial popn
-  n_steps      = 365*2,
   initial_infected  = 20,
   model_sex    = "msm",
   popsumm_frequency=1, #frequency of timesteps should popsumm stats be calculated
-  ncores =1, #16 if running on hyak using EpiModelHPC
   #runtime printing options
   scrolling_output = TRUE,
   print_frequency = 10, # Set to 10 to print to output screen every 10 days. Default should be 1.
@@ -48,13 +45,6 @@ param_evonet <- function(
   #used in  nw_setup(...) ->  setup_initialize_network(...) for
   #ergm/tergm estimation/simulation
   modes         = 1, #epimodel param, will change to 2 in "input_params_derived" if hetero model
-  nw_form_terms = "~edges + offset(nodematch('role', diff=TRUE, keep=1:2))",
-  nw_coef_form  = c(-Inf, -Inf),
-  target_stats  = 100*0.7/2,
-  relation_dur  = 50,
-  d_rate =        3e-05, # default value in epimodel's netest
-  nw_constraints = " ~.",
-  dissolution="~offset(edges)",
   rm_offset_rel = F, # temporary solution to remove same-role (MSM simulations)
                      # and same-sex (heterosexual simulations) relationships.
                      # If = T, function remove_offset_relationships will be called in initialize_module.
@@ -566,4 +556,71 @@ param_evonet <- function(
   class(p) <- "param.net"
   return(p)
 
+}
+
+
+#' @export
+control_evonet <- function(nsteps = 365*2,
+                           start = 1,
+                           nsims =  1,
+                           ncores =  1,
+                           resimulate.network = TRUE,
+                           tergmLite = TRUE,
+                           save.nwstats = TRUE,
+                           verbose = FALSE,
+                           skip.check = TRUE,
+                           raw.output = FALSE,
+                           initialize.FUN = initialize_module,
+                           plot_network.FUN = plot_network_fxn,
+                           resim_nets.FUN = resim_nets,
+                           aging.FUN = aging,
+                           testing.FUN  = testing,
+                           treatment.FUN = treatment,
+                           viral_update.FUN = viral_update,
+                           coital_acts.FUN = coital_acts,
+                           transmission.FUN = transmission,
+                           evo_departures.FUN = evo_departures,
+                           evo_arrivals.FUN = evo_arrivals,
+                           summary_module.FUN = summary_module,
+                           nwupdate.FUN = evo_nwupdate,
+                           verbose.FUN = NULL,
+                           save.other = c("attr", "pop", "param",
+                                          "nw", "coital_acts_list",
+                                          "popsumm", "vl_list",
+                                          "InfMat", "age_list", "el",
+                                          "sessionInfo", "partner_list",
+                                          "vacc_model"),
+                           type = NULL,
+                           ...) {
+
+  formal.args <- formals(sys.function())
+  dot.args <- list(...)
+  p <- get_args(formal.args, dot.args)
+
+  p$prevalence.FUN = EpiModel::prevalence.net
+
+  # p$type <- NULL
+  p$nwstats.formula = "formation"
+
+  p$skip.check <- TRUE
+  p$save.transmat <- FALSE
+
+  bi.mods <- grep(".FUN", names(formal.args), value = TRUE)
+  bi.mods <- bi.mods[which(sapply(bi.mods, function(x) !is.null(eval(parse(text = x))),
+                                  USE.NAMES = FALSE) == TRUE)]
+  p$bi.mods <- bi.mods
+  p$user.mods <- grep(".FUN", names(dot.args), value = TRUE)
+
+  p$save.network <- FALSE
+  p$verbose.int <- 1
+
+  if (is.null(p$set.control.stergm)) {
+    p$set.control.stergm <- control.simulate.network(MCMC.burnin.min = 1000)
+  }
+  if (is.null(p$set.control.ergm)) {
+    p$set.control.ergm <- control.simulate.ergm(MCMC.burnin = 2e+05)
+  }
+
+  class(p) <- "control.net"
+  return(p)
 }
