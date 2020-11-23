@@ -131,28 +131,28 @@ summary_popsumm<-function(dat,at){
 
 
  if(new_infections_count>0){
-   
-  donor_time_inf <- dat$pop$Time_Inf[which(new_infections)]-dat$pop$Donors_Total_Time_Inf_At_Trans[which(new_infections)] 
+
+  donor_time_inf <- dat$pop$Time_Inf[which(new_infections)]-dat$pop$Donors_Total_Time_Inf_At_Trans[which(new_infections)]
   donor_time_inf_index <- which(donor_time_inf <= dat$param$t_acute)
-  donor_acute_count <- length(donor_time_inf_index)  
+  donor_acute_count <- length(donor_time_inf_index)
   if(donor_acute_count>0){
     dat$popsumm$percent_donor_acute[popsumm_index]<- donor_acute_count/new_infections_count
   }else{
     dat$popsumm$percent_donor_acute[popsumm_index] <- 0
   }
-  
+
  }else{
    dat$popsumm$percent_donor_acute[popsumm_index] <- NA
  }
-        
+
     new_births <- is.element(dat$pop$arrival_time, time_index)
     cd4_aids <- dat$pop$CD4 == 4
     new_diagnoses <- dat$pop$diag_status == 1 &  is.element(dat$pop$diag_time,time_index)
     percent_virus_sensitive <- round(100*(length(which(dat$pop$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
     percentVaccinated <- round(100*(length(which(dat$pop$vaccinated == 1 & alive_index))/total_alive))
     dat$popsumm$percentAliveVaccinated[popsumm_index]<- percentVaccinated
-    
-    
+
+
     #deaths
     just_died <- is.element(dat$pop$Time_Death,time_index)
     died_aids <- dat$pop$Status == -2 & just_died
@@ -194,9 +194,9 @@ summary_popsumm<-function(dat,at){
     log10_vl_values  <-  log10(dat$pop$V[which(inf_index)]+dat$param$AbsoluteCut)
     spvl_untreated_values <- (
       dat$pop$LogSetPoint[which(inf_index & not_treated_index)])
-    # todo: may be a faster way to calculate degree
 
-    edges_by_agent <- unname(summary(nw ~ sociality(base = 0),at=at)) #use dat$attr$id for index on dat$pop
+    edges_by_agent <- EpiModel::get_degree(nw)
+
     edges_untreated <- edges_by_agent[dat$attr$id %in% not_treated_agents ]
     edges_treated <- edges_by_agent[dat$attr$id %in%  treated_agents]
     edges_under30 <- edges_by_agent[dat$attr$id %in% agents_under30]
@@ -334,22 +334,22 @@ summary_popsumm<-function(dat,at){
     dat$popsumm$inf_under30[popsumm_index]<-length(which(inf_under30_index))/length(which(under30_index))
     dat$popsumm$inf_30to50[popsumm_index]<-length(which(inf_agents30to50_index))/length(which(agents30to50_index))
     dat$popsumm$inf_over50[popsumm_index]<-length(which(inf_over50_index))/length(which(over50_index))
-  
+
     female_edges <-  edges_by_agent[dat$attr$sex == 'f']
     tot_grp <- length(female_edges)
     if(tot_grp>1){
       mean_degree_female <- sum(female_edges)/tot_grp
     }else{mean_degree_female <- NA}
     dat$popsumm$mean_degree_female[popsumm_index]=mean_degree_female
-    
+
     male_edges <-  edges_by_agent[dat$attr$sex == 'm']
     tot_grp <- length(male_edges)
     if(tot_grp>1){
       mean_degree_male <- sum(male_edges)/tot_grp
     }else{mean_degree_male <- NA}
     dat$popsumm$mean_degree_male[popsumm_index]=mean_degree_male
-    
-    
+
+
   }
 
   #--------------------------------------------
@@ -358,7 +358,7 @@ summary_popsumm<-function(dat,at){
   dat$popsumm$no_treated[popsumm_index]<-length(which(inf_index & treated_index))
   dat$popsumm$percent_suppressed[popsumm_index]<-((length(which(treated_index &
                        (log10(dat$pop$V)< dat$param$vl_full_supp ) )))/ total_alive )
-          
+
   }
 
   #--------------------------------------------
@@ -403,7 +403,7 @@ summary_popsumm<-function(dat,at){
   }
   #--------------------------------------------
   #disease modifying vaccine
-  #Note 2/11/19: intrinsic (formerly called genotypic) = spvl assigned to agents regardless of vaccine status, one that is passed on to infectees, 
+  #Note 2/11/19: intrinsic (formerly called genotypic) = spvl assigned to agents regardless of vaccine status, one that is passed on to infectees,
   #as opposed to phenotypic spvl, which is the expressed spvl that reflects modification by vaccine. Intrinsic and phenotypic are the same in unvaccinated agents
   if(dat$param$vacc_therapeutic_campaign){
     dat$popsumm$percentAliveVaccinated[popsumm_index]<- percentVaccinated
@@ -421,8 +421,8 @@ summary_popsumm<-function(dat,at){
     dat$popsumm$mean_ispvl_intrinsic_nonvacc[popsumm_index]<-mean(ispvl_nonvacc)  #mean of nonvaccinated spvls of agents infected during this time window, provides mean incident SPVL
     dat$popsumm$mean_ispvl_instrinsic_vacc[popsumm_index]<-mean(ispvl_vacc)  #mean of vaccinated spvls of agents infected during this time window, provides mean incident SPVL
   }
-    
-  
+
+
   #--------------------------------------------
   #"aim3"
   if(dat$param$VL_Function=="aim3"){
@@ -495,22 +495,22 @@ summary_popsumm<-function(dat,at){
 
     dat$popsumm$Perc_5_drug_muts_long[popsumm_index]<- mutations5_long/total_inf
   }#end of aim3 summary stats
-  
+
   ####################################
   #calculation of generic attribute stats
-  
+
   #what percent of alive agents are in each category
   #stat: generic_att_percent_cat_xx (xx=1,..,total number of attributes)
-  
+
   #what percent of alive agents are infected in each category
   #stat: generic_att_percent_inf_cat_xx
-  
+
   #stats for generic attribute values need to be treated separately
   #as the number of attributes may vary between model scenarios
-  #note: objects below need to be renamed for clarity 
+  #note: objects below need to be renamed for clarity
   temp_length <- length(dat$param$generic_nodal_att_values)
-  if(temp_length>1){  
-    
+  if(temp_length>1){
+
     #how many alive agents in each category
     temp_table=table(dat$pop$att1[alive_index])
     #how many alive and infected agents in each category
@@ -520,22 +520,22 @@ summary_popsumm<-function(dat,at){
     #total agents
     sum_temp_table=sum(temp_table)
     #this vector makes sure categories from tables above are
-    #arranged in ascending order (necessary if zero agents in a particular 
+    #arranged in ascending order (necessary if zero agents in a particular
     #category, which would mean they are missing in tables above
     temp_match=match(names(temp_table),1:temp_length)
-    
-    
+
+
     for(zz in 1:length(temp_match)){
       namevec <- paste("generic_att_percent_cat_",temp_match[zz],sep="")
       dat$popsumm[[namevec]][popsumm_index]=temp_table[zz]/sum_temp_table
     }
     for(zz in 1:temp_length){
       namevec2 <- paste("generic_att_percent_inf_cat_",zz,sep="")
-      
+
       ix1<- which(names(temp_table)==zz)
       ix2<- which(names(temp_table2)==zz)
       if(length(ix2)>0){
-        val<- temp_table2[ix2]/temp_table[ix1]  
+        val<- temp_table2[ix2]/temp_table[ix1]
       }else{val<-0}
       dat$popsumm[[namevec2]][popsumm_index] <- val
     }
@@ -585,7 +585,7 @@ summary_popsumm<-function(dat,at){
       susceptible <- which(dat$pop$Status == 0 & dat$pop$att1 == temp_match[zz])
       tot_grp <- length(risk_group)
       if(tot_grp>1){
-        sus_group   <- length(susceptible) 
+        sus_group   <- length(susceptible)
       }else{sus_group <- NA}
       dat$popsumm[[namevec]][popsumm_index]=sus_group
     }
@@ -622,7 +622,7 @@ summary_popsumm<-function(dat,at){
       dat$popsumm[[namevec]][popsumm_index]=prep_eligible_group
     }
   }
-  # end of calculating summary stats for generic attributes    
+  # end of calculating summary stats for generic attributes
   #################################################
   return(dat)
 }
