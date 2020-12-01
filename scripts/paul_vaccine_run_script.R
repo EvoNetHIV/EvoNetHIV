@@ -23,10 +23,10 @@ VACCINE.EFFICACY.YEARS <- 3;
 
 ## NEW: add the fns for implementing the new vaccination approach.
 ## ERE I AM. TODO: send parameters to the fn too
-source( "pkg/R/vaccination_model_creator.R" );
-.e <- create.basic.vaccination.model();
-attach( .e, name = "vaccination" )
-rm( "create.basic.vaccination.model" );
+# source( "pkg/R/vaccination_model_creator.R" );
+# .e <- create.basic.vaccination.model();
+# attach( .e, name = "vaccination" )
+# rm( "create.basic.vaccination.model" );
 
 #---------------------
 # library(devtools)
