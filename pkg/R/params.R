@@ -2,10 +2,8 @@
 
 
 #' @export
-input_params<-function(
-
-
-  # Returns list of parameters and default values, unless modified by user
+param_evonet <- function(
+# Returns list of parameters and default values, unless modified by user
 
 
 #-- Basic model setup parameters -------------#
@@ -52,14 +50,14 @@ input_params<-function(
   #-- Network estimation terms -------------#
   #used in  nw_setup(...) ->  setup_initialize_network(...) for
   #ergm/tergm estimation/simulation
-    modes         = 1, #epimodel param, will change to 2 in "input_params_derived" if hetero model
-    nw_form_terms = "~edges + offset(nodematch('role', diff=TRUE, keep=1:2))",
-    nw_coef_form  = c(-Inf, -Inf),
-    target_stats  = 100*0.7/2,
-    relation_dur  = 50,
-    d_rate =        3e-05, # default value in epimodel's netest
-    nw_constraints = " ~.",
-    dissolution="~offset(edges)",
+    #modes         = 1, #epimodel param, will change to 2 in "input_params_derived" if hetero model
+    #nw_form_terms = "~edges + offset(nodematch('role', diff=TRUE, keep=1:2))",
+    #nw_coef_form  = c(-Inf, -Inf),
+    #target_stats  = 100*0.7/2,
+    #relation_dur  = 50,
+    #d_rate =        3e-05, # default value in epimodel's netest
+    #nw_constraints = " ~.",
+    #dissolution="~offset(edges)",
     rm_offset_rel = F, # temporary solution to remove same-role (MSM simulations) and same-sex (heterosexual simulations) relationships. If = T, function remove_offset_relationships will be called in initialize_module.
 
 #-- viral load progression / spvl parameters -------------#
@@ -482,12 +480,74 @@ input_params<-function(
                 class = "data.frame",
                 row.names = c("spvl<3", "spvl_3.0_3.5", "spvl_3.5_4.0", "spvl_4.0_4.5",
                           "spvl_4.5_5.0",
-                          "spvl_5.0_5.5", "spvl_5.5_6.0", "spvl_6.0_6.5", "spvl>6.5"))
+                          "spvl_5.0_5.5", "spvl_5.5_6.0", "spvl_6.0_6.5", "spvl>6.5")),
+                               ... ){
 
 
-){
-    
-  evo_args <- as.list(environment())
-  return(evo_args)
+  p <- get_args(formal.args = formals(sys.function()),
+                dot.args = list(...))
+
+  #Description:
+  # Basic parameters calculated from parameter values in input_parameters_primary().
+  # Make changes to parameter values in input_parameters_primary().
+  
+  #1st, some basic qaqc
+  p$n_steps <- round(abs(p$n_steps))
+  p$initial_pop <- round(abs(p$initial_pop))
+  p$initial_infected  <- round(abs(p$initial_infected))
+  
+  #change epimodel param 'modes' to 2 if hetero model, default = 1
+  if (p$model_sex != "msm") { p$modes = 2 }
+  
+  if (p$VL_Function == "aim3") {
+    p$Max_Allowable_Loci <- 5
+  }
+  if (p$VL_Function == "aim2") {
+    p$Max_Allowable_Loci <- 0
+  }
+  
+  # poisson_birth_lambda, parameter for default birth fxn, is a fxn of popn size
+  p$poisson_birth_lambda     = (p$initial_pop/100) * p$poisson_birth_base  
+  
+  
+  mort_per_timestep_male = input_parameters_asmr(
+    data_name = p$asmr_data_male,
+    p$min_age, p$max_age)
+  
+  mort_per_timestep_female = input_parameters_asmr(
+    data_name = p$asmr_data_female,
+    p$min_age, p$max_age)
+  
+  pop_growth_rate_timestep  = utilities_annual_prob_conversion(
+    p$pop_growth_rate_annual,
+    365)
+  
+  male_age_dist = input_parameters_age_distribution(p, mort_per_timestep_female,
+                                                    pop_growth_rate_timestep,
+                                                    p$baseline_input_exp_growth,
+                                                    data_name = p$initial_agedata_male,
+                                                    p$min_age,
+                                                    p$max_age)
+  female_age_dist = input_parameters_age_distribution(p, mort_per_timestep_female,
+                                                      pop_growth_rate_timestep,
+                                                      p$baseline_input_exp_growth,
+                                                      data_name = p$initial_agedata_female,
+                                                      p$min_age,
+                                                      p$max_age)
+  
+  derived_params <- list(
+    h     = sqrt(p$Heritability),
+    r0    = (log(p$vl_peak_acute / p$V0) /
+               p$t_peak),
+    pop_growth_rate_timestep = pop_growth_rate_timestep,
+    mort_per_timestep_male = mort_per_timestep_male,
+    mort_per_timestep_female = mort_per_timestep_female,
+    male_age_dist = male_age_dist,
+    female_age_dist = female_age_dist)
+  
+  p <- c(p, derived_params)
+  
+  class(p) <- "param.net"
+  return(p)
 
 }

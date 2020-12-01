@@ -65,19 +65,12 @@ summary_epi_mat <- function(model){
 evoplot<-function(model,outpath=getwd(),name=NULL,nw_stats=TRUE,max_points_rep=NULL,
                   epi_frequency=NULL,variables=NULL,main=NULL,...){
   
-  #evoplot<-function(model,name=NULL,outpath=getwd(),
-  #                  variables=NULL,nw_stats=NULL,max_points_rep=NULL,
-  #                  epi_frequency=NULL,...){
   
-  if(model$param[[1]]$ncores==1){
-    evoplot_internal(model=model,save=F,name=name,outpath=outpath,
+  for(ii in 0:1){
+    evoplot_internal(model=model,save=ii,name=name,outpath=outpath,
                      variables=variables,main=main)
   }
-  
-  if(is.null(variables)){
-    evoplot_internal(model=model,save=T,name=name,outpath=outpath,
-                     variables=variables,main=main)
-  }
+   
 }
 
 
@@ -99,6 +92,7 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
                              variables=NULL,main=NULL){
   
   not_plotted=c(
+    "percent_suppressed",
     "Perc_1_drug_muts_total_pop",
     "Perc_2_drug_muts_total_pop",
     "Perc_3_drug_muts_total_pop",
