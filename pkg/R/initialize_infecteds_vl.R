@@ -16,13 +16,13 @@ initialize_infecteds_vl <- function(dat,at)
   # Sets up initial viral load and associated values for initial infected individuals 
   # including contributions to SPVL from viral features and the environment
   # (direct porting from virulence model)
-  # inputs: dat$param, dat$pop, at, 
-  # outputs: dat$pop including values for acute_inf_flat_vl_index, acute_inf_prepeak_index, post_acute_inf_index_1,
+  # inputs: dat$param, dat$attr, at, 
+  # outputs: dat$attr including values for acute_inf_flat_vl_index, acute_inf_prepeak_index, post_acute_inf_index_1,
   # post_acute_inf_index_2, and aids_index, pop$ViralContribToLogSP0, pop$EnvirContribToLogSP0, pop$LogSetPoint, 
   # pop$SetPoint,pop$d_acute, pop$Status, pop$Generation, pop$disclosure_status, pop$Adherence 
   
   param <-  dat$param 
-  pop   <-  dat$pop
+  pop   <-  dat$attr
   timeIndex  <- at
   
   # EpiModel determines infected status in init_status.net and puts it in "dat$attr$status
@@ -41,11 +41,14 @@ initialize_infecteds_vl <- function(dat,at)
   pop$treated[ind] <- 0
   pop$treated_2nd_line[ind] <- 0
   
+  ###################
+  #aim 3 (ask John?)
   pop$Drug1[ind] <- 0
   pop$Drug2[ind] <- 0
   pop$Drug3[ind] <- 0
   pop$Drug4[ind] <- 0
   pop$Aim3RoundingErrors[ind] <-0
+  ######################
   
   if(length(ind)==0){
     stop("hmmm...no infecteds in initial population.....
@@ -85,7 +88,7 @@ initialize_infecteds_vl <- function(dat,at)
   pop$rate_phase2[ind] = -1*(log(pop$vl_phase2_trans[ind]/pop$SetPoint[ind])/
                             (param$t_acute - param$t_acute_phase2))
   
-  dat$pop$d_acute[ind] <- (log(vl_peak /
+  dat$attr$d_acute[ind] <- (log(vl_peak /
                                        pop$vl_phase2_trans[ind]) /
                                    (param$t_acute_phase2- param$t_peak))                      
   
@@ -153,7 +156,7 @@ initialize_infecteds_vl <- function(dat,at)
   
   ###############################
   #Aim3 dynamics
-  
+  if(param$VL_Function=="aim3"){
   initial_vec <- rep(0,"^"(2, param$Max_Allowable_Loci))                
   pop$V_vec[ind,] <- initial_vec
   pop$I_vec[ind,] <- initial_vec
@@ -170,8 +173,9 @@ initialize_infecteds_vl <- function(dat,at)
   pop$OnDrug[ind] <- 0
   pop$K[ind] <- pop$SetPoint[ind]
   pop$CD4count[ind] <- 1000
+  }
   
-  dat$pop <- pop
+  dat$attr <- pop
   return(dat)
   }
 ###################################################

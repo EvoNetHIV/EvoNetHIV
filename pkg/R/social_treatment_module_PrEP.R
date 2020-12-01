@@ -33,7 +33,7 @@ social_treatment_module_PrEP <- function(dat, at)
   
    #eligible_patients: diagnosed, eligible for care
   eligible_patients <- 
-      which(dat$pop$diag_status %in% c(0,NA) & dat$pop$eligible_care == 1) 
+      which(dat$attr$diag_status %in% c(0,NA) & dat$attr$eligible_care == 1) 
   
   if(length(eligible_patients)==0){return(dat)}
   
@@ -47,8 +47,8 @@ social_treatment_module_PrEP <- function(dat, at)
   #subset of eligible agents (eligible_patients) that meet specified tx criteria
   eligible_patients_treated <- eligible_patients[eligible_patients_criteria]
   
-  dat$pop$treated[eligible_patients_treated] <- 1
-  dat$pop$tx_init_time[eligible_patients_treated] <- at
+  dat$attr$treated[eligible_patients_treated] <- 1
+  dat$attr$tx_init_time[eligible_patients_treated] <- at
   dat$treatment_index <- eligible_patients_treated
   
  return(dat)

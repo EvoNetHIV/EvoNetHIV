@@ -71,7 +71,7 @@ viral_update_aim3_args_list_1 <-  function(dat,evonet_params,ind)
        drug_2nd_decay2 =  evonet_params$drug_2nd_decay2,
        #drug_2nd_decay3 =  evonet_params$drug_2nd_decay3,
        #changing decay rate if CYP_allele is present #is this really drug1_2nd_decay #0.54 from Haas et al. 2004 #516t/t genotype #0.26 is an arbitrary number
-       drug_2nd_decay3 = if(dat$pop$CYP_6_slow[ind] == 1){ evonet_params$drug_2nd_decay3*2} else { evonet_params$drug_2nd_decay3},
+       drug_2nd_decay3 = if(dat$attr$CYP_6_slow[ind] == 1){ evonet_params$drug_2nd_decay3*2} else { evonet_params$drug_2nd_decay3},
        
        drug_2nd_decay4 =  evonet_params$drug_2nd_decay4,
        conc_2nd_phase1 =  evonet_params$conc_2nd_phase1,

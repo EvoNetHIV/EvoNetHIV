@@ -8,7 +8,7 @@ viral_update_aim3 <-function(dat,at)
       #viral_update_modified_logistic_args_list_2)
       #mod_logistic_v5 (rcpp fxn)
   #  Input: "dat" and "at" data structures                                                    #
-  #  Primary output: Update dat$pop$V, dat$pop$CD4                                                #
+  #  Primary output: Update dat$attr$V, dat$attr$CD4                                                #
   #  Secondary outputs: Vr, c, K,                                                   #
   ###########################################################################################################
 
@@ -16,9 +16,9 @@ viral_update_aim3 <-function(dat,at)
   timeIndex          <- at
     
   if (dat$param$PrEP_Model) {
-    List_Simulated_Agents  <- which(dat$pop$Status>=0)
+    List_Simulated_Agents  <- which(dat$attr$Status>=0)
   } else {
-    List_Simulated_Agents <- which(dat$pop$Status==1)
+    List_Simulated_Agents <- which(dat$attr$Status==1)
   }
 
   for (ind in List_Simulated_Agents) 
@@ -45,7 +45,7 @@ viral_update_aim3 <-function(dat,at)
  
     
     #calculate number mutations for agent
-    if(dat$pop$V[ind] > dat$param$vl_undetectable){
+    if(dat$attr$V[ind] > dat$param$vl_undetectable){
     
     seq0 <- c(1) #0  mutations
     seq1 <- c(2,3,5,9,17) #1 mutations
@@ -57,28 +57,28 @@ viral_update_aim3 <-function(dat,at)
     # See summary_vl_list for notes about convertion of binary to decimals
 
     
-    mutation_vec <- c( sum(dat$pop$V_vec[ind,seq0]), 
-                       sum(dat$pop$V_vec[ind,seq1]),
-                       sum(dat$pop$V_vec[ind,seq2]),
-                       sum(dat$pop$V_vec[ind,seq3]),
-                       sum(dat$pop$V_vec[ind,seq4]),
-                       sum(dat$pop$V_vec[ind,seq5]))
+    mutation_vec <- c( sum(dat$attr$V_vec[ind,seq0]), 
+                       sum(dat$attr$V_vec[ind,seq1]),
+                       sum(dat$attr$V_vec[ind,seq2]),
+                       sum(dat$attr$V_vec[ind,seq3]),
+                       sum(dat$attr$V_vec[ind,seq4]),
+                       sum(dat$attr$V_vec[ind,seq5]))
     
     no_mutations <- which.max(mutation_vec)-1
-    dat$pop$aim3_no_muts[ind] <- no_mutations
+    dat$attr$aim3_no_muts[ind] <- no_mutations
     
-    if((dat$pop$M_vec[ind,seq0]+dat$pop$L_vec[ind,seq0])>0)
-      dat$pop$aim3_mutations_long[ind] <- 0
-    if(sum(dat$pop$M_vec[ind,seq1])+sum(dat$pop$L_vec[ind,seq1])>0)
-      dat$pop$aim3_mutations_long[ind]<- 1
-    if(sum(dat$pop$M_vec[ind,seq2])+sum(dat$pop$L_vec[ind,seq2])>0)
-      dat$pop$aim3_mutations_long[ind]<- 2
-    if(sum(dat$pop$M_vec[ind,seq3])+sum(dat$pop$L_vec[ind,seq3])>0)
-      dat$pop$aim3_mutations_long[ind]<- 3
-    if(sum(dat$pop$M_vec[ind,seq4])+sum(dat$pop$L_vec[ind,seq4])>0)
-      dat$pop$aim3_mutations_long[ind]<- 4
-    if((dat$pop$M_vec[ind,seq5]+dat$pop$L_vec[ind,seq5])>0)
-      dat$pop$aim3_mutations_long[ind]<- 5
+    if((dat$attr$M_vec[ind,seq0]+dat$attr$L_vec[ind,seq0])>0)
+      dat$attr$aim3_mutations_long[ind] <- 0
+    if(sum(dat$attr$M_vec[ind,seq1])+sum(dat$attr$L_vec[ind,seq1])>0)
+      dat$attr$aim3_mutations_long[ind]<- 1
+    if(sum(dat$attr$M_vec[ind,seq2])+sum(dat$attr$L_vec[ind,seq2])>0)
+      dat$attr$aim3_mutations_long[ind]<- 2
+    if(sum(dat$attr$M_vec[ind,seq3])+sum(dat$attr$L_vec[ind,seq3])>0)
+      dat$attr$aim3_mutations_long[ind]<- 3
+    if(sum(dat$attr$M_vec[ind,seq4])+sum(dat$attr$L_vec[ind,seq4])>0)
+      dat$attr$aim3_mutations_long[ind]<- 4
+    if((dat$attr$M_vec[ind,seq5]+dat$attr$L_vec[ind,seq5])>0)
+      dat$attr$aim3_mutations_long[ind]<- 5
     
     
     

@@ -399,7 +399,7 @@ init_status.net <- function(dat) {
 #' nw <- init_pids(nw, c("A", "B"))
 #' nw %v% "vertex.names"
 #'
-init_pids <- function(nw, prefixes=c("F", "M")) {
+init_pids <- function(nw, prefixes=c(0,1)) {
 
   if (is.null(nw$gal$vertex.pid)) {
     if (nw$gal$bipartite == FALSE) {

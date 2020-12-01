@@ -42,19 +42,19 @@
     }
   }
   
-  infected <-  which(dat$pop$Status==1)
+  infected <-  which(dat$attr$Status==1)
   if(length(infected)==0){return(dat)}
   
   #eligible_patients: infected,diagnosed,eligible for care,not treated
   eligible_patients <- 
-      which(dat$pop$Status == 1 & dat$pop$treated == 0 &
-            dat$pop$diag_status == 1 & dat$pop$eligible_care == 1 &
-            dat$pop$eligible_ART == 1) 
+      which(dat$attr$Status == 1 & dat$attr$treated == 0 &
+            dat$attr$diag_status == 1 & dat$attr$eligible_care == 1 &
+            dat$attr$eligible_ART == 1) 
   
   # If tx_in_acute_phase = F (i.e., patients are not treated if they are in acute phase), subset
   # those patients who were infected more than dat$param$t_acute days ago.
   if(!dat$param$tx_in_acute_phase) {
-    eligible_patients <- eligible_patients[which((at - dat$pop$Time_Inf[eligible_patients]) > dat$param$t_acute)]
+    eligible_patients <- eligible_patients[which((at - dat$attr$Time_Inf[eligible_patients]) > dat$param$t_acute)]
   }
   
   # Eligible patients initiate ART only when they attend a clinic visit (i.e., each patient
@@ -73,54 +73,54 @@
   if(dat$param$tx_type=="VL"){
   
     eligible_patients_criteria <- 
-      which(dat$pop$V[eligible_patients] > dat$param$treatment_threshold)
+      which(dat$attr$V[eligible_patients] > dat$param$treatment_threshold)
   
   }
    
   if(dat$param$tx_type=="CD4") {
     
     eligible_patients_criteria <- 
-      which(is.element(dat$pop$CD4[eligible_patients], dat$param$cd4_treatment_threshold))
+      which(is.element(dat$attr$CD4[eligible_patients], dat$param$cd4_treatment_threshold))
   }
   if(dat$param$tx_type=="time"){
     
     eligible_patients_criteria <- 
-      which((at-dat$pop$Time_Inf[eligible_patients]) > dat$param$min_inf_time_for_treat)
+      which((at-dat$attr$Time_Inf[eligible_patients]) > dat$param$min_inf_time_for_treat)
   }
   if(dat$param$tx_type == "time_dist") {
     eligible_patients_criteria <-
-      which((at-dat$pop$Time_Inf[eligible_patients]) > dat$pop$min_time_tx[eligible_patients])
+      which((at-dat$attr$Time_Inf[eligible_patients]) > dat$attr$min_time_tx[eligible_patients])
   }
   if(dat$param$tx_type=="vl_and_cd4"){
     
     eligible_patients_criteria <- 
-        which(dat$pop$V[eligible_patients] > dat$param$treatment_threshold &
-        is.element(dat$pop$CD4[eligible_patients], dat$param$cd4_treatment_threshold) )
+        which(dat$attr$V[eligible_patients] > dat$param$treatment_threshold &
+        is.element(dat$attr$CD4[eligible_patients], dat$param$cd4_treatment_threshold) )
   }
   if(dat$param$tx_type=="vl_and_time"){
     
     eligible_patients_criteria <- 
-        which(dat$pop$V[eligible_patients] > dat$param$treatment_threshold &
-        (at-dat$pop$Time_Inf[eligible_patients]) > dat$param$min_inf_time_for_treat )
+        which(dat$attr$V[eligible_patients] > dat$param$treatment_threshold &
+        (at-dat$attr$Time_Inf[eligible_patients]) > dat$param$min_inf_time_for_treat )
   }
   if(dat$param$tx_type=="cd4_and_time"){
     
     eligible_patients_criteria <- 
-         which( is.element(dat$pop$CD4[eligible_patients], dat$param$cd4_treatment_threshold) &
-         (at-dat$pop$Time_Inf[eligible_patients]) > dat$param$min_inf_time_for_treat)
+         which( is.element(dat$attr$CD4[eligible_patients], dat$param$cd4_treatment_threshold) &
+         (at-dat$attr$Time_Inf[eligible_patients]) > dat$param$min_inf_time_for_treat)
   }
   if(dat$param$tx_type=="cd4_and_time_dist") {
     eligible_patients_criteria <- 
-      which(is.element(dat$pop$CD4[eligible_patients], dat$param$cd4_treatment_threshold) &
-            (at-dat$pop$Time_Inf[eligible_patients]) > dat$pop$min_time_tx[eligible_patients])  
+      which(is.element(dat$attr$CD4[eligible_patients], dat$param$cd4_treatment_threshold) &
+            (at-dat$attr$Time_Inf[eligible_patients]) > dat$attr$min_time_tx[eligible_patients])  
   }
   
   if(dat$param$tx_type=="vl_and_cd4_and_time"){
     
     eligible_patients_criteria <- 
-         which(dat$pop$V[eligible_patients] > dat$param$treatment_threshold &
-         is.element(dat$pop$CD4[eligible_patients], dat$param$cd4_treatment_threshold) &
-         (at-dat$pop$Time_Inf[eligible_patients]) > dat$param$min_inf_time_for_treat )
+         which(dat$attr$V[eligible_patients] > dat$param$treatment_threshold &
+         is.element(dat$attr$CD4[eligible_patients], dat$param$cd4_treatment_threshold) &
+         (at-dat$attr$Time_Inf[eligible_patients]) > dat$param$min_inf_time_for_treat )
   }
   
   if(length(eligible_patients_criteria)==0){return(dat)}
@@ -128,10 +128,10 @@
   #subset of eligible agents (eligible_patients) that meet specified tx criteria
   eligible_patients_treated <- eligible_patients[eligible_patients_criteria]
   
-  dat$pop$treated[eligible_patients_treated] <- 1
-  dat$pop$tx_init_time[eligible_patients_treated] <- at
+  dat$attr$treated[eligible_patients_treated] <- 1
+  dat$attr$tx_init_time[eligible_patients_treated] <- at
   dat$treatment_index <- eligible_patients_treated
-  dat$pop$vl_expected[eligible_patients_treated] <- dat$pop$V[eligible_patients_treated]
+  dat$attr$vl_expected[eligible_patients_treated] <- dat$attr$V[eligible_patients_treated]
   
  return(dat)
 }

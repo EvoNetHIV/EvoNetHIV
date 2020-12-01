@@ -24,16 +24,16 @@ incidence_rate_plot<-function(model_obj){
   
   for(nsim in 1:total_sims)
   {
-    popsumm_freq <- model$param[[nsim]]$popsumm_frequency
+    popsumm_freq <- model$param[[nsim]]$popsumm_freq
     nsteps <- model$param[[nsim]]$n_steps
     
     if(nsteps>=365)
-      steps_per_year <- floor(365/model$param[[nsim]]$popsumm_frequency)
+      steps_per_year <- floor(365/model$param[[nsim]]$popsumm_freq)
     else
-      steps_per_year <- floor(nsteps/model$param[[nsim]]$popsumm_frequency)
+      steps_per_year <- floor(nsteps/model$param[[nsim]]$popsumm_freq)
     
-    sus <- model$popsumm[[nsim]]$susceptibles
-    inf <- model$popsumm[[nsim]]$new_infections
+    sus <- model$epi$susceptibles[,nsim]
+    inf <- model$epi$new_infections[,nsim]
     nsteps <- model$param[[nsim]]$n_steps
     nyears <- (nsteps/365)
     

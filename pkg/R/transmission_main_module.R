@@ -39,10 +39,10 @@ transmission_main_module <- function(dat,at)
   inf_id     <- dat$discord_coital_df$inf_id 
   sus_sex    <- dat$discord_coital_df$sus_sex
   inf_sex    <- dat$discord_coital_df$inf_sex
-  logV_inf <-  log10(dat$pop$V[inf_id])
-  V_inf <-   dat$pop$V[inf_id]
-  on_prep <- dat$pop$on_prep[sus_id]
-  susceptibility <- dat$pop$susceptibility[sus_id]
+  logV_inf <-  log10(dat$attr$V[inf_id])
+  V_inf <-   dat$attr$V[inf_id]
+  on_prep <- dat$attr$on_prep[sus_id]
+  susceptibility <- dat$attr$susceptibility[sus_id]
   
   ###############################################################
   ##### identify: 1) msm susceptible and insertive 
@@ -74,7 +74,7 @@ transmission_main_module <- function(dat,at)
   hetero_sus_female_ai <- rep(0, nrow(dat$discord_coital_df))
   hetero_sus_male_ai   <- rep(0, nrow(dat$discord_coital_df))
   hetero_sus_male_circum_status <- rep(0, nrow(dat$discord_coital_df))
-  age_vec_sus   <- dat$pop$age[sus_id]
+  age_vec_sus   <- dat$attr$age[sus_id]
   #cap ages to dat$param$max_age_RR_age so all females above "max_age"
   #have same RR due to age effects
   age_vec_sus[age_vec_sus>dat$param$max_age_RR_age]=dat$param$max_age_RR_age
@@ -82,10 +82,10 @@ transmission_main_module <- function(dat,at)
   #----- either msm/hetero variables ---------------------
   #acute phase status of infector
   acute_phase_status <- rep(0,nrow(dat$discord_coital_df))
-  acute_phase_index <-  which((at - dat$pop$Time_Inf[inf_id]) < dat$param$t_acute)
+  acute_phase_index <-  which((at - dat$attr$Time_Inf[inf_id]) < dat$param$t_acute)
   if(length(acute_phase_index)>0){ acute_phase_status[acute_phase_index] <- 1 }
   #sti status of susceptible (relevant for both msm and hetero) 
-  sti_status_sus <- dat$pop$sti_status[sus_id]
+  sti_status_sus <- dat$attr$sti_status[sus_id]
   #on prep
   
   #--------- preventative vaccine dynamics -----------------
@@ -96,8 +96,8 @@ transmission_main_module <- function(dat,at)
   
   #if sus is vaccinated and infected with sensitive virus
   if(at >=  dat$param$start_vacc_campaign[1] & dat$param$preventative_campaign==T){
-       vacc_ix <- which(dat$pop$vaccinated[sus_id]==1 & 
-                   dat$pop$virus_sens_vacc[inf_id]==1)
+       vacc_ix <- which(dat$attr$vaccinated[sus_id]==1 & 
+                   dat$attr$virus_sens_vacc[inf_id]==1)
       if(length(vacc_ix)>0){vacc_sens_sus[vacc_ix] <- 1}  
   }
   
@@ -115,7 +115,7 @@ transmission_main_module <- function(dat,at)
     }
     #susceptible, insertive, circumcised
     temp_which <- which(insert_id==sus_id &
-                          dat$pop$circum[insert_id]==1)
+                          dat$attr$circum[insert_id]==1)
     if(length(temp_which)>0){
       msm_circum_status_insert_sus[temp_which] <- 1 
     }
@@ -128,15 +128,15 @@ transmission_main_module <- function(dat,at)
   
   if(dat$param$model_sex!="msm"){
     ai <- dat$discord_coital_df$ai
-    hetero_inf_female[which(inf_sex=="f")] <- 1
-    hetero_inf_male[which(inf_sex=="m")]   <- 1
-    hetero_sus_female[which(sus_sex=="f")] <- 1
-    hetero_sus_male[which(sus_sex=="m")] <- 1
+    hetero_inf_female[which(inf_sex==0)] <- 1
+    hetero_inf_male[which(inf_sex==1)]   <- 1
+    hetero_sus_female[which(sus_sex==0)] <- 1
+    hetero_sus_male[which(sus_sex==1)] <- 1
     hetero_sus_female_vi[which(sus_sex == 'f' & ai == 0)] <- 1
     hetero_sus_female_ai[which(sus_sex == 'f' & ai == 1)] <- 1
     hetero_sus_male_ai[which(sus_sex == 'm' & ai == 1)] <- 1
     #susceptible, male(insertive), circumcised
-    temp_which <- which(hetero_sus_male == 1 & dat$pop$circum[sus_id]==1)
+    temp_which <- which(hetero_sus_male == 1 & dat$attr$circum[sus_id]==1)
     if(length(temp_which)>0){
       hetero_sus_male_circum_status[temp_which] <- 1 
     } 
@@ -164,11 +164,11 @@ transmission_main_module <- function(dat,at)
   # and fill in "vacc_efficacies" vector (all other values of this vector are zero)
   if(at >=  dat$param$start_vacc_campaign[1] & dat$param$vacc_multi_eff==T){
     vacc_efficacies <- rep(0,nrow(dat$discord_coital_df))
-    vacc_ix <- which(dat$pop$vaccinated[sus_id]==1) 
+    vacc_ix <- which(dat$attr$vaccinated[sus_id]==1) 
     if(length(vacc_ix)>0){
       #for vaccinated and susceptible agents, get partner's VE
       inf_ix= inf_id[vacc_ix]
-      vacc_efficacies[vacc_ix] <- dat$pop$vacc_eff[inf_ix]
+      vacc_efficacies[vacc_ix] <- dat$attr$vacc_eff[inf_ix]
       trans_probs <- trans_probs*(1-vacc_efficacies[vacc_ix])
     }  
   }
@@ -187,7 +187,7 @@ transmission_main_module <- function(dat,at)
   dat$discord_coital_df$age_vec_sus <- age_vec_sus
   prep_ix <- which(on_prep==1)
   if(length(prep_ix)>0){
-    trans_probs[prep_ix] <- trans_probs[prep_ix]*(1- dat$pop$prep_decrease[sus_id[prep_ix]])
+    trans_probs[prep_ix] <- trans_probs[prep_ix]*(1- dat$attr$prep_decrease[sus_id[prep_ix]])
   }
   dat$discord_coital_df$trans_probs <- trans_probs
   

@@ -18,7 +18,7 @@ social_coital_acts <-function(dat,at)
   #-- couples have more than one act for timestep
   #-- eliminates couples with zero acts for timestep
   #-- main output: discord_coital_df
-  # inputs: dat$discord_edgelist_df, dat$pop$disclosure_status, dat$param$act_redux_discl,
+  # inputs: dat$discord_edgelist_df, dat$attr$disclosure_status, dat$param$act_redux_discl,
   # dat$param$mean_sex_acts_day, dat$param$days_per_timestep
   # outputs: dat$discord_coital_df
   #######################################################
@@ -35,22 +35,22 @@ social_coital_acts <-function(dat,at)
   
   #calculate no acts per day, stop if none 
   reduction_vec  <- rep(1, length(infector_id))
-  temp_index     <- which(dat$pop$diag_status[infector_id]==1 & dat$pop$disclosure_status[infector_id]==1)
+  temp_index     <- which(dat$attr$diag_status[infector_id]==1 & dat$attr$disclosure_status[infector_id]==1)
   #reduce no. of sex acts due to infected partner disclosing status
   if(length(temp_index)>0)
     reduction_vec[temp_index] <- 1.0 -dat$param$act_redux_discl 
   
   #track when sus agent last (knowingly) had sex with hiv+ agent
-  dat$pop$time_hiv_sex[recipient_id][temp_index] <- at
+  dat$attr$time_hiv_sex[recipient_id][temp_index] <- at
   #track when inf agent last  had sex 
-  dat$pop$last_disc_sex[infector_id] <- at
+  dat$attr$last_disc_sex[infector_id] <- at
   
   
   #browser()
    if(dat$param$prob_sex_by_age){
      
-   recip_age_vec <- dat$pop$age[recipient_id]
-   inf_age_vec   <- dat$pop$age[infector_id]
+   recip_age_vec <- dat$attr$age[recipient_id]
+   inf_age_vec   <- dat$attr$age[infector_id]
    mean_age_vec  <- rowMeans(cbind(recip_age_vec,inf_age_vec))
    #these calculations come from john
    prob_sex <- pmax ( dat$param$prob_sex_age_19 * 
@@ -80,8 +80,8 @@ social_coital_acts <-function(dat,at)
   acts_by_agent_index <- as.numeric(names(acts_by_agent))
   
   #discordonant total acts
-  dat$pop$total_acts[acts_by_agent_index] <-  
-    ( dat$pop$total_acts[acts_by_agent_index]+as.numeric(acts_by_agent) ) 
+  dat$attr$total_acts[acts_by_agent_index] <-  
+    ( dat$attr$total_acts[acts_by_agent_index]+as.numeric(acts_by_agent) ) 
   
   #add couple id
   discord_edgelist_df$couple_id <- 1:nrow(discord_edgelist_df)

@@ -26,27 +26,27 @@ social_generic_attribute_transition <- function(dat,at)
 
   if(is.logical(dat$param$generic_nodal_att_trans_mat)){return(dat)}
   
-  tempvals <- dat$pop$att1
+  tempvals <- dat$attr$att1
   for( ii in dat$param$generic_nodal_att_values)
   {
-    index <- which(dat$pop$att1 == ii & dat$pop$Status >= 0)
+    index <- which(dat$attr$att1 == ii & dat$attr$Status >= 0)
     size <- length(index)
     probs <- dat$param$generic_nodal_att_trans_mat[ii,]
     new_vals <- sample(dat$param$generic_nodal_att_values,
                        size = size, prob = probs, replace = T)
     tempvals[index] <- new_vals
   }
-  dat$pop$att1 <- tempvals
+  dat$attr$att1 <- tempvals
   
   #set new values on network
   #assign values of initial generic_attribue to initial network
-  temp_match<- match(dat$attr$id,dat$pop$id)
+  temp_match<- match(dat$attr$id,dat$attr$id)
   #qaqc for now (10/8/15)
   if(any(is.na(temp_match))){browser()}
   if(!is.null(dat[['nw']])){
     network::set.vertex.attribute( x = dat$nw, attr = "att1",
-                                   value = dat$pop$att1[temp_match])
+                                   value = dat$attr$att1[temp_match])
   }
-  dat$attr$att1 <- dat$pop$att1[temp_match]
+  dat$attr$att1 <- dat$attr$att1[temp_match]
   return(dat)
 }

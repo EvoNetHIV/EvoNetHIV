@@ -24,9 +24,9 @@ if(at==1){
 }
               
 if (dat$param$PrEP_Model==TRUE) {  
-  vl_ix <- which(dat$pop$Status>=0 | (dat$pop$Status==-2 & dat$pop$Time_Death==at))
+  vl_ix <- which(dat$attr$Status>=0 | (dat$attr$Status==-2 & dat$attr$Time_Death==at))
 } else {
-  vl_ix <- which(dat$pop$Status==1 | (dat$pop$Status==-2 & dat$pop$Time_Death==at) )
+  vl_ix <- which(dat$attr$Status==1 | (dat$attr$Status==-2 & dat$attr$Time_Death==at) )
 }
 if(length(vl_ix)==0){return(dat)}
   
@@ -34,12 +34,12 @@ if(length(vl_ix)==0){return(dat)}
 #non-aim3 runs
 if(dat$param$Max_Allowable_Loci==0){
   #if(at> 16*365){browser()}
-  # which(!is.na(dat$pop$tx_stop_time) & dat$pop$Status==1)
+  # which(!is.na(dat$attr$tx_stop_time) & dat$attr$Status==1)
   
-  dat$vl_list[[at]] <- cbind(dat$pop$id[vl_ix], #Agent
-                             dat$pop$V[vl_ix], #VL
-                             dat$pop$CD4[vl_ix],#CD4
-                             dat$pop$CD4count[vl_ix]/200, # CD4c
+  dat$vl_list[[at]] <- cbind(dat$attr$id[vl_ix], #Agent
+                             dat$attr$V[vl_ix], #VL
+                             dat$attr$CD4[vl_ix],#CD4
+                             dat$attr$CD4count[vl_ix]/200, # CD4c
                              at) 
   #aa=dat$vl_list[[at]]
   
@@ -68,31 +68,31 @@ namesvec<-c("id","vl","cd4","cd4c","time","muts0","muts1","muts2","muts3","muts4
 
 if(dat$param$Max_Allowable_Loci==5){
   
-dat$vl_list[[at]] <- cbind(dat$pop$id[vl_ix], #Agent
-                        dat$pop$V[vl_ix], #VL
-                        dat$pop$CD4[vl_ix],#CD4
-                        dat$pop$CD4count[vl_ix]/200, # CD4c
+dat$vl_list[[at]] <- cbind(dat$attr$id[vl_ix], #Agent
+                        dat$attr$V[vl_ix], #VL
+                        dat$attr$CD4[vl_ix],#CD4
+                        dat$attr$CD4count[vl_ix]/200, # CD4c
                         at, #Time
-                        dat$pop$V_vec[vl_ix,seq0], # Muts0
-                        rowSums(dat$pop$V_vec[vl_ix,seq1,drop=F]), # Muts1
-                        rowSums(dat$pop$V_vec[vl_ix,seq2,drop=F]), # Muts2
-                        rowSums(dat$pop$V_vec[vl_ix,seq3,drop=F]), # Muts3
-                        rowSums(dat$pop$V_vec[vl_ix,seq4,drop=F]), # Muts4
-                        dat$pop$V_vec[vl_ix,seq5], # Muts5
-                        dat$pop$Drug1[vl_ix], #D1
-                        dat$pop$Drug2[vl_ix], #D2
-                        dat$pop$Drug3[vl_ix], #D3
-                        rowSums(dat$pop$I_vec[vl_ix,,drop=F]), #I
-                        rowSums(dat$pop$M_vec[vl_ix,,drop=F]), #M
-                        rowSums(dat$pop$L_vec[vl_ix,,drop=F]), #L
-                        rowSums(dat$pop$V_vec[vl_ix,K65R,drop=F])/dat$pop$V[vl_ix],#K65R
-                        rowSums(dat$pop$V_vec[vl_ix,M184V,drop=F])/dat$pop$V[vl_ix], #M184V
-                        rowSums(dat$pop$V_vec[vl_ix,K103N,drop=F])/dat$pop$V[vl_ix], #K103N
-                        rowSums(dat$pop$V_vec[vl_ix,K103N_gEFV,drop=F])/dat$pop$V[vl_ix], # K103N + Generic EFV (e.g. G190A, Y181C)
-                        rowSums(dat$pop$V_vec[vl_ix,M184V_K65R,drop=F])/dat$pop$V[vl_ix], #M184VK65R double mut
-                        rowSums(dat$pop$V_vec[vl_ix,GenericTDF,drop=F])/dat$pop$V[vl_ix], 
-                        rowSums(dat$pop$V_vec[vl_ix,GenericEFV,drop=F])/dat$pop$V[vl_ix],
-                        dat$pop$Drug4[vl_ix]) # Second line therapy
+                        dat$attr$V_vec[vl_ix,seq0], # Muts0
+                        rowSums(dat$attr$V_vec[vl_ix,seq1,drop=F]), # Muts1
+                        rowSums(dat$attr$V_vec[vl_ix,seq2,drop=F]), # Muts2
+                        rowSums(dat$attr$V_vec[vl_ix,seq3,drop=F]), # Muts3
+                        rowSums(dat$attr$V_vec[vl_ix,seq4,drop=F]), # Muts4
+                        dat$attr$V_vec[vl_ix,seq5], # Muts5
+                        dat$attr$Drug1[vl_ix], #D1
+                        dat$attr$Drug2[vl_ix], #D2
+                        dat$attr$Drug3[vl_ix], #D3
+                        rowSums(dat$attr$I_vec[vl_ix,,drop=F]), #I
+                        rowSums(dat$attr$M_vec[vl_ix,,drop=F]), #M
+                        rowSums(dat$attr$L_vec[vl_ix,,drop=F]), #L
+                        rowSums(dat$attr$V_vec[vl_ix,K65R,drop=F])/dat$attr$V[vl_ix],#K65R
+                        rowSums(dat$attr$V_vec[vl_ix,M184V,drop=F])/dat$attr$V[vl_ix], #M184V
+                        rowSums(dat$attr$V_vec[vl_ix,K103N,drop=F])/dat$attr$V[vl_ix], #K103N
+                        rowSums(dat$attr$V_vec[vl_ix,K103N_gEFV,drop=F])/dat$attr$V[vl_ix], # K103N + Generic EFV (e.g. G190A, Y181C)
+                        rowSums(dat$attr$V_vec[vl_ix,M184V_K65R,drop=F])/dat$attr$V[vl_ix], #M184VK65R double mut
+                        rowSums(dat$attr$V_vec[vl_ix,GenericTDF,drop=F])/dat$attr$V[vl_ix], 
+                        rowSums(dat$attr$V_vec[vl_ix,GenericEFV,drop=F])/dat$attr$V[vl_ix],
+                        dat$attr$Drug4[vl_ix]) # Second line therapy
 
   colnames(dat$vl_list[[at]]) <- namesvec
 }

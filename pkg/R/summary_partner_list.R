@@ -23,7 +23,7 @@ summary_partner_list <- function(dat){
   }
   ss <- cbind(c(cc[,1],cc[,2]),c(cc[,4],cc[,4]))
   tt <- split(ss[,2],ss[,1])
-  no_agents <- length(dat$pop$Status)
+  no_agents <- length(dat$attr$Status)
   outlist <- vector('list',length=no_agents)
   outlist <- as.list(rep(NA_real_,no_agents))
   lapply(1:length(tt),function(x) outlist[[ as.numeric(names(tt))[x] ]]<<-tt[[x]])

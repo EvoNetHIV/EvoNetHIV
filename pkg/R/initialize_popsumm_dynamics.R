@@ -43,8 +43,8 @@ initialize_popsumm_dynamics <- function(dat,at)
   popsumm$total_infections[1] <- param$initial_infected
   popsumm$susceptibles[1]     <- param$initial_pop-param$initial_infected
   popsumm$alive[1]            <- param$initial_pop
-  popsumm$no_in_aids_gamma[1] <- length(which( (at-dat$pop$Time_Inf) >  dat$pop$RandomTimeToAIDS))
-  popsumm$no_in_aids_cd4[1]   <- length(which(dat$pop$CD4 == 4))
+  popsumm$no_in_aids_gamma[1] <- length(which( (at-dat$attr$Time_Inf) >  dat$attr$RandomTimeToAIDS))
+  popsumm$no_in_aids_cd4[1]   <- length(which(dat$attr$CD4 == 4))
   popsumm$aged_out[1] <- 0
   
   popsumm$diagnosed[1]  <- 0

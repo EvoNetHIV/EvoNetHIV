@@ -11,7 +11,7 @@
 #' example function call here
 
 #' @export
-new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at)
+new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),at=NULL)
 {
   #description:
   #main argument: type="births" or type="initial"
@@ -29,10 +29,8 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
   total_new <- length(index)
   #------------------------------
   #functions for these variables are same initial population and for new births
-      
   input_list$s[index]<- rep(dat$param$prog_rate,total_new)
 
-  input_list$id[index] <-  index   
   
   #Assume new entrants (births) and immigrants aren't treated.
   input_list$treated[index] <-  rep(0,total_new)  
@@ -211,7 +209,7 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
     if(dat$param$model_sex=="msm"){
       input_list$sex[index] <- "m"
     } else {
-      input_list$sex[index]<- sample(c("m","f"),length(index),prob=c(0.5,0.5),replace=T)
+      input_list$sex[index]<- sample(c(0,1),length(index),prob=c(0.5,0.5),replace=T)
     }
     
     # Assign generic nodal attribute
@@ -255,10 +253,10 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
     }
     
     #ages for new additions -------------------------
-    if(dat$param$age_dist_new_adds=="min_age"){
+    if(dat$param$age_new_adds=="min_age"){
       input_list$age[index] <- dat$param$min_age+round(runif(length(index)),5)
     }else
-      if(dat$param$age_dist_new_adds=="mixed"){  
+      if(dat$param$age_new_adds=="mixed"){  
       ages <- rep(NA_real_,length(index))
       probs <- runif(length(index))
       ix <- which(probs <= dat$param$prop_new_agents_min_age)
@@ -276,7 +274,7 @@ new_additions_fxn <- function(input_list,dat,index,type=c("births","initial"),at
       }
       input_list$age[index] <- ages
       }else
-        if(dat$param$age_dist_new_adds=="linear_decline_18_55"){
+        if(dat$param$age_new_adds=="linear_decline_18_55"){
           input_list$age[index]<- sample(x=dat$param$min_age:(dat$param$max_age-1),
                                           size=total_new,
                                           replace=TRUE,

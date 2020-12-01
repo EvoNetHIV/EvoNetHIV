@@ -26,14 +26,14 @@ prep_risk_factors<-function(dat,at){
   risk_time = at + dat$param$prep_eligibility_time #i.e. 6 months from present
   
   #risk factor = in a relationship
-  dat$pop$last_ts_relationship[all.el] = risk_time
+  dat$attr$last_ts_relationship[all.el] = risk_time
   
   #risk factor = in 1+ relationships
   n_occur <- data.frame(table(all.el)) #data frame with a list of ids and the number of times they occurred.
   multiples <- n_occur[n_occur$Freq > 1,] #which ids occurred more than once.
   mult_rel <- as.numeric(as.character(multiples$all.el))
   
-  dat$pop$last_ts_multiple_relationships[mult_rel] = risk_time
+  dat$attr$last_ts_multiple_relationships[mult_rel] = risk_time
   
   return(dat)
 }

@@ -49,14 +49,6 @@ initialize_evonet_misc <- function(dat)
   #attach fxns to calculte population statistics to "dat" object
   #and plotting methods; see "summary_popsumm_fxns"
   
- #if not aim3 run, then aim3 stats/figures not produced
- #if(dat$param$VL_Function=="aim3"){aim3=T}else{aim3=F}
- #if(dat$param$fast_edgelist==TRUE){fast_el=T}else{fast_el=F}
- # popsumm_fxns <- summary_popsumm_fxns(generic_nodal_att_values=dat$param$generic_nodal_att_values,
-  #                                     aim3=aim3,fast_el=fast_el,params=dat$param)
- # dat$popsumm_fxns <- lapply(1:length(popsumm_fxns),function(x) popsumm_fxns[[x]]$model_value_fxn)
-  #names(dat$popsumm_fxns)<- names(popsumm_fxns)
-  
   popsumm2_vars  <- summary_popsumm_vars(dat)
   popsumm2_initial       <- vector('list',length(popsumm2_vars) )
   popsumm2        <- lapply(popsumm2_initial, function(x){ rep( NA_real_,
@@ -64,22 +56,7 @@ initialize_evonet_misc <- function(dat)
   names(popsumm2) <- popsumm2_vars
   dat$popsumm <-  popsumm2
   
-  #create an empty list based on number of variables, fill in with NAs                                                          
-  #popsumm_vars     <- names(popsumm_fxns)
-  #dat$popsumm        <- vector('list', length(popsumm_vars))
-  
-  #popsumm length is how many times summary stats will be recorded
-  #during model run; popsumm_frequency=1 means stats recorded
-  #each timestep; setting popsumm_frequency >1 (eg, 30) saves time
-  #by skipping calculations of summary stats
-  #if(dat$param$popsumm_frequency==1)
-   # popsumm_length <- dat$param$n_steps
-  #else
-  #  popsumm_length <- (dat$param$n_steps/dat$param$popsumm_frequency)+1
-  
- #  dat$popsumm        <- lapply(dat$popsumm,function(x){ rep(NA_real_,times=popsumm_length)})
- # dat$popsumm        <- lapply(dat$popsumm,function(x){ rep(0,times=popsumm_length)})
-#  names(dat$popsumm) <- popsumm_vars
+
   #-----------------------------
   #create age list for plotting age distributions during model
   #run (at start,1/4,1/2,3/4, end of model time period)

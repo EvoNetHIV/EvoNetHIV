@@ -38,45 +38,45 @@ summary_popsumm_deprec<-function(dat,at){
   
   
   #logical vectors and indices helpful to calculate summary stats  
-  inf_index     <-  dat$pop$Status == 1
+  inf_index     <-  dat$attr$Status == 1
   total_inf     <- length(which(inf_index))
-  sus_index     <-  dat$pop$Status == 0
-  care_index    <-  dat$pop$eligible_care == 1
-  male_index    <- dat$pop$sex == "m" & dat$pop$Status >= 0
-  female_index  <- dat$pop$sex == "f" & dat$pop$Status >= 0
-  inf_male_index <- dat$pop$sex == "m" & inf_index
-  inf_female_index <- dat$pop$sex == "f" & inf_index
-  treated_inf_male_index <- dat$pop$sex == "m" & inf_index  & dat$pop$treated == 1
-  treated_inf_female_index <- dat$pop$sex == "f" & inf_index  & dat$pop$treated == 1
+  sus_index     <-  dat$attr$Status == 0
+  care_index    <-  dat$attr$eligible_care == 1
+  male_index    <- dat$attr$sex == "m" & dat$attr$Status >= 0
+  female_index  <- dat$attr$sex == "f" & dat$attr$Status >= 0
+  inf_male_index <- dat$attr$sex == "m" & inf_index
+  inf_female_index <- dat$attr$sex == "f" & inf_index
+  treated_inf_male_index <- dat$attr$sex == "m" & inf_index  & dat$attr$treated == 1
+  treated_inf_female_index <- dat$attr$sex == "f" & inf_index  & dat$attr$treated == 1
   alive_index   <-  inf_index | sus_index
   total_alive <- length(which(alive_index))
-  treated_index <-  dat$pop$treated == 1 & inf_index
-  not_treated_index <-  dat$pop$treated == 0 & inf_index
-  treated_undetectable <- treated_index & dat$pop$V<dat$param$vl_undetectable
+  treated_index <-  dat$attr$treated == 1 & inf_index
+  not_treated_index <-  dat$attr$treated == 0 & inf_index
+  treated_undetectable <- treated_index & dat$attr$V<dat$param$vl_undetectable
   treated_agents <- which(treated_index)
   not_treated_agents <- which(not_treated_index)
   no_females_alive <- length(which(female_index & alive_index))
   no_males_alive <- length(which(male_index & alive_index))
-  circum_prev <- length(which(male_index & dat$pop$circum == 1))/no_males_alive
+  circum_prev <- length(which(male_index & dat$attr$circum == 1))/no_males_alive
   
-  under30_index <- dat$pop$age < 30 & dat$pop$Status >= 0
-  inf_under30_index <- dat$pop$age < 30 & inf_index
-  treated_inf_under30_index <- dat$pop$age < 30 & inf_index & dat$pop$treated == 1
-  agents30to50_index <- dat$pop$age >= 30 & dat$pop$age < 50 & dat$pop$Status >= 0 # Testing need to change 31 back to 50
-  inf_agents30to50_index <- dat$pop$age >= 30 & dat$pop$age < 50 & inf_index
-  treated_inf_agents30to50_index <- dat$pop$age >= 30 & dat$pop$age < 50 & inf_index & dat$pop$treated == 1
-  over50_index <- dat$pop$age >= 50 & dat$pop$Status >= 0
-  inf_over50_index <- dat$pop$age >= 50 & inf_index
-  treated_inf_over50_index <- dat$pop$age >= 50 & inf_index & dat$pop$treated == 1
+  under30_index <- dat$attr$age < 30 & dat$attr$Status >= 0
+  inf_under30_index <- dat$attr$age < 30 & inf_index
+  treated_inf_under30_index <- dat$attr$age < 30 & inf_index & dat$attr$treated == 1
+  agents30to50_index <- dat$attr$age >= 30 & dat$attr$age < 50 & dat$attr$Status >= 0 # Testing need to change 31 back to 50
+  inf_agents30to50_index <- dat$attr$age >= 30 & dat$attr$age < 50 & inf_index
+  treated_inf_agents30to50_index <- dat$attr$age >= 30 & dat$attr$age < 50 & inf_index & dat$attr$treated == 1
+  over50_index <- dat$attr$age >= 50 & dat$attr$Status >= 0
+  inf_over50_index <- dat$attr$age >= 50 & inf_index
+  treated_inf_over50_index <- dat$attr$age >= 50 & inf_index & dat$attr$treated == 1
   agents_under30 <- which(under30_index)
   agents_30to50 <- which(agents30to50_index)
   agents_over50 <- which(over50_index)
   
   # Age vectors to be used in sex- and age-specific prevalence and treatment
-  age_15to24 <- findInterval(dat$pop$age, c(15,25)) == 1
-  age_15to49 <- findInterval(dat$pop$age, c(15,50)) == 1
-  age_25to34 <- findInterval(dat$pop$age, c(25,35)) == 1
-  age_35plus <- findInterval(dat$pop$age, c(35,100)) == 1
+  age_15to24 <- findInterval(dat$attr$age, c(15,25)) == 1
+  age_15to49 <- findInterval(dat$attr$age, c(15,50)) == 1
+  age_25to34 <- findInterval(dat$attr$age, c(25,35)) == 1
+  age_35plus <- findInterval(dat$attr$age, c(35,100)) == 1
   
   # Prevalence vectors to be used in model fitting
   prev_15to24   <- length(which(inf_index & age_15to24))/length(which(alive_index & age_15to24))
@@ -90,7 +90,7 @@ summary_popsumm_deprec<-function(dat,at){
   
   #browser()
   # Sex- and age-specific treatment coverage
-  cd4_elig   <- dat$pop$CD4 %in% dat$param$cd4_treatment_threshold | dat$pop$CD4_at_trtmnt %in% dat$param$cd4_treatment_threshold
+  cd4_elig   <- dat$attr$CD4 %in% dat$param$cd4_treatment_threshold | dat$attr$CD4_at_trtmnt %in% dat$param$cd4_treatment_threshold
   
   # Proportion coverage among those eligible by CD4 threshold
   prop_trt_elig          <- length(which(inf_index & treated_index))/length(which(inf_index & cd4_elig))
@@ -126,48 +126,48 @@ summary_popsumm_deprec<-function(dat,at){
   prop_m_35plus_trt      <- length(which(inf_male_index & age_35plus & treated_index))/
                             length(which(inf_male_index & age_35plus))
   
-  new_infections <- is.element(dat$pop$Time_Inf, time_index)
-  new_infections_count <- length(which(is.element(dat$pop$Time_Inf, time_index)))
-  new_infections_virus_vacc_sens_count <- length(which(is.element(dat$pop$Time_Inf, time_index)&
-                                                         dat$pop$virus_sens_vacc==1))
-  new_infections_virus_vacc_notsens_count <- length(which(is.element(dat$pop$Time_Inf, time_index)&
-                                                         dat$pop$virus_sens_vacc==0))
+  new_infections <- is.element(dat$attr$Time_Inf, time_index)
+  new_infections_count <- length(which(is.element(dat$attr$Time_Inf, time_index)))
+  new_infections_virus_vacc_sens_count <- length(which(is.element(dat$attr$Time_Inf, time_index)&
+                                                         dat$attr$virus_sens_vacc==1))
+  new_infections_virus_vacc_notsens_count <- length(which(is.element(dat$attr$Time_Inf, time_index)&
+                                                         dat$attr$virus_sens_vacc==0))
   
-  new_infections_virus_drug_sens_count <- length(which(is.element(dat$pop$Time_Inf, time_index)&
-                                                         dat$pop$virus_sens_drug==1))
-  new_infections_virus_drug_part_res_count <- length(which(is.element(dat$pop$Time_Inf, time_index)&
-                                                         dat$pop$virus_part_res_drug==1))
-  new_infections_virus_drug_3_plus_res_count <- length(which(is.element(dat$pop$Time_Inf, time_index) &
-                                                         dat$pop$virus_3_plus_drug_muts==1))
-  new_infections_virus_1_drug_muts <- length(which(is.element(dat$pop$Time_Inf, time_index) &
-                                                             dat$pop$virus_3_plus_drug_muts==1))
+  new_infections_virus_drug_sens_count <- length(which(is.element(dat$attr$Time_Inf, time_index)&
+                                                         dat$attr$virus_sens_drug==1))
+  new_infections_virus_drug_part_res_count <- length(which(is.element(dat$attr$Time_Inf, time_index)&
+                                                         dat$attr$virus_part_res_drug==1))
+  new_infections_virus_drug_3_plus_res_count <- length(which(is.element(dat$attr$Time_Inf, time_index) &
+                                                         dat$attr$virus_3_plus_drug_muts==1))
+  new_infections_virus_1_drug_muts <- length(which(is.element(dat$attr$Time_Inf, time_index) &
+                                                             dat$attr$virus_3_plus_drug_muts==1))
   
   
   donor_time_inf  <- ifelse(new_infections_count>0,
-                            dat$pop$Donors_Total_Time_Inf_At_Trans[new_infections],
+                            dat$attr$Donors_Total_Time_Inf_At_Trans[new_infections],
                             NA)
   donor_acute_count <- ifelse(!is.na(donor_time_inf),
                               length(which(donor_time_inf<=dat$param$t_acute)),
                               NA)
-  new_births <- is.element(dat$pop$arrival_time, time_index)
-  cd4_aids <- dat$pop$CD4 == 4
-  new_diagnoses <- dat$pop$diag_status == 1 &  is.element(dat$pop$diag_time,time_index)
-  acute_phase_vec <- (at-dat$pop$Time_Inf)<dat$param$t_acute
+  new_births <- is.element(dat$attr$arrival_time, time_index)
+  cd4_aids <- dat$attr$CD4 == 4
+  new_diagnoses <- dat$attr$diag_status == 1 &  is.element(dat$attr$diag_time,time_index)
+  acute_phase_vec <- (at-dat$attr$Time_Inf)<dat$param$t_acute
   acute_phase <- !is.na(acute_phase_vec) & acute_phase_vec==T
-  percent_virus_sensitive <- round(100*(length(which(dat$pop$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
-  percentVaccinated <- round(100*(length(which(dat$pop$vaccinated == 1 & alive_index))/total_alive))
+  percent_virus_sensitive <- round(100*(length(which(dat$attr$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
+  percentVaccinated <- round(100*(length(which(dat$attr$vaccinated == 1 & alive_index))/total_alive))
   
   #deaths
-  just_died <- is.element(dat$pop$Time_Death,time_index)
-  died_aids <- dat$pop$Status == -2 & just_died
-  died_aids_mean_age <- mean(dat$pop$age[died_aids])
-  died_non_aids <- dat$pop$Status == -1 & just_died
-  died_non_aids_inf <- died_non_aids & !is.na(dat$pop$V)
-  died_non_aids_sus <- died_non_aids & is.na(dat$pop$V)
-  aged_out <- (dat$pop$age>=dat$param$max_age) & just_died
+  just_died <- is.element(dat$attr$Time_Death,time_index)
+  died_aids <- dat$attr$Status == -2 & just_died
+  died_aids_mean_age <- mean(dat$attr$age[died_aids])
+  died_non_aids <- dat$attr$Status == -1 & just_died
+  died_non_aids_inf <- died_non_aids & !is.na(dat$attr$V)
+  died_non_aids_sus <- died_non_aids & is.na(dat$attr$V)
+  aged_out <- (dat$attr$age>=dat$param$max_age) & just_died
   
   #prep
-  prop_on_prep <- length(which(alive_index & dat$pop$prep_list == 1))/total_alive
+  prop_on_prep <- length(which(alive_index & dat$attr$prep_list == 1))/total_alive
   
 #browser()
   #network statistics
@@ -195,9 +195,9 @@ summary_popsumm_deprec<-function(dat,at){
     
  
   #viral load values
-  log10_vl_values  <-  log10(dat$pop$V[which(inf_index)]+dat$param$AbsoluteCut)
+  log10_vl_values  <-  log10(dat$attr$V[which(inf_index)]+dat$param$AbsoluteCut)
   spvl_untreated_values <- (
-        dat$pop$LogSetPoint[which(inf_index & not_treated_index)])
+        dat$attr$LogSetPoint[which(inf_index & not_treated_index)])
   # todo: may be a faster way to calculate degree
   
   edges_by_agent <- unname(summary(nw ~ sociality(base = 0),at=at)) #use dat$attr$id for index on dat$pop
@@ -210,61 +210,61 @@ summary_popsumm_deprec<-function(dat,at){
   # Simple method for getting mean degrees for the generic attribute groups
   num_generic_attrs <- length(dat$param$generic_nodal_att_values)
   if (num_generic_attrs >= 2) {
-    risk_group1 <- which(dat$pop$att1 == 1 & dat$pop$Status >=0)
+    risk_group1 <- which(dat$attr$att1 == 1 & dat$attr$Status >=0)
     tot_grp1 <- length(risk_group1)
     edges_grp1 <-  edges_by_agent[dat$attr$id %in% risk_group1]
     
-    risk_group2 <- which(dat$pop$att1 == 2 & dat$pop$Status >=0)
+    risk_group2 <- which(dat$attr$att1 == 2 & dat$attr$Status >=0)
     tot_grp2 <- length(risk_group2)
     edges_grp2 <-  edges_by_agent[dat$attr$id %in% risk_group2]
     
     if (num_generic_attrs >= 3){
-      risk_group3 <- which(dat$pop$att1 == 3 & dat$pop$Status >=0)
+      risk_group3 <- which(dat$attr$att1 == 3 & dat$attr$Status >=0)
       tot_grp3 <- length(risk_group2)
       edges_grp3 <-  edges_by_agent[dat$attr$id %in% risk_group3]
     }
     if (num_generic_attrs >= 4){
-      risk_group4 <- which(dat$pop$att1 == 4 & dat$pop$Status >=0)
+      risk_group4 <- which(dat$attr$att1 == 4 & dat$attr$Status >=0)
       tot_grp4 <- length(risk_group4)
       edges_grp4 <-  edges_by_agent[dat$attr$id %in% risk_group4]
     }
     if (num_generic_attrs >= 5){
-      risk_group5 <- which(dat$pop$att1 == 5 & dat$pop$Status >=0)
+      risk_group5 <- which(dat$attr$att1 == 5 & dat$attr$Status >=0)
       tot_grp5 <- length(risk_group5)
       edges_grp5 <-  edges_by_agent[dat$attr$id %in% risk_group5]
     }
   }
   
    #aim3 mutations
-   inf_undetect_ix <- (dat$pop$Status==1 & dat$pop$V> dat$param$vl_undetectable)
+   inf_undetect_ix <- (dat$attr$Status==1 & dat$attr$V> dat$param$vl_undetectable)
    no_inf_undect <- length(which(inf_undetect_ix))
-  mutations0 <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts==0))
-  mutations1 <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts>=1))
-  mutations2 <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts>=2))
-  mutations3 <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts>=3))
-  mutations4 <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts>=4))
-  mutations5 <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts>=5))
+  mutations0 <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts==0))
+  mutations1 <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts>=1))
+  mutations2 <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts>=2))
+  mutations3 <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts>=3))
+  mutations4 <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts>=4))
+  mutations5 <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts>=5))
   
-  mutations1exact <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts==1))
-  mutations2exact <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts==2))
-  mutations3exact <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts==3))
-  mutations4exact <- length(which(inf_undetect_ix & dat$pop$aim3_no_muts==4))
+  mutations1exact <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts==1))
+  mutations2exact <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts==2))
+  mutations3exact <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts==3))
+  mutations4exact <- length(which(inf_undetect_ix & dat$attr$aim3_no_muts==4))
   
-  mutations3plus_long <- length(which(inf_index & dat$pop$aim3_muations_long>=3)) 
-  mutations4plus_long <- length(which(inf_index & dat$pop$aim3_muations_long>=4)) 
-  mutations5_long <- length(which(inf_index & dat$pop$aim3_muations_long==5)) 
+  mutations3plus_long <- length(which(inf_index & dat$attr$aim3_muations_long>=3)) 
+  mutations4plus_long <- length(which(inf_index & dat$attr$aim3_muations_long>=4)) 
+  mutations5_long <- length(which(inf_index & dat$attr$aim3_muations_long==5)) 
   
-  mutations0all <- length(which( dat$pop$aim3_no_muts==0))
-  mutations1all <- length(which( dat$pop$aim3_no_muts==1))
-  mutations2all <- length(which( dat$pop$aim3_no_muts==2))
-  mutations3all <- length(which(dat$pop$aim3_no_muts==3))
-  mutations4all <- length(which(dat$pop$aim3_no_muts==4))
-  mutations5all <- length(which(dat$pop$aim3_no_muts==5))
+  mutations0all <- length(which( dat$attr$aim3_no_muts==0))
+  mutations1all <- length(which( dat$attr$aim3_no_muts==1))
+  mutations2all <- length(which( dat$attr$aim3_no_muts==2))
+  mutations3all <- length(which(dat$attr$aim3_no_muts==3))
+  mutations4all <- length(which(dat$attr$aim3_no_muts==4))
+  mutations5all <- length(which(dat$attr$aim3_no_muts==5))
 
-  mutations1plusall <- length(which( dat$pop$aim3_no_muts>=1))
-  mutations2plusall <- length(which( dat$pop$aim3_no_muts>=2))
-  mutations3plusall <- length(which(dat$pop$aim3_no_muts>=3))
-  mutations4plusall <- length(which(dat$pop$aim3_no_muts>=4))
+  mutations1plusall <- length(which( dat$attr$aim3_no_muts>=1))
+  mutations2plusall <- length(which( dat$attr$aim3_no_muts>=2))
+  mutations3plusall <- length(which(dat$attr$aim3_no_muts>=3))
+  mutations4plusall <- length(which(dat$attr$aim3_no_muts>=4))
 
     #coital acts
   
@@ -310,11 +310,11 @@ summary_popsumm_deprec<-function(dat,at){
     if(temp_length>1){  
        
        #how many alive agents in each category
-       temp_table=table(dat$pop$att1[alive_index])
+       temp_table=table(dat$attr$att1[alive_index])
        #how many alive and infected agents in each category
-       temp_table2=table(dat$pop$att1[inf_index])
+       temp_table2=table(dat$attr$att1[inf_index])
        # How many vaccinated in each category
-       temp_table3 = table(dat$pop$att1[dat$pop$vaccinated == 1])
+       temp_table3 = table(dat$attr$att1[dat$attr$vaccinated == 1])
        #total agents
        sum_temp_table=sum(temp_table)
        #this vector makes sure categories from tables above are

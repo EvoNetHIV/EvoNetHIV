@@ -24,7 +24,7 @@ social_treatment_dropout <- function(dat, at)
   # pop$treated
   # pop$tx_stop_time  *** new attribute ***
   
-  curr_treated <- which(dat$pop$Status >= 0  & dat$pop$treated == 1)
+  curr_treated <- which(dat$attr$Status >= 0  & dat$attr$treated == 1)
   
   if(length(curr_treated)==0){return(dat)}
   
@@ -33,9 +33,9 @@ social_treatment_dropout <- function(dat, at)
   dropouts <- which(prob_dropout < dat$param$prob_tx_droput)
   if(length(dropouts)>0){
     dropout_ix <- curr_treated[dropouts]
-    dat$pop$treated[dropout_ix] <- 0
-    dat$pop$tx_stop_time[dropout_ix] <- at
-    dat$pop$tx_dropout[dropout_ix] <- 1
+    dat$attr$treated[dropout_ix] <- 0
+    dat$attr$tx_stop_time[dropout_ix] <- at
+    dat$attr$tx_dropout[dropout_ix] <- 1
   }
   
   return(dat)

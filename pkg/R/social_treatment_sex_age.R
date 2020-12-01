@@ -20,11 +20,11 @@ social_treatment_sex_age <- function(dat, at) {
     dat$param$cd4_treatment_threshold <- dat$param$cd4_trt_guidelines_chgs[[which(at == dat$param$start_treatment_campaign)]]
   }
   
-  if(length(which(dat$pop$Status == 1)) == 0) { return(dat) }
+  if(length(which(dat$attr$Status == 1)) == 0) { return(dat) }
   
   # Select eligible patients: alive, HIV+, not on treatment, and meeting current CD4 threshold
-  elig_pat <- which(dat$pop$Status == 1 & dat$pop$treated == 0 & 
-                    (dat$pop$CD4 %in% dat$param$cd4_treatment_threshold | dat$pop$CD4_at_trtmnt %in% dat$param$cd4_treatment_threshold))
+  elig_pat <- which(dat$attr$Status == 1 & dat$attr$treated == 0 & 
+                    (dat$attr$CD4 %in% dat$param$cd4_treatment_threshold | dat$attr$CD4_at_trtmnt %in% dat$param$cd4_treatment_threshold))
   
   if(length(elig_pat) == 0) { return(dat) }
   
@@ -37,7 +37,7 @@ social_treatment_sex_age <- function(dat, at) {
   for(i in 1:ncol(dat$param$cov_prob_scal)) {
     for(j in 1:nrow(dat$param$cov_prob_scal)) {
       # Subset eligible patients of the ith sex and jth age group
-      elig <- elig_pat[dat$pop$sex[elig_pat] == colnames(dat$param$cov_prob_scal)[i] & findInterval(dat$pop$age[elig_pat], dat$param$cov_prob_ageg[[j]]) == 1]
+      elig <- elig_pat[dat$attr$sex[elig_pat] == colnames(dat$param$cov_prob_scal)[i] & findInterval(dat$attr$age[elig_pat], dat$param$cov_prob_ageg[[j]]) == 1]
       
       if(length(elig) == 0) { next }
       
@@ -46,14 +46,14 @@ social_treatment_sex_age <- function(dat, at) {
       
       # Beyond final year in which observed coverage changes, coverage should plateau. 
       if(at/365 > max(dat$param$cov_prob_yrs) + 1) {
-        nTreated <- length(which(dat$pop$sex == colnames(dat$param$cov_prob_scal)[i] &
-                                 findInterval(dat$pop$age, dat$param$cov_prob_ageg[[j]]) == 1 &
-                                 dat$pop$Status == 1 & dat$pop$treated == 1))
-        nElig    <- length(which(dat$pop$sex == colnames(dat$param$cov_prob_scal)[i] &
-                                 findInterval(dat$pop$age, dat$param$cov_prob_ageg[[j]]) == 1 &
-                                 dat$pop$Status == 1 &
-                                 (is.element(dat$pop$CD4, dat$param$cd4_treatment_threshold) |
-                                  is.element(dat$pop$CD4_at_trtmnt, dat$param$cd4_treatment_threshold))))
+        nTreated <- length(which(dat$attr$sex == colnames(dat$param$cov_prob_scal)[i] &
+                                 findInterval(dat$attr$age, dat$param$cov_prob_ageg[[j]]) == 1 &
+                                 dat$attr$Status == 1 & dat$attr$treated == 1))
+        nElig    <- length(which(dat$attr$sex == colnames(dat$param$cov_prob_scal)[i] &
+                                 findInterval(dat$attr$age, dat$param$cov_prob_ageg[[j]]) == 1 &
+                                 dat$attr$Status == 1 &
+                                 (is.element(dat$attr$CD4, dat$param$cd4_treatment_threshold) |
+                                  is.element(dat$attr$CD4_at_trtmnt, dat$param$cd4_treatment_threshold))))
         current_cov <- nTreated/nElig
         #if(current_cov > target_cov) { browser() }
         
@@ -68,11 +68,11 @@ social_treatment_sex_age <- function(dat, at) {
   
   if(length(trt_pat) == 0) { return(dat) }
   
-  dat$pop$CD4_at_trtmnt[trt_pat] <- dat$pop$CD4[trt_pat]
-  dat$pop$treated[trt_pat] <- 1
-  dat$pop$tx_init_time[trt_pat] <- at
+  dat$attr$CD4_at_trtmnt[trt_pat] <- dat$attr$CD4[trt_pat]
+  dat$attr$treated[trt_pat] <- 1
+  dat$attr$tx_init_time[trt_pat] <- at
   dat$treatment_index <- trt_pat
-  dat$pop$vl_expected[trt_pat] <- dat$pop$V[trt_pat]
+  dat$attr$vl_expected[trt_pat] <- dat$attr$V[trt_pat]
   
   # Add code for loss-to-program
 

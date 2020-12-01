@@ -35,16 +35,16 @@ social_treatment_module_john <- function(dat, at)
     return(dat)
   }
   
-  if(length(which(dat$pop$Status==1))==0){return(dat)}
+  if(length(which(dat$attr$Status==1))==0){return(dat)}
   
-  eligible_agents_index <- which(dat$pop$Status == 1 & 
-                                   dat$pop$treated == 0 &
-                                   dat$pop$eligible_care == 1 & 
-                                   dat$pop$diag_status == 1) 
+  eligible_agents_index <- which(dat$attr$Status == 1 & 
+                                   dat$attr$treated == 0 &
+                                   dat$attr$eligible_care == 1 & 
+                                   dat$attr$diag_status == 1) 
   
   if(length(eligible_agents_index)==0){return(dat)}
   
-  no_on_tx <- length(which(dat$pop$treated==1 & dat$pop$Status==1))
+  no_on_tx <- length(which(dat$attr$treated==1 & dat$attr$Status==1))
   
   #------------------------------------------------------------------------  
   # this section for treatment scenarios where there is limint to number treated (max_treated)  
@@ -53,7 +53,7 @@ social_treatment_module_john <- function(dat, at)
     
     if(at>=dat$param$start_treatment_campaign & is.na(dat$param$max_treated)){
       dat$param$max_treated <- trunc(dat$param$proportion_treated*length(eligible_agents_index))
-      dat$param$max_treated_diff <- length(which(dat$pop$Status==1)) - dat$param$max_treated
+      dat$param$max_treated_diff <- length(which(dat$attr$Status==1)) - dat$param$max_treated
     }
     
     if(dat$param$max_treated==0){return(dat)}
@@ -62,7 +62,7 @@ social_treatment_module_john <- function(dat, at)
     if(dat$param$tx_in_acute_phase){
       eligible_agents_index_acute_flag<-eligible_agents_index
     }else{
-      eligible_agents_index_acute_flag <- eligible_agents_index[which((at - dat$pop$Time_Inf[eligible_agents_index]) > dat$param$t_acute)]
+      eligible_agents_index_acute_flag <- eligible_agents_index[which((at - dat$attr$Time_Inf[eligible_agents_index]) > dat$param$t_acute)]
     }
    
     length_eligible_agents_index_acute_flag <- length(eligible_agents_index_acute_flag)
@@ -75,44 +75,44 @@ social_treatment_module_john <- function(dat, at)
     if(subsample){      #if more elibible for tx than allowed, need to subset
 
       if(dat$param$tx_type=="VL3" ){
-        rank_eligible_agents_acute_flag<- rank(-dat$pop$V[eligible_agents_index_acute_flag],ties.method="random")
+        rank_eligible_agents_acute_flag<- rank(-dat$attr$V[eligible_agents_index_acute_flag],ties.method="random")
         eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag[which(rank_eligible_agents_acute_flag<= max_starting_therapy)]
       }
       
       if(dat$param$tx_type=="VL4" ){
-        rank_eligible_agents_acute_flag<- rank(dat$pop$V[eligible_agents_index_acute_flag],ties.method="random")
+        rank_eligible_agents_acute_flag<- rank(dat$attr$V[eligible_agents_index_acute_flag],ties.method="random")
         eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag[which(rank_eligible_agents_acute_flag<= max_starting_therapy)]
       }
       
       if(dat$param$tx_type=="fifo" ){
-        rank_eligible_agents_acute_flag<- rank(-(at - dat$pop$diag_time[eligible_agents_index_acute_flag]),ties.method="random")
+        rank_eligible_agents_acute_flag<- rank(-(at - dat$attr$diag_time[eligible_agents_index_acute_flag]),ties.method="random")
         eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag[which(rank_eligible_agents_acute_flag<= max_starting_therapy)]    
       }
       
       if(dat$param$tx_type=="CD42" ){
-        rank_eligible_agents_acute_flag<- rank(-dat$pop$CD4[eligible_agents_index_acute_flag],ties.method="random")
+        rank_eligible_agents_acute_flag<- rank(-dat$attr$CD4[eligible_agents_index_acute_flag],ties.method="random")
         eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag[which(rank_eligible_agents_acute_flag<= max_starting_therapy)]
       }
       
       if(dat$param$tx_type=="generic_attr" ){
-        rank_eligible_agents_acute_flag<- rank(-dat$pop$att1[eligible_agents_index_acute_flag],ties.method="random")
+        rank_eligible_agents_acute_flag<- rank(-dat$attr$att1[eligible_agents_index_acute_flag],ties.method="random")
         eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag[which(rank_eligible_agents_acute_flag<= max_starting_therapy)]    
       }
           
   
       if(dat$param$tx_type=="VL3" ){
-        rank_eligible_agents_acute_flag<- rank(-dat$pop$V[eligible_agents_index_acute_flag],ties.method="random")
+        rank_eligible_agents_acute_flag<- rank(-dat$attr$V[eligible_agents_index_acute_flag],ties.method="random")
         eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag[which(rank_eligible_agents_acute_flag<= max_starting_therapy)]
       }
       
       if(dat$param$tx_type=="MS2" ){
-        rank_eligible_agents_acute_flag<- rank(-(5 - dat$pop$att1[eligible_agents_index_acute_flag] + 0.3333*log10(dat$pop$V[eligible_agents_index_acute_flag])),
+        rank_eligible_agents_acute_flag<- rank(-(5 - dat$attr$att1[eligible_agents_index_acute_flag] + 0.3333*log10(dat$attr$V[eligible_agents_index_acute_flag])),
                                                ties.method="random")
         eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag[which(rank_eligible_agents_acute_flag<= max_starting_therapy)]    
       }
       
       if(dat$param$tx_type=="MS1" ){
-        tempvec <- dat$pop$att1[eligible_agents_index_acute_flag]+log10(dat$pop$V[eligible_agents_index_acute_flag]) 
+        tempvec <- dat$attr$att1[eligible_agents_index_acute_flag]+log10(dat$attr$V[eligible_agents_index_acute_flag]) 
         rank_eligible_agents_acute_flag<- rank(-tempvec,ties.method="random")
         eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag[which(rank_eligible_agents_acute_flag<= max_starting_therapy)]    
       }
@@ -124,8 +124,8 @@ social_treatment_module_john <- function(dat, at)
      eligible_agents_acute_flag_receive_tx <- eligible_agents_index_acute_flag
    } 
   
-    dat$pop$treated[eligible_agents_acute_flag_receive_tx] <- 1
-    dat$pop$tx_init_time[eligible_agents_acute_flag_receive_tx] <- at
+    dat$attr$treated[eligible_agents_acute_flag_receive_tx] <- 1
+    dat$attr$tx_init_time[eligible_agents_acute_flag_receive_tx] <- at
    
     return(dat)
   } #end of   if(dat$param$tx_type %in% c("VL3","fifo","CD42","generic_attr","random")){

@@ -34,7 +34,7 @@ input_parameters_derived  <- function(initial_param)
   }
   
   # poisson_birth_lambda, parameter for default birth fxn, is a fxn of popn size
-    initial_param$poisson_birth_lambda     = (initial_param$initial_pop/100)* initial_param$poisson_birth_lambda_base
+    initial_param$poisson_birth_lambda     = (initial_param$initial_pop/100)* initial_param$poisson_birth_base
   
   
   mort_per_timestep_male = input_parameters_asmr(

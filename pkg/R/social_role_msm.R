@@ -28,8 +28,8 @@ social_role_msm <- function(dat,at)
 
   if(dat$param$model_sex!="msm"){return(dat)}
 
-  sus_role <- dat$pop$role[dat$discord_coital_df$agent2]
-  inf_role <- dat$pop$role[dat$discord_coital_df$agent1]
+  sus_role <- dat$attr$role[dat$discord_coital_df$agent2]
+  inf_role <- dat$attr$role[dat$discord_coital_df$agent1]
   dat$discord_coital_df$sus_role <- sus_role
   dat$discord_coital_df$inf_role <- inf_role
 
@@ -87,8 +87,8 @@ social_role_msm <- function(dat,at)
     dat$discord_coital_df$iev[index_vv] <- rbinom(no_vv,1,dat$param$prob_iev)
 
     #assign who is insertive,receptive
-    sus_ins_quot <- dat$pop$insert_quotient[dat$discord_coital_df$sus_id[index_vv]]
-    inf_ins_quot <- dat$pop$insert_quotient[dat$discord_coital_df$inf_id[index_vv]]
+    sus_ins_quot <- dat$attr$insert_quotient[dat$discord_coital_df$sus_id[index_vv]]
+    inf_ins_quot <- dat$attr$insert_quotient[dat$discord_coital_df$inf_id[index_vv]]
     insert_probs <- inf_ins_quot/ (inf_ins_quot + sus_ins_quot)
     insert_inf_index <- index_vv[which(runif(no_vv)< insert_probs)]
     recept_inf_index <- setdiff(index_vv,insert_inf_index )

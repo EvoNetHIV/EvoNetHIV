@@ -22,17 +22,12 @@ setup_initialize_network <- function(params){
 nw <- network::network.initialize(params$initial_pop,
                                   directed = FALSE)
 
-#"id" mainly for qaqc testing
-id_vec <- 1:params$initial_pop
-network::set.vertex.attribute(x = nw, attr = "id",
-                              value = id_vec)
-
 
 if(params$model_sex!="msm"){
-  sex_vec <- sample(c("m","f"),params$initial_pop,prob=c(0.5,0.5),replace=T)
+  sex_vec <- sample(c(0,1),params$initial_pop,prob=c(0.5,0.5),replace=T)
   network::set.vertex.attribute(x = nw, attr = "sex", value =sex_vec)
 } else {
-  network::set.vertex.attribute(x=nw, attr="sex", value="m")
+  network::set.vertex.attribute(x=nw, attr="sex", value=1)
 }
 #---------------------------------
 
@@ -46,8 +41,8 @@ age_vec[index_male] <- vital_initial_age_dist(
   popsize   = length(index_male),
   age_dist = params$male_age_dist)
 }else{
-  index_male <- which(sex_vec=="m")
-  index_female <- which(sex_vec=="f")
+  index_male <- which(sex_vec==0)
+  index_female <- which(sex_vec==1)
   age_vec[index_male] <- vital_initial_age_dist( 
     age.range = params$min_age : (params$max_age-1),
     popsize   = length(index_male),
@@ -63,9 +58,6 @@ if(any(is.na(age_vec))){browser()}
 
 network::set.vertex.attribute(x=nw, attr="age", value=age_vec)
 network::set.vertex.attribute(x=nw, attr="sqrt_age", value=sqrt(age_vec))
-
-
-
 
 #--------------------------------
 #set generic atts on nw if in use

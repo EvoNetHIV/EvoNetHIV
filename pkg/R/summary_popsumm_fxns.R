@@ -150,16 +150,16 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
     popsumm_fxns$"percent_suppressed"<-
       list(model_value_fxn   = function(...){
         (length(which(treated_index & 
-                        ((at-dat$pop$tx_init_time)>100) &
-                        (log10(dat$pop$V)< dat$pop$LogSetPoint/10) &
+                        ((at-dat$attr$tx_init_time)>100) &
+                        (log10(dat$attr$V)< dat$attr$LogSetPoint/10) &
                         length(inf_index))) / length(inf_index) )
       },
       plot_type="line_raw",description="")
   }
   
   popsumm_fxns$"no_in_aids_gamma"<-
-    list(model_value_fxn   = function(...){length(which((at > (dat$pop$Time_Inf + 
-                                                                 dat$pop$RandomTimeToAIDS))&
+    list(model_value_fxn   = function(...){length(which((at > (dat$attr$Time_Inf + 
+                                                                 dat$attr$RandomTimeToAIDS))&
                                                           inf_index))},
          plot_type="line_raw",description="")
   
@@ -248,25 +248,25 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
       plot_type="points",loess=F,description="")
   
   popsumm_fxns$"mean_time_donor_infected_incident" <-
-    list(model_value_fxn   = function(...){mean(dat$pop$Donors_Total_Time_Inf_At_Trans[which(new_infections)])},
+    list(model_value_fxn   = function(...){mean(dat$attr$Donors_Total_Time_Inf_At_Trans[which(new_infections)])},
          plot_type="points",loess=T,ymin="data",description="")
   
   popsumm_fxns$"mean_age_incident" <-
-    list(model_value_fxn   = function(...){mean(dat$pop$age[which(new_infections)])},
+    list(model_value_fxn   = function(...){mean(dat$attr$age[which(new_infections)])},
          plot_type="points",loess=T,ymin="data",description="")
   
   popsumm_fxns$"mean_age_died_AIDS"<-
-    list(model_value_fxn   = function(...){mean(dat$pop$age[which(died_aids)])},
+    list(model_value_fxn   = function(...){mean(dat$attr$age[which(died_aids)])},
          plot_type="points",loess=T,ymin="data",description="")
   
   if (params$start_treatment_campaign < 5e5) {  #only plot if treatment is available in model 
     popsumm_fxns$"mean_spvl_pop_all"<-
-      list(model_value_fxn   = function(...){mean(dat$pop$LogSetPoint[which(inf_index)])},
+      list(model_value_fxn   = function(...){mean(dat$attr$LogSetPoint[which(inf_index)])},
            plot_type="line_raw",ymin="data",description="")}
   
   if (params$start_treatment_campaign < 5e5) {  #only plot if treatment is available in model 
     popsumm_fxns$"mean_vl_pop_untreated"<-
-      list(model_value_fxn   = function(...){mean(log10(dat$pop$V[which(inf_index &  not_treated_index)]))},
+      list(model_value_fxn   = function(...){mean(log10(dat$attr$V[which(inf_index &  not_treated_index)]))},
            plot_type="line_raw",ymin="data",description="")}
   
   popsumm_fxns$"mean_spvl_pop_untreated"<-
@@ -278,7 +278,7 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
          plot_type="line_raw",ymin="data",description="")
   
   popsumm_fxns$"mean_spvl_incident"<-
-    list(model_value_fxn   = function(...){mean(dat$pop$LogSetPoint[which(new_infections)])},
+    list(model_value_fxn   = function(...){mean(dat$attr$LogSetPoint[which(new_infections)])},
          plot_type="points",loess=T,description="")
   
   if (params$perc_vaccinated != 0.5) {    #only plot if vaccine campaign in model
@@ -307,11 +307,11 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
            plot_type="line_raw",description="")}
   
   popsumm_fxns$"mean_age_infecteds"<-
-    list(model_value_fxn   = function(...){mean(dat$pop$age[which(inf_index)])},
+    list(model_value_fxn   = function(...){mean(dat$attr$age[which(inf_index)])},
          plot_type="line_raw",ymin="data",description="")
   
   popsumm_fxns$"mean_age_susceptibles"<-
-    list(model_value_fxn   = function(...){mean(dat$pop$age[which(sus_index)])},
+    list(model_value_fxn   = function(...){mean(dat$attr$age[which(sus_index)])},
          plot_type="line_raw",ymin="data",description="")
   
   #  popsumm_fxns$"number_coit_acts"<-
@@ -457,11 +457,11 @@ summary_popsumm_fxns<-function(generic_nodal_att_values=NULL,aim3,fast_el,params
            plot_type="line_cumul",description="")
     
     popsumm_fxns$"mean_PPP_incident"<-
-      list(model_value_fxn   = function(...){mean(dat$pop$PPP[which(new_infections)])},
+      list(model_value_fxn   = function(...){mean(dat$attr$PPP[which(new_infections)])},
            plot_type="points",loess=T,description="")
     
     popsumm_fxns$"mean_PPP_infected"<-
-      list(model_value_fxn   = function(...){mean(dat$pop$PPP[which(inf_index)])},
+      list(model_value_fxn   = function(...){mean(dat$attr$PPP[which(inf_index)])},
            plot_type="line_raw",ymin="data",description="")
     
     popsumm_fxns$"drug_muts_1+"<-
@@ -630,7 +630,7 @@ summary_popsumm_generic_att_fxns<-function(generic_att_values,fxn_list)
     ww=zz
     temp_fxn=function(ww){ 
       force(ww) 
-      return(function(...){length(which(dat$pop$att1==ww))/
+      return(function(...){length(which(dat$attr$att1==ww))/
           length(which(alive_index))} )
     }
     

@@ -46,13 +46,13 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
   #                                                        "sessionInfo","partner_list"))
   #############################################################
   
-  f1=function(x,type="hello",s=1,at=2){invisible()}
+  f1 <- function(x,type="hello",s=1,at=2){invisible()}
   
   control_epimodel_params_list <- list(type=NULL,
               nsteps=evonet_params$n_steps,
               start = 1,
               nsims =  evonet_params$nsims,
-              ncores =  1,
+              ncores =   evonet_params$ncores,
               resimulate.network = TRUE,
               tergmLite = TRUE,
               save.nwstats = TRUE,

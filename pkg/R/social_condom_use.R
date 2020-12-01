@@ -22,18 +22,19 @@ social_condom_use <- function(dat,at)
   ###########################################
   
   # Calcuate condom use (0/1) based on "condom_prob"
-  if(dat$param$risk_comp_cond) {
-    condom_prob <- ifelse((dat$pop$vaccinated[dat$discord_coital_df$sus_id] == 1 |
-                           (dat$pop$vaccinated[dat$discord_coital_df$inf_id] == 1 & 
-                            is.na(dat$pop$diag_status[dat$discord_coital_df$inf_id]))),
-                          dat$param$condom_prob * dat$param$risk_comp_cond_rr,
-                          dat$param$condom_prob)
-  }
-  else {
     condom_prob <- rep(dat$param$condom_prob, nrow(dat$discord_coital_df))
-  }
+    
+    if(dat$param$risk_comp_cond) {
+      ix_rc <- which(dat$attr$vaccinated[dat$discord_coital_df$sus_id] == 1 |
+                      (dat$attr$vaccinated[dat$discord_coital_df$inf_id] == 1 & 
+                         is.na(dat$attr$diag_status[dat$discord_coital_df$inf_id])) )
+      if(length(ix_rc)>0){
+        condom_prob[ix] <- dat$param$condom_prob * dat$param$risk_comp_cond_rr
+       }
+                   
+    }
   
-#update condom prob vec based on relationship durations (Sorry, James for changing index names -- I am  struggling to understand this code.)
+    #update condom prob vec based on relationship durations (Sorry, James for changing index names -- I am  struggling to understand this code.)
 if(dat$param$condom_use_rel_dur){
   dat <- update_compact_el_and_rel_durs(dat,at)
   p1 <- floor(dat$compact_el) # agent ID for agents listed in the first column of the edgelist (partner 1)
@@ -54,8 +55,8 @@ if(dat$param$condom_use_rel_dur){
     p2i_dc <- which(dat$discord_coital_df$inf_id %in% p2[p2i] & dat$discord_coital_df$sus_id %in% p1[p2i])
     condom_prob[p2i_dc] <- condom_prob[p2i_dc]*(5*365/(5*365+dat$partnership_durs[p2i]))
   }
-  condom_user_modifier_non_users <- (dat$pop$condom_user[dat$discord_coital_df$sus_id] + 
-                                    dat$pop$condom_user[dat$discord_coital_df$inf_id])/2
+  condom_user_modifier_non_users <- (dat$attr$condom_user[dat$discord_coital_df$sus_id] + 
+                                    dat$attr$condom_user[dat$discord_coital_df$inf_id])/2
   condom_prob <- condom_prob*condom_user_modifier_non_users
                           
 }
@@ -64,7 +65,7 @@ if(dat$param$condom_use_rel_dur){
 # idea is that condom usage will decline with age from the age 16 (or age 18) baseline given by dat$param$condom_prob
 if(dat$param$condom_use_age){
   
-    average_age <- (dat$pop$age[dat$discord_coital_df$sus_id] + dat$pop$age[dat$discord_coital_df$inf_id])/2
+    average_age <- (dat$attr$age[dat$discord_coital_df$sus_id] + dat$attr$age[dat$discord_coital_df$inf_id])/2
     
     # For age_condom_use_halves = 50, average age = 16, min_age = 16, modifier below will be (50-16)/(50+16-2*16) = (50-16)/(50-16+16-16) = 1.0
     # For age_condom_use_halves = 50, average age = 50, min_age = 16, modifier below will be (50-16)/(50+50-2*16) = (50-16)/(50-16+50-16) = 0.5
@@ -81,7 +82,7 @@ if(dat$param$condom_use_age){
     
   #update condom_prob based on agent level condom use probability
   if(dat$param$individual_condom_prob){
-    condom_use_vec <- c(dat$pop$individual_condom_prob[dat$discord_coital_df$agent1], dat$pop$individual_condom_prob[dat$discord_coital_df$agent2])
+    condom_use_vec <- c(dat$attr$individual_condom_prob[dat$discord_coital_df$agent1], dat$attr$individual_condom_prob[dat$discord_coital_df$agent2])
     condom_use_matrix <- matrix(condom_use_vec,ncol=2,byrow = F)
     if(dat$param$individual_condom_prob_compromise_method == "mean"){ 
       condom_use_prob <- rowMeans(condom_use_matrix,na.rm=T)

@@ -32,12 +32,12 @@ evo_arrivals <- function(dat, at) {
   nBirths <- vital_births_calculate_new(dat,at)
   if(nBirths==0){return(dat)}
   
-  #expand "pop" lists and fill in default values as needed
-  dat$pop <- vital_births_bookkeeping_pop(no_births = nBirths, 
+  dat$no_births <- dat$no_births + nBirths 
+  
+  #expand "attr" lists and fill in default values as needed
+  dat$attr <- vital_births_bookkeeping_pop(no_births = nBirths, 
                                           dat=dat, timestep = at)
   
-  #modify network and "status" vectors as needed
-  dat <- vital_births_bookkeeping_misc(dat,at)  
   
   return(dat)
 }

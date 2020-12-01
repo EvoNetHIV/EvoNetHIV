@@ -32,14 +32,14 @@ social_testing_diagnosis_with_enhancements_module <- function(dat, at){
      stop ("argument testing.pattern must equal \"memoryless\" or \"interval\".") 
 
   
-  #note: when using NAs for uninfected, !is.element(dat$pop$diag,c(0,NA_real_))
-  to_be_tested <- which(dat$pop$eligible_care== 1 & dat$pop$Status %in% c(0,1) & dat$pop$diag_status %in% c(0,NA) )
+  #note: when using NAs for uninfected, !is.element(dat$attr$diag,c(0,NA_real_))
+  to_be_tested <- which(dat$attr$eligible_care== 1 & dat$attr$Status %in% c(0,1) & dat$attr$diag_status %in% c(0,NA) )
   if (length(to_be_tested)==0){return(dat)}
   
-  to_be_tested_male_reg <- which(dat$pop$sex[to_be_tested] == 'm' & dat$pop$enhanced_testing[to_be_tested] == 0)
-  to_be_tested_male_enh <- which(dat$pop$sex[to_be_tested] == 'm' & dat$pop$enhanced_testing[to_be_tested] == 1)
-  to_be_tested_female_reg <- which(dat$pop$sex[to_be_tested] == 'f' & dat$pop$enhanced_testing[to_be_tested] == 0)
-  to_be_tested_female_enh <- which(dat$pop$sex[to_be_tested] == 'f' & dat$pop$enhanced_testing[to_be_tested] == 1)
+  to_be_tested_male_reg <- which(dat$attr$sex[to_be_tested] == 'm' & dat$attr$enhanced_testing[to_be_tested] == 0)
+  to_be_tested_male_enh <- which(dat$attr$sex[to_be_tested] == 'm' & dat$attr$enhanced_testing[to_be_tested] == 1)
+  to_be_tested_female_reg <- which(dat$attr$sex[to_be_tested] == 'f' & dat$attr$enhanced_testing[to_be_tested] == 0)
+  to_be_tested_female_enh <- which(dat$attr$sex[to_be_tested] == 'f' & dat$attr$enhanced_testing[to_be_tested] == 1)
   
   mean_test_interval <- numeric(length(to_be_tested))
   mean_test_interval[to_be_tested_male_reg] <- dat$param$mean_test_interval_male
@@ -53,7 +53,7 @@ social_testing_diagnosis_with_enhancements_module <- function(dat, at){
     
   
   if(dat$param$testing_model=="interval") {
-    time_since_last_neg_test <- (at - dat$pop$last_neg_test[to_be_tested])
+    time_since_last_neg_test <- (at - dat$attr$last_neg_test[to_be_tested])
     testers <- which(time_since_last_neg_test >= mean_test_interval)
     if(length(testers)>0){
       testing <- to_be_tested[testers]
@@ -64,7 +64,7 @@ social_testing_diagnosis_with_enhancements_module <- function(dat, at){
    
   if(length(testing)>0) {
     
-    testing_and_infected <- which(dat$pop$Status[testing]==1)
+    testing_and_infected <- which(dat$attr$Status[testing]==1)
     if(length(testing_and_infected)>0){
           
         testing_positive <- testing[testing_and_infected]
@@ -72,14 +72,14 @@ social_testing_diagnosis_with_enhancements_module <- function(dat, at){
               
           if(length(testing_negative)>0){
                 
-             dat$pop$last_neg_test[testing_negative] <- at
+             dat$attr$last_neg_test[testing_negative] <- at
            }
               
            if(length(testing_positive)>0){    
-              dat$pop$diag_status[testing_positive] <- 1
-              dat$pop$diag_time[testing_positive] <- at  
-              dat$pop$vl_at_test[testing_positive] <- dat$pop$V[testing_positive]
-              dat$pop$cd4_at_test[testing_positive] <- dat$pop$CD4[testing_positive]
+              dat$attr$diag_status[testing_positive] <- 1
+              dat$attr$diag_time[testing_positive] <- at  
+              dat$attr$vl_at_test[testing_positive] <- dat$attr$V[testing_positive]
+              dat$attr$cd4_at_test[testing_positive] <- dat$attr$CD4[testing_positive]
             }
         }  
     }

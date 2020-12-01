@@ -40,37 +40,37 @@ social_treatment_module_john_v3 <- function(dat, at)
     return(dat)
   }
   
-  if(length(which(dat$pop$Status==1))==0){return(dat)}
+  if(length(which(dat$attr$Status==1))==0){return(dat)}
   
   if(is.logical(dat$param$generic_nodal_att_mean_trtmnt_delay)){
-  eligible_agents_index <- which(dat$pop$Status == 1 & 
-                                   dat$pop$treated == 0 &
-                                   dat$pop$eligible_care == 1 & 
-                                   dat$pop$diag_status == 1 &
-                                  ((dat$pop$Time_Inf+dat$param$mean_trtmnt_delay)<=at)) 
+  eligible_agents_index <- which(dat$attr$Status == 1 & 
+                                   dat$attr$treated == 0 &
+                                   dat$attr$eligible_care == 1 & 
+                                   dat$attr$diag_status == 1 &
+                                  ((dat$attr$Time_Inf+dat$param$mean_trtmnt_delay)<=at)) 
   
-  eligible_agents_index_including_treated <- which(dat$pop$Status == 1 & 
-                                              dat$pop$eligible_care == 1 & 
-                                              dat$pop$diag_status == 1 &
-                                             ((dat$pop$Time_Inf+dat$param$mean_trtmnt_delay)<=at))}
+  eligible_agents_index_including_treated <- which(dat$attr$Status == 1 & 
+                                              dat$attr$eligible_care == 1 & 
+                                              dat$attr$diag_status == 1 &
+                                             ((dat$attr$Time_Inf+dat$param$mean_trtmnt_delay)<=at))}
   
   if(!is.logical(dat$param$generic_nodal_att_mean_trtmnt_delay)){
-    eligible_agents_index <- which(dat$pop$Status == 1 & 
-                                     dat$pop$treated == 0 &
-                                     dat$pop$eligible_care == 1 & 
-                                     dat$pop$diag_status == 1 &
-                                     ((dat$pop$Time_Inf+(dat$param$mean_trtmnt_delay*(dat$pop$att1==1)+dat$param$generic_nodal_att_mean_trtmnt_delay*(dat$pop$att1==2)))<=at)) 
+    eligible_agents_index <- which(dat$attr$Status == 1 & 
+                                     dat$attr$treated == 0 &
+                                     dat$attr$eligible_care == 1 & 
+                                     dat$attr$diag_status == 1 &
+                                     ((dat$attr$Time_Inf+(dat$param$mean_trtmnt_delay*(dat$attr$att1==1)+dat$param$generic_nodal_att_mean_trtmnt_delay*(dat$attr$att1==2)))<=at)) 
     
-    eligible_agents_index_including_treated <- which(dat$pop$Status == 1 & 
-                                                       dat$pop$eligible_care == 1 & 
-                                                       dat$pop$diag_status == 1 &
-                                    ((dat$pop$Time_Inf+(dat$param$mean_trtmnt_delay*(dat$pop$att1==1)+dat$param$generic_nodal_att_mean_trtmnt_delay*(dat$pop$att1==2)))<=at))}
+    eligible_agents_index_including_treated <- which(dat$attr$Status == 1 & 
+                                                       dat$attr$eligible_care == 1 & 
+                                                       dat$attr$diag_status == 1 &
+                                    ((dat$attr$Time_Inf+(dat$param$mean_trtmnt_delay*(dat$attr$att1==1)+dat$param$generic_nodal_att_mean_trtmnt_delay*(dat$attr$att1==2)))<=at))}
   
   
   
   if(length(eligible_agents_index)==0){return(dat)}
   
-  no_on_tx <- length(which(dat$pop$treated==1 & dat$pop$Status==1))
+  no_on_tx <- length(which(dat$attr$treated==1 & dat$attr$Status==1))
   
   #is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
   #if(is.wholenumber(at/365/10)==T){browser()}
@@ -92,65 +92,65 @@ social_treatment_module_john_v3 <- function(dat, at)
     if(subsample || dat$param$tx_type == "all_men") {      #if more elibible for tx than allowed, need to subset
 
       if(dat$param$tx_type=="VL_low" ){
-        rank_eligible_agents<- rank(dat$pop$V[eligible_agents_index],ties.method="random")
+        rank_eligible_agents<- rank(dat$attr$V[eligible_agents_index],ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]
       }
 
       if(dat$param$tx_type=="VL_high" ){
-        rank_eligible_agents <- rank(-dat$pop$V[eligible_agents_index],ties.method="random")
+        rank_eligible_agents <- rank(-dat$attr$V[eligible_agents_index],ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]
       }
       
      if (dat$param$tx_type=="generic_attr" ){
-        rank_eligible_agents<- rank(-dat$pop$att1[eligible_agents_index],ties.method="random")
+        rank_eligible_agents<- rank(-dat$attr$att1[eligible_agents_index],ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]    
       }
 
      if(dat$param$tx_type=="MS2" ){
-        rank_eligible_agents<- rank(-(10*dat$pop$att1[eligible_agents_index] + 0.3333*log10(dat$pop$V[eligible_agents_index])),
+        rank_eligible_agents<- rank(-(10*dat$attr$att1[eligible_agents_index] + 0.3333*log10(dat$attr$V[eligible_agents_index])),
                                                ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]    
       }
       
       if(dat$param$tx_type=="MS1" ){
-        tempvec <- dat$pop$att1[eligible_agents_index]+log10(dat$pop$V[eligible_agents_index]) 
+        tempvec <- dat$attr$att1[eligible_agents_index]+log10(dat$attr$V[eligible_agents_index]) 
         rank_eligible_agents<- rank(-tempvec,ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]    
       }
 
       if(dat$param$tx_type=="under45" ){
-         eligible_agents_receive_tx <- eligible_agents_index[which(dat$pop$age[eligible_agents_index] <= 45)]
+         eligible_agents_receive_tx <- eligible_agents_index[which(dat$attr$age[eligible_agents_index] <= 45)]
       } 
 
       if (dat$param$tx_type=="risk_age" ){
-        tempvec <- 100*dat$pop$att1[eligible_agents_index]+dat$pop$age[eligible_agents_index]
+        tempvec <- 100*dat$attr$att1[eligible_agents_index]+dat$attr$age[eligible_agents_index]
         rank_eligible_agents<- rank(-tempvec,ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]    
       }
 
       if(dat$param$tx_type=="fifo" ){
-        rank_eligible_agents<- rank(-(at - dat$pop$diag_time[eligible_agents_index]),ties.method="random")
+        rank_eligible_agents<- rank(-(at - dat$attr$diag_time[eligible_agents_index]),ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]    
       }
       
       if(dat$param$tx_type=="CD4_low" ){
-        rank_eligible_agents<- rank(-dat$pop$CD4[eligible_agents_index],ties.method="random")
+        rank_eligible_agents<- rank(-dat$attr$CD4[eligible_agents_index],ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]
       }
   
        if(dat$param$tx_type=="men" ){
-        eligible_agents_receive_tx <- eligible_agents_index[which(dat$pop$sex[eligible_agents_index] == "m")]   
+        eligible_agents_receive_tx <- eligible_agents_index[which(dat$attr$sex[eligible_agents_index] == "m")]   
       }
       
       if(dat$param$tx_type=="youngest" ){
-        rank_eligible_agents<- rank(dat$pop$age[eligible_agents_index],ties.method="random")
+        rank_eligible_agents<- rank(dat$attr$age[eligible_agents_index],ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]
       }
 
       if(dat$param$tx_type=="men_cd4" ){
-        tempvec <- dat$pop$sex[eligible_agents_index] 
+        tempvec <- dat$attr$sex[eligible_agents_index] 
         tempvec2 <- as.numeric(factor(tempvec,c("f","m")))
-        rank_eligible_agents<- rank(-10*tempvec2 - dat$pop$CD4[eligible_agents_index],ties.method="random")
+        rank_eligible_agents<- rank(-10*tempvec2 - dat$attr$CD4[eligible_agents_index],ties.method="random")
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]
       }
                
@@ -158,14 +158,14 @@ social_treatment_module_john_v3 <- function(dat, at)
         eligible_agents_receive_tx <- sample(eligible_agents_index,max_starting_therapy)
       }
       if(dat$param$tx_type=="role" ){
-        tempvec <- dat$pop$sex[eligible_agents_index] 
+        tempvec <- dat$attr$sex[eligible_agents_index] 
         tempvec2 <- as.numeric(factor(tempvec,c("I","R","V")))
         rank_eligible_agents<- rank(tempvec2)
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]    
       }
 
       if(dat$param$tx_type=="women" ){
-        tempvec <- dat$pop$role[eligible_agents_index] 
+        tempvec <- dat$attr$role[eligible_agents_index] 
         tempvec2 <- as.numeric(factor(tempvec,c("I","R","V")))
         rank_eligible_agents<- rank(-tempvec2)
         eligible_agents_receive_tx <- eligible_agents_index[which(rank_eligible_agents<= max_starting_therapy)]    
@@ -174,8 +174,8 @@ social_treatment_module_john_v3 <- function(dat, at)
      eligible_agents_receive_tx <- eligible_agents_index
    } 
   
-    dat$pop$treated[eligible_agents_receive_tx] <- 1
-    dat$pop$tx_init_time[eligible_agents_receive_tx] <- at
+    dat$attr$treated[eligible_agents_receive_tx] <- 1
+    dat$attr$tx_init_time[eligible_agents_receive_tx] <- at
    
     return(dat)
   } else {

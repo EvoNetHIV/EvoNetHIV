@@ -47,7 +47,7 @@ if (dat$param$birth_model=="exponential_growth")
 if (dat$param$birth_model=="constant_size")
 {
   
-  nBirths <- length(which(dat$pop$Time_Death==at))
+  nBirths <- length(which(dat$attr$Time_Death==at))
 }
 #-----------------------------------------------
 #constant number of births
@@ -60,7 +60,7 @@ if (dat$param$birth_model=="poisson_birth_numbers")
 #constant birth rate
 if (dat$param$birth_model == "constant_rate")
 {
-  no_alive <- length(which(is.element(dat$pop$Status,c(0:1))))
+  no_alive <- length(which(is.element(dat$attr$Status,c(0:1))))
   nBirths  <-  rpois(1,no_alive*dat$param$constant_birth_rate)
 }
 #-----------------------------------------------
@@ -117,6 +117,7 @@ if (dat$param$birth_model == "constant_rate_spread_out")
     nBirths <- dat$constant_number_spread_out_new_adds[at-1]
    }
 #-----------------------------------------------
+
 return(nBirths)
 
 }

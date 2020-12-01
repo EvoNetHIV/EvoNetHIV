@@ -16,35 +16,42 @@ vital_births_bookkeeping_pop <- function(no_births,dat,timestep)
   # Expand “pop” list based on number of new births and fill in default values with “new_additions_fxn” 
   # note: fxn only called in nbirths>=1
   # Inputs: dat$param$no_loci, no_births, dat$pop
-  # Outputs: tempList
+  # Outputs: attr_new
   
   V_vec_length <- 2^dat$param$Max_Allowable_Loci
   temp_matrix  <- matrix(0, nrow = no_births, ncol = V_vec_length)
   
-  tempList <- lapply(1:length(dat$pop),
+attr_new <- lapply(1:length(dat$attr),
                      function(jj){
-                       if(is.vector(dat$pop[[jj]])){
-                         dat$pop[[jj]] <- c(dat$pop[[jj]],rep(NA_real_,no_births))}
-                       else{dat$pop[[jj]] <- rbind(dat$pop[[jj]],temp_matrix) } 
+                       if(is.vector(dat$attr[[jj]])){
+                         dat$attr[[jj]] <- c(dat$attr[[jj]],rep(NA_real_,no_births))}
+                       else{dat$attr[[jj]] <- rbind(dat$attr[[jj]],temp_matrix) } 
                      })
   
   
-  names(tempList) <- names(dat$pop)
+  names(attr_new) <- names(dat$attr)
   
   #this assumes all pop list elements have the same length, so it doesn't matter
   #which one you use to create an index.
   if(no_births > 1){
-    ix_start <-  length(tempList[[1]])-no_births+1
-    ix_end <-  length(tempList[[1]])
+    ix_start <-  length(attr_new[[1]])-no_births+1
+    ix_end <-  length(attr_new[[1]])
   }
   if(no_births == 1){
-    ix_start  <-  length(tempList[[1]])
+    ix_start  <-  length(attr_new[[1]])
     ix_end  <-  ix_start
   }
   
-  tempList <- new_additions_fxn(input_list = tempList, dat = dat,
+attr_final <- new_additions(input_list = attr_new, dat = dat,
                                 index = ix_start:ix_end,
                                 type= "births", at = timestep)   
+#add epimodel specific attributes (not part of evonet)
+attr_final$status     <- c(dat$attr$status,   rep("s",no_births))
+attr_final$active     <- c(dat$attr$active,   rep(1, no_births))
+attr_final$entrTime   <- c(dat$attr$entrTime, rep(timestep, no_births ) )
+attr_final$exitTime   <- c(dat$attr$exitTime, rep(NA_real_, no_births ) )
+attr_final$infTime    <- c(dat$attr$infTime,  rep(NA_real_, no_births ) )
+
   
-  return(tempList)
+  return(attr_final)
 }

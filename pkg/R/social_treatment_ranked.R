@@ -40,18 +40,18 @@ social_treatment_ranked <- function(dat, at)
   # Note: This algorithm assumes that those already being treated stay on treatment for life                 #
   ############################################################################################################
   
-    newly_eligible <- which(dat$pop$Status == 1 & dat$pop$treated == 0 &
-                            dat$pop$diag_status == 1 & dat$pop$eligible_care == 1 ) 
+    newly_eligible <- which(dat$attr$Status == 1 & dat$attr$treated == 0 &
+                            dat$attr$diag_status == 1 & dat$attr$eligible_care == 1 ) 
     # If tx_in_acute_phase == FALSE, restrict eligibility to chronically infected  
     if (dat$param$tx_in_acute_phase == FALSE) { 
-      newly_eligible <- newly_eligible[which((at - dat$pop$Time_Inf[newly_eligible]) > dat$param$t_acute)]
+      newly_eligible <- newly_eligible[which((at - dat$attr$Time_Inf[newly_eligible]) > dat$param$t_acute)]
     }
     if ( length(newly_eligible)==0 ) { return(dat) } # Exit if no eligible agents
   
   ############################################################################################################
   # Calculate the number currently on therapy                                                                #
   ############################################################################################################
-    no_on_tx <- length(which(dat$pop$treated==1 & dat$pop$Status==1))   # Figure the number currently on therapy
+    no_on_tx <- length(which(dat$attr$treated==1 & dat$attr$Status==1))   # Figure the number currently on therapy
     total_drugs_available = dat$param$max_treated # Internal representation for clarity
     if ( no_on_tx >= total_drugs_available ) { return(dat) } # Exit (no new tx) if treatment limit is exceeded
 
@@ -94,7 +94,7 @@ social_treatment_ranked <- function(dat, at)
  
      # Allocate drug to patients with the highest viral loads
      if (dat$param$tx_type=="VL3" ){ 
-        rank_newly_eligible <- rank(-dat$pop$V[newly_eligible],ties.method="random")
+        rank_newly_eligible <- rank(-dat$attr$V[newly_eligible],ties.method="random")
                               # Note: The rank function ranks by the lowest value.
                               #       Ranking by negative viral load prioritizes those with the highest VLs for therapy
         newly_eligible_receive_tx <- newly_eligible[which(rank_newly_eligible<= new_drugs_available)]
@@ -102,13 +102,13 @@ social_treatment_ranked <- function(dat, at)
      
       # Allocate drug to patients with the lowest viral loads (probably a bad strategy)
       if (dat$param$tx_type=="VL4" ) {
-        rank_newly_eligible <- rank(dat$pop$V[newly_eligible],ties.method="random")
+        rank_newly_eligible <- rank(dat$attr$V[newly_eligible],ties.method="random")
         newly_eligible_receive_tx <- newly_eligible[which(rank_newly_eligible<= new_drugs_available)]
       }
       
       # First-in, first-out.  Allocate drug those who were diagnosed the longest time ago
       if (dat$param$tx_type=="fifo" ) { 
-        Time_Infected <- at - dat$pop$diag_time[newly_eligible]
+        Time_Infected <- at - dat$attr$diag_time[newly_eligible]
         rank_newly_eligible <- rank(-Time_Infected,ties.method="random")
                               # Note: The rank function ranks by the lowest value.
                               #       Ranking by negative Time_Infected prioritizes those who were infected the longest for therapy
@@ -117,7 +117,7 @@ social_treatment_ranked <- function(dat, at)
       
       # Allocate drug to agents with the highest CD4 category (= lowest CD4 T-cell count)
       if (dat$param$tx_type=="CD42" ) { 
-        rank_newly_eligible <- rank(-dat$pop$CD4[newly_eligible],ties.method="random")
+        rank_newly_eligible <- rank(-dat$attr$CD4[newly_eligible],ties.method="random")
                               # Note: The rank function ranks by the lowest value.
                               #       Ranking by negative CD4 prioritizes agents in CD4 category 4 (i.e., those in AIDS) for therapy
         newly_eligible_receive_tx <- newly_eligible[which(rank_newly_eligible<= new_drugs_available)]
@@ -125,14 +125,14 @@ social_treatment_ranked <- function(dat, at)
      
       # Allocate drug to the most connected agents (note: lower number means more connected)
       if (dat$param$tx_type=="generic_attr" ) { 
-        rank_newly_eligible <- rank(dat$pop$att1[newly_eligible],ties.method="random")
+        rank_newly_eligible <- rank(dat$attr$att1[newly_eligible],ties.method="random")
                                # Note: This new version prioritizes those in group 1 for therapy 
         newly_eligible_receive_tx <- newly_eligible[which(rank_newly_eligible<= new_drugs_available)]    
       }
       
      # Allocate drug to highly connected agents with high viral loads
       if (dat$param$tx_type=="MS1" ) {  
-        rank_newly_eligible <- rank(dat$pop$att1[newly_eligible] - log10(dat$pop$V[newly_eligible]), ties.method="random")
+        rank_newly_eligible <- rank(dat$attr$att1[newly_eligible] - log10(dat$attr$V[newly_eligible]), ties.method="random")
                                # Notes: Because the rank function ranks by the lowest value, this prioritizes those in risk
                                #        group 1 (the most connected in John's newest scripts) and those with high VLs for therapy
         newly_eligible_receive_tx <- newly_eligible[which(rank_newly_eligible<= new_drugs_available)]    
@@ -140,7 +140,7 @@ social_treatment_ranked <- function(dat, at)
      
       # Allocate drug to highly connected agents with high viral loads (using a slightly different formula)
       if (dat$param$tx_type=="MS2" ) {
-        rank_newly_eligible <- rank(dat$pop$att1[newly_eligible] - 0.3333*log10(dat$pop$V[newly_eligible]), ties.method="random")
+        rank_newly_eligible <- rank(dat$attr$att1[newly_eligible] - 0.3333*log10(dat$attr$V[newly_eligible]), ties.method="random")
         newly_eligible_receive_tx <- newly_eligible[which(rank_newly_eligible<= new_drugs_available)]    
       }
     
@@ -151,8 +151,8 @@ social_treatment_ranked <- function(dat, at)
    
    } # end sub-sampling
   
-  dat$pop$treated[newly_eligible_receive_tx] <- 1
-  dat$pop$tx_init_time[newly_eligible_receive_tx] <- at
+  dat$attr$treated[newly_eligible_receive_tx] <- 1
+  dat$attr$tx_init_time[newly_eligible_receive_tx] <- at
      
   return(dat)
 }

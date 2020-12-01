@@ -24,7 +24,7 @@ initialize_infecteds_cd4 <- function(dat,at)
 ##########################################
 
   param <-  dat$param 
-  pop   <-  dat$pop
+  pop   <- dat$attr
   timeIndex  <- at
   
   #EpiModel deteremines infected status in init_status.net and puts it in "dat$attr$status
@@ -43,7 +43,7 @@ initialize_infecteds_cd4 <- function(dat,at)
   pop$CD4_time[ind] <- (-pop$Time_Inf[ind])
   pop$CD4_treatment_delay_index[ind] <- (-pop$Time_Inf[ind])
 
-  dat$pop <- pop
+ dat$attr <- pop
   return(dat)
   }
 ###################################################

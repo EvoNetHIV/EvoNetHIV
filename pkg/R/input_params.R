@@ -272,7 +272,7 @@ input_params<-function(
     #                               -> input_parameters_age_distribution(...)
     min_age                  = 18,
     max_age                  = 55,
-    age_dist_new_adds        = "min_age", # "mixed" (some min_age, others older)
+    age_new_adds              = "min_age", # "mixed" (some min_age, others older)
                                #or "linear_decline_18_55"
     prop_new_agents_min_age   = 0.45, #for "mixed" see above line
     asmr_data_male            = "usa_men_18_to_100",#other option: "south_africa_male"
@@ -296,7 +296,7 @@ input_params<-function(
     baseline_input_exp_growth = 0.007, # Used with "exponential_growth"  MUST BE SCALED BY HAND TO GET A STABLE AGE DISTRIBUTIONbirth_model              = "poisson_birth_numbers",   # "births=deaths", "poisson_birth_numbers", "constant_rate", "constant_number"
     contstant_birth_number   = 0,
     constant_birth_rate      = 0.0001306,
-    poisson_birth_lambda_base     = 0.01370, #scaled to init pop size in 'input_derived_parameters', 7/720/16
+    poisson_birth_base     = 0.01370, #scaled to init pop size in 'input_derived_parameters', 7/720/16
     pop_growth_rate_annual   = 0.01, # as proportion, x100 for percent
     constant_rate_spread_out = .01, #birth model: "constant_rate_spread_out"
     births_per_year          = 1, #birth model: "constant_number_spread_out"
@@ -354,9 +354,12 @@ input_params<-function(
 	    cov_prob_ageg = list(c(15, 25), c(25, 35), c(35, 56)),
 
     # -- additional treatment parameters --- #
-     under_25_flag           =  FALSE,
+    vacc_wane                =   TRUE, #KP vacc rc model
+    trtmnt_sex_age           = FALSE,  #KP vacc rc model
+    ve_24_months             =  0.8,#KP vacc rc model
+    under_25_flag            =  FALSE,
     tx_in_acute_phase        = FALSE,
-    tx_schedule_props        =c("F"=1,"V"=0,"N"=0,"P"=0),
+    tx_schedule_props        = c("F"=1,"V"=0,"N"=0,"P"=0),
     treatment_threshold      = 1e4,     #VL raw,not log10 transformed
     cd4_treatment_threshold  = 0,
     cd4_trt_guidelines_chgs  = NA, # Default for SA eligibility changes: list(4, 3:4, 2:4, 1:4)

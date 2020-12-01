@@ -15,71 +15,96 @@
 initialize_module <- function(x, param, init, control, s)
 {  
   #Description:
-  # runs  EpiModel function EpiModel::initialize.net()
-  # fills in viral load values for initial infected with initialize_infecteds_vl()
-  #	fills in cd4 variable values for initial infected (initial CD4 value based on SPVL)
-  # with initialize_infecteds_cd4()
-  #	does a few bookkeeping steps with initialize_evonet_misc()
-  #	updates vl of initial infecteds (otw, vl jumps from initial value to spvl in one
-  # timestep) with viral_update_module_gamma()
-  #	creates and inserts initial values for "popsumm" stats (calculated at end of
-  # each timestep_ with initialize_popsumm_dynamics()
+  # Sets up model structure in 15 steps
+  #1st step is epimodel function, rest evonet specific
   
 
-    #sets up basic EpiModel structure
+  #1 sets up basic EpiModel structure with EpiModel function initialize.net
   dat  <-  initialize.net(x, param, init, control,s)
+  
+  #2 create empty list of population summary stats
+  # e.g. dat$epi$prevalence,dat$epi$incidence, etc.
+  #filled in "summary_popsumm"
+  #actual stats depend on type of model (msm/hetero/ART/aim3 )
+  #adds evonet stats to the 2 default epimodel stats (i.num and s.num)
+  #popsumm_vars  <- summary_popsumm_vars(dat)
+  #for(ii in 1:length(popsumm_vars)){
+  #   add_epi(dat,popsumm_vars[ii])
+  #}
 
-  ## Remove relationships specified as prohibited in network formation terms
+  #3 Remove relationships specified as prohibited in network formation terms
   if(dat$param$rm_offset_rel) {
     dat <- remove_offset_relationships(dat)
   }
   
-  # need to ensure that sex attribute as been copied to dat$attr from the network.
-  #  ideally for consistency we'd like to have all of the attributes 
-  # included on the dat$attr list.  However, when in network mode, only the 
-  # attributes included in the formula (usually 'role') will be coppied
-  # so need to force copy it here until we figure a better system.  
-  dat$attr$status_evo <- rep(0,length(dat$attr$status))
-  dat$attr$status_evo[which(dat$attr$status=="i" )] <- 1
-  
-  if(!is.null(dat[['nw']])){
-    dat$attr$sex <- get.vertex.attribute(dat$nw,'sex')
-    dat$attr$age <- get.vertex.attribute(dat$nw,'age')
-    dat$attr$sqrt_age <- sqrt(dat$attr$age)
-    dat$attr$id <- get.vertex.attribute(dat$nw,'id')
-    if(!is.logical(dat$param$generic_nodal_att_values))
-    dat$attr$att1 <- get.vertex.attribute(dat$nw,'att1')
-  }
-  
-  # likewise, if there is going to be roles in the model, need to ensure they are copied in
-  if(dat$param$model_sex=="msm" && 
-     (is.null(dat$attr[['role']]) & !is.null(dat[['nw']]))){
-    dat$attr$role <- get.vertex.attribute(dat$nw,'role')
-  }
-  
-  
-  #sets up agent attributes and initial values 
+  #4 sets up agent attributes and initial values 
   dat  <-  initialize_agents(dat, 1)
+  
   #fills in vl variable values for initial infecteds
   dat  <-  initialize_infecteds_vl(dat,1)
-  #fills in cd4 variable values for initial infecteds
+  
+  #5 fills in cd4 variable values for initial infecteds
   #note, this must come after initialize_infecteds_vl because initial cd4 based on spvl 
   dat  <-  initialize_infecteds_cd4(dat,1)
-  #does a few random bookkeeping steps
-  dat  <-   initialize_evonet_misc(dat)
-  #updates vl of initial infecteds (otw, jumps from initial value to spvl)
+  
+  #6 removed
+  
+  #7 updates vl of initial infecteds (otw, jumps from initial value to spvl)
   #but shouldn't happen for aim3 runs
   if(param$VL_Function != "aim3"){
   dat  <-  viral_update_gamma(dat,1)
   dat  <-  viral_update_cd4_intial_pop(dat)
   }
-  #create list, if "save_vl_list" = TRUE to save
+  
+  #8 create list, if "save_vl_list" = TRUE to save
   #individual agent's vl/cd4 values for each timestep
   dat<- summary_vl_list(dat,1)
-  #creates and fills in initial values for "popsumm" stats (stats calculated at
+  
+  #9 creates and fills in initial values for "popsumm" stats (stats calculated at
   #end of each timestep)
   dat <- summary_popsumm(dat,1)
-  #keep track of current simulation/replicate
+  
+  #10 keep track of current simulation/replicate
   dat$simulation <- s
+  
+  #11 create "pop" list as permanent record of agents 
+  #filled in when agents die/age-out in summary_misc
+  dat$pop <- rep(list(NULL),length(dat$attr))
+  
+  #12 create (or not) coital acts list, which is used to save (if flagged)
+  #coital acts df for each time step for qaqc purposes
+  if(dat$param$save_coital_acts)
+    dat$coital_acts_list <- list()
+  else
+    dat$coital_acts_list  <- NULL
+  
+  #13 dat$InfMat: data object filled in "transmission_bookkeeping_module"
+  #if TRUE, then timestep, id of newly infected agent, and id of infector saved
+  #for qaqc purposes
+  if(dat$param$save_infection_matrix)
+    dat$InfMat <- list()
+  else 
+    dat$InfMat<-NULL
+  
+  #14 create age list for plotting age distributions during model
+  #run (at start,1/4,1/2,3/4, end of model time period)
+  dat$age_list<-vector('list',length=5)
+  
+  #15 save fast edgelist if flag=T
+  if(dat$param$fast_edgelist & dat$param$save_partner_list){
+    dat$partner_list<-vector('list',length=dat$param$n_steps)
+  }
+  
+  #16
+  #also need to track number of agents that i) aged out ii) died-aids,
+  # iii) died-naturally. If summary stats are not-calculated every timestep
+  #will then need to track these stats separately because these agents are
+  #removed from the "attr" list at the end of the timestep that they reach
+  #these conditions. Used in "summary_popsumm"
+  dat$no_births <- 0
+  dat$no_deaths_aids <- 0
+  dat$no_deaths_nonaids <- 0
+  dat$no_aged_out <- 0
+  
   return(dat)
 }

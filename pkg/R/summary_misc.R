@@ -14,16 +14,40 @@
 summary_misc <- function(dat,at){
 #browser()
   #Description:
+  #0) fills in "pop" list (permanent record of agents), when
+  #   agents die/age-out
   #1)fills in vl_list (inidividual agent vl per timstep - if flagged)
-  #2)viral and spvl lineage attributes per agent filled in if last timestep
   #3)saves dat$discord_coital_df if flagged (qaqc to look at acts per agent/couple)
-  #4)updates dat$nwparam[[1]]$coef.form[1] (epimodel's edges correct fxn)
+  #4)removed
   #5)prints summary stats to screen
   #6) subset out age data for graphing
   #7) add sessionInfo to output object
-  #8) add evonet version to output object
+  
   
 #-----------------------------------------------------------------
+#0 fill in "pop" list (permanent record of agents)
+#before last time-step, fill in dead/aged-out agents
+#on last time-step, fill in all agents remaining (alive and dead)
+  if(at != dat$param$n_steps){
+  ix <- which(dat$attr$Time_Death == at)
+  if(length(ix)>0){
+    for(ii in 1:length(ix)){
+      agent_index <- ix[ii]
+      agent_attr <- lapply(1:length(dat$attr), function(xx) dat$attr[[xx]][agent_index ] )
+      dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],agent_attr[[xx]]) )
+    }
+    #qaqc
+    #names(dat$pop) <- names(dat$attr)
+    #print("====")
+    #print(at)
+    #print(dat$pop$Status)
+  }
+  }else{
+    #last time-step, fill in all agents on dat$attr
+    dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],dat$attr[[xx]]) )
+    names(dat$pop) <- names(dat$attr)
+  }
+  
 #1
 #populate vl/cd4 list
 
@@ -42,16 +66,7 @@ summary_misc <- function(dat,at){
   
 
 #-----------------------------------------------------------------
-#2
-
-#at last timestep, assign "founder" lineage to each infected
-#(except for initially infected, who are the founders)
-#and assign founder spvl
-#if(at == dat$param$n_steps){    
-#  viral_list <-  summary_viral_lineage(dat$pop)
-#  dat$pop <-  viral_lineage_fnx2(vl_list = viral_list, poplist= dat$pop)
-#  dat$pop <-  summary_spvl_lineage(poplist = dat$pop)
-#}
+#2 removed
 
 #-----------------------------------------------------------------
 #3
@@ -60,136 +75,75 @@ if(dat$param$save_coital_acts)
 
 #-----------------------------------------------------------------
 
-#4
-
-#EpiModel's edges correct fxn here, 
-#note: initial values set in "initialize_module"
-if(at==2){
-if(dat$param$model_sex=="msm"){
-  #at=2, msm
-dat$number_males_prev <- dat$param$initial_pop
-dat$number_females_prev <- 0
-}else{
-  #at=2, hetero
-  dat$number_females_prev <- dat$param$initial_pop/2
-  dat$number_males_prev <- dat$param$initial_pop/2
-}
-}else{
-  #at>2
-dat$number_males_prev <- dat$number_males
-dat$number_females_prev <- dat$number_females
-}
-
-
-#msm
-if(dat$param$model_sex=="msm"){
-    dat$number_males <- length(which(dat$pop$sex=='m' & dat$pop$Status %in% c(0,1)))
-    old.num <- dat$number_males_prev
-    new.num <- dat$number_males
-    dat$nwparam[[1]]$coef.form[1] <- ( dat$nwparam[[1]]$coef.form[1] + 
-                                         log(old.num) - log(new.num) )
-}#end of msm, start of hetero
-else{
-  dat$number_males <- length(which(dat$pop$sex=='m' & dat$pop$Status %in% c(0,1)))
-  dat$number_females <- length(which(dat$pop$sex=='f' & dat$pop$Status %in% c(0,1)))
-  old.num.m1 <- dat$number_females_prev
-  old.num.m2 <- dat$number_males_prev
-  new.num.m1 <- dat$number_females
-  new.num.m2 <- dat$number_males
-  dat$nwparam[[1]]$coef.form[1] <- (dat$nwparam[[1]]$coef.form[1]+
-        log(2 * old.num.m1 * old.num.m2/(old.num.m1 +
-         old.num.m2)) - log(2 * new.num.m1 *
-         new.num.m2/(new.num.m1+new.num.m2)))
-}
+#4 removed
 
 #-----------------------------------------------------------------
 #5 (Version 5a -- Refresh screen very time step)
+# 
+# if(!dat$param$hpc & !dat$param$scrolling_output){
+# 
+#   cat("\f")
+#   cat("\nEvoNet HIV Simulation")
+#   cat("\n----------------------------")
+#   cat("\nModel name:" ,dat$param$model_name)
+#   cat("\nSimulation:",dat$simulation)
+#   cat("\nTimestep: ", at, "/", dat$control$nsteps,  sep = " ")
+#   cat("\nTotal population (alive):",  dat$epi$alive[at])
+#   cat("\nMean SPVL (untreated):",  dat$epi$mean_spvl_pop_untreated[at])
+#   cat("\nTotal infections:", dat$epi$total_infections_alive[at])
+#   cat("\nTotal susceptibles:",  dat$epi$susceptibles[at] )
+#   
+#   cat("\nAIDS deaths", sum(dat$epi$aids_deaths[1:at],na.rm=T))
+#   cat("\nOther deaths", sum(dat$epi$natural_deaths[1:at],na.rm=T))
+#   cat("\nAged-out", sum(dat$epi$aged_out[1:at],na.rm=T))
+#   
+#   cat("\n----------------------------")
+# }
 
-if(!dat$param$hpc & !dat$param$scrolling_output){
-
-  cat("\f")
-  cat("\nEvoNet HIV Simulation")
-  cat("\n----------------------------")
-  cat("\nModel name:" ,dat$param$model_name)
-  cat("\nSimulation:",dat$simulation)
-  cat("\nTimestep: ", at, "/", dat$control$nsteps,  sep = " ")
-  cat("\nTotal population (alive):",  dat$popsumm$alive[at])
-  cat("\nMean SPVL (untreated):",  dat$popsumm$mean_spvl_pop_untreated[at])
-  cat("\nTotal infections:", dat$popsumm$total_infections_alive[at])
-  cat("\nTotal susceptibles:",  dat$popsumm$susceptibles[at] )
-  
-  cat("\nAIDS deaths", sum(dat$popsumm$aids_deaths[1:at],na.rm=T))
-  cat("\nOther deaths", sum(dat$popsumm$natural_deaths[1:at],na.rm=T))
-  cat("\nAged-out", sum(dat$popsumm$aged_out[1:at],na.rm=T))
-  
-  cat("\n----------------------------")
-}
 
 # 5 (Version 5b -- Don't over-write screen each time step)
 if(!dat$param$hpc & dat$param$scrolling_output){
-  if (at <= 2) {
+  
+  if (at == 2) {
     cat("\nStarting simulation of ",dat$control$nsteps," time steps\n")
-  }
-  if (at <= 2) {
-    cat ("sim\t time\t Tot\t Inf\t InfNot\t Sus\t VL \t SPVL\t dAIDS\t dNat\t AgeOut\t Pills\n")
+    cat ("Sim\t Time\t Alive\t Inf\t Sus\t VL \t SPVL\n") #dAIDS\t dNat\t AgeOut\n")# Pills\n")
   }
   
-  if(dat$param$popsumm_frequency==1)
-  {
-  if ((at == 2) || (at %% dat$param$print_frequency == 0)) {
-      
+  
+  if( (at%%dat$param$popsumm_frequency==0)){
+    index <- (at/dat$param$popsumm_frequency)+1
     cat(
       dat$simulation,"\t",
       at,"\t",
-      dat$popsumm$alive[at],"\t",
-      dat$popsumm$total_infections_alive[at],"\t",
-      dat$popsumm$total_infections_not_treated[at],"\t",
-      dat$popsumm$susceptibles[at],"\t",
-      round(dat$popsumm$mean_vl_pop_all[at],2),"\t",
-      round(dat$popsumm$mean_spvl_pop_untreated[at],2),"\t",
-      sum(dat$popsumm$aids_deaths[1:at],na.rm=T),"\t",
-      sum(dat$popsumm$natural_deaths[1:at],na.rm=T),"\t",
-      sum(dat$popsumm$aged_out[1:at],na.rm=T),"\t",
-      dat$popsumm$total_pills_taken[at],"\n")
+      dat$epi$alive[index],"\t",
+      dat$epi$total_infections_alive[index],"\t",
+      #dat$epi$total_infections_not_treated[at],"\t",
+      dat$epi$susceptibles[index],"\t",
+      round(dat$epi$mean_vl_pop_all[index],2),"\t",
+      round(mean(dat$attr$LogSetPoint[which(dat$attr$treated!=1)],na.rm=T),2),"\n" )#,"\t",
+      #dat$no_deaths_aids,"\t",
+      #dat$no_deaths_natural,"\t",
+      #dat$no_aged_out,"\n")
+       #dat$epi$total_pills_taken[time_index],"\n")
   }
-  }
-  if(dat$param$popsumm_frequency>1)
-  {
-    if (at%%dat$param$popsumm_frequency==0) {
-         time_index=(at/dat$param$popsumm_frequency)+1
-         
-        cat(
-        dat$simulation,"\t",
-        at,"\t",
-        dat$popsumm$alive[time_index],"\t",
-        dat$popsumm$total_infections_alive[time_index],"\t",
-        dat$popsumm$total_infections_not_treated[time_index],"\t",
-        dat$popsumm$susceptibles[time_index],"\t",
-        round(dat$popsumm$mean_vl_pop_all[time_index],2),"\t",
-        round(dat$popsumm$mean_spvl_pop_untreated[time_index],2),"\t",
-        sum(dat$popsumm$aids_deaths[1:time_index],na.rm=T),"\t",
-        sum(dat$popsumm$natural_deaths[1:time_index],na.rm=T),"\t",
-        sum(dat$popsumm$aged_out[1:time_index],na.rm=T),"\t",
-        dat$popsumm$total_pills_taken[time_index],"\n")
-    }
-  }
-   if (at == dat$control$nsteps) { # Remind users what the columns mean
-     cat ("sim\t time\t Tot\t Inf\t InfNot\t Sus\t VL \t SPVL\t dAIDS\t dNat\t AgeOut\t Pills\n")
-   }
-
 }
+
+if (at == dat$control$nsteps) { # Remind users what the columns mean
+  cat ("Sim\t Time\t Alive\t Inf\t Sus\t VL \t SPVL\n") # dAIDS\t dNat\t AgeOut\n")# Pills\n")
+}
+
 #----------------------------------------------
 #6
 if(at==2)
-dat$age_list[[1]]<-dat$pop$age[which(dat$pop$Status>=0)]
+dat$age_list[[1]]<-dat$attr$age[which(dat$attr$Status>=0)]
 if(at==round(dat$param$n_steps*.25))
-dat$age_list[[2]]<-dat$pop$age[which(dat$pop$Status>=0)]
+dat$age_list[[2]]<-dat$attr$age[which(dat$attr$Status>=0)]
 if(at==round(dat$param$n_steps *.50))
-dat$age_list[[3]]<-dat$pop$age[which(dat$pop$Status>=0)]
+dat$age_list[[3]]<-dat$attr$age[which(dat$attr$Status>=0)]
 if(at==round(dat$param$n_steps *.75))
-dat$age_list[[4]]<-dat$pop$age[which(dat$pop$Status>=0)]
+dat$age_list[[4]]<-dat$attr$age[which(dat$attr$Status>=0)]
 if(at==dat$param$n_steps)
-dat$age_list[[5]]<-dat$pop$age[which(dat$pop$Status>=0)]
+dat$age_list[[5]]<-dat$attr$age[which(dat$attr$Status>=0)]
 
 #-----------------------------------------------------------------
 #7
