@@ -41,7 +41,11 @@ summary_epi_mat <- function(model){
   }#end ii loop
   
   ix <- which(vars %in% bad_vars)
+  
+  if(length(ix)>0){
   vars <- vars[-ix]
+  }
+  
   epi_list <- vector("list",length=length(vars))
   names(epi_list) <- vars
   for(ii in 1:length(vars)){
@@ -66,8 +70,8 @@ evoplot<-function(model,outpath=getwd(),name=NULL,nw_stats=TRUE,max_points_rep=N
                   epi_frequency=NULL,variables=NULL,main=NULL,...){
   
   
-  for(ii in 0:1){
-    evoplot_internal(model=model,save=ii,name=name,outpath=outpath,
+  for(ii in 1:2){
+    evoplot_internal(model=model,save=c(T,F)[ii],name=name,outpath=outpath,
                      variables=variables,main=main)
   }
    
