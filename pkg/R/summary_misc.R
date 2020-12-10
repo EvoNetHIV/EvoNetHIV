@@ -73,7 +73,7 @@ if(at == dat$param$n_steps){
         dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],dat$attr[[xx]]) )
         names(dat$pop) <- names(dat$attr)
     }else{
-       browser()
+      # browser()
           vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
           non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
           attr_list <- dat$attr[-non_vectors]
