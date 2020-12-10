@@ -28,6 +28,11 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
 
   total_new <- length(index)
   #------------------------------
+  
+  #agent-specific id
+  input_list$id[index] <-  index 
+  
+  
   #functions for these variables are same initial population and for new births
   input_list$s[index]<- rep(dat$param$prog_rate,total_new)
 

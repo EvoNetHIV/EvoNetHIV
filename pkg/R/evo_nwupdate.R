@@ -28,10 +28,15 @@ evo_nwupdate<- function(dat, at) {
   #    curr.tab <- get_attr_prop(dat, nwterms)
   #    dat <- auto_update_attr(dat, arrivals, curr.tab)
   #  }
-    if (length(unique(sapply(dat$attr, length))) != 1) {
-      stop("Attribute list of unequal length. Check arrivals.net module.\n",
-           print(cbind(sapply(get_attr_list(dat), length))))
+    
+    if( (at %% (365*5)) == 0){
+       if (length(unique(sapply(dat$attr, length))) != 1) {
+       #stop("Attribute list of unequal length. Check arrivals.net module.\n",
+           cat("Note: Attribute list of unequal length.\nPossibly due to non-numeric attributes, e.g., matrices")
+               # print(cbind(sapply(get_attr_list(dat), length))))
+       }
     }
+    
     if (tergmLite == FALSE) {
       dat$nw[[1]] <- add.vertices(dat$nw[[1]], nv = nArrivals)
       dat$nw[[1]] <- activate.vertices(dat$nw[[1]], onset = at, terminus = Inf, v = arrivals)
@@ -54,7 +59,33 @@ evo_nwupdate<- function(dat, at) {
                                          v = departures, deactivate.edges = TRUE)
     }
     if (tergmLite == TRUE) {
-      dat <- delete_attr(dat, departures)
+      
+      #replacement code for delete_attr(dat,departures) because
+      # base epimodel fxn can't handle non-scalar type values (eg., matices)
+      #as agent attributes
+      
+      #deletes values for dead/aged-out agents except for non-scalar attributes
+      vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
+      non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
+      
+      attrList <- dat$attr[-non_vectors]
+      if (class(attrList) != "list") {
+        stop("dat object does not contain a valid attribute list", 
+             call. = FALSE)
+      }
+      
+      if(dat$param$VL_Function != "aim3"){
+      if (length(unique(sapply(attrList, length))) != 1) {
+        stop("attribute list must be rectangular (same number of obs per element)")
+      }
+      }
+      
+      
+      attrList <- lapply(attrList, function(x) x[-departures])
+      
+      dat$attr <- c(attrList,dat$attr[non_vectors])
+      
+      #regular epimodel function
       dat$el[[1]] <- delete_vertices(dat$el[[1]], departures)
     }
   }

@@ -69,7 +69,14 @@ initialize_module <- function(x, param, init, control, s)
   
   #11 create "pop" list as permanent record of agents 
   #filled in when agents die/age-out in summary_misc
-  dat$pop <- rep(list(NULL),length(dat$attr))
+  #if(param$VL_Function != "aim3"){
+  dat$pop <- list()
+  #note: now at top of summary-misc
+  #dat$pop <- rep(list(NULL),length(dat$attr))
+  #}else{
+  #  dat$pop <- rep(list(NULL),length(dat$attr)-4)#remove I_vec,M_vec,L_vec,V_vec matrices
+  #}
+  
   
   #12 create (or not) coital acts list, which is used to save (if flagged)
   #coital acts df for each time step for qaqc purposes

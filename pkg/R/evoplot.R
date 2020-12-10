@@ -33,7 +33,7 @@ summary_epi_mat <- function(model){
     }
     
     for(jj in 1:ncol(epi[[vars[ii]]])){
-      ix <- which(epi[[vars[ii]]][,jj]== -999)
+      ix <- which(epi[[vars[ii]]][,jj]== -999 | is.infinite(epi[[vars[ii]]][,jj]) )
       if(length(ix)>0){
         epi[[vars[ii]]][ix,jj]=NA
       }#end if block
@@ -49,6 +49,7 @@ summary_epi_mat <- function(model){
   epi_list <- vector("list",length=length(vars))
   names(epi_list) <- vars
   for(ii in 1:length(vars)){
+   # if(vars[ii]=="mean_vl_pop_untreated"){browser()}
     epi_list[[ii]]$values <- epi[[ vars[ii] ]]
     epi_list[[ii]]$mean_values <- rowMeans(epi_list[[ii]]$values,na.rm=T)
     mn <- 0.95 * min(unlist(epi_list[[ii]]$values),na.rm=T)
@@ -177,6 +178,8 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   
   for(ii in 1:length(vars)){
     #print(vars[ii])
+    
+    #if(vars[ii]=="mean_vl_pop_untreated"){browser()}
     
     #plot incidence after prevalence
     if(ii==2){incidence_rate_plot(model)}

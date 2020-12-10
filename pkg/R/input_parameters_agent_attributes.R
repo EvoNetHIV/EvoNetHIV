@@ -55,7 +55,7 @@ input_parameters_agent_attributes <-function(){
     "CD4_at_trtmnt",                    "num_consec_VL_gt1k",
     "start_aids_cd4",                   "start_max_aids",
     "virus_sens_vacc",                  "virus_sens_drug",
-    "virus_part_res_drug",              
+    "virus_part_res_drug",               "virus_1_plus_drug_muts",
     "virus_3_plus_drug_muts",             "Aim3RoundingErrors",               
      "aim3_mutations_long",             "CYP_6_slow",
     

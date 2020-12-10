@@ -33,6 +33,6 @@ viral_update_aim3_rcpp_output <- function(dat,out,ind)
   dat$attr$Drug4[ind]      = out$Drug4  
   dat$attr$Aim3RoundingErrors[ind] = out$Aim3RoundingErrors
   
-  return(dat$pop)
+  return(dat$attr)
   
 }

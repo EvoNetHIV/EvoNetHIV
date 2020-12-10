@@ -26,27 +26,62 @@ summary_misc <- function(dat,at){
   
 #-----------------------------------------------------------------
 #0 fill in "pop" list (permanent record of agents)
-#before last time-step, fill in dead/aged-out agents
-#on last time-step, fill in all agents remaining (alive and dead)
-  if(at != dat$param$n_steps){
-  ix <- which(dat$attr$Time_Death == at)
-  if(length(ix)>0){
-    for(ii in 1:length(ix)){
-      agent_index <- ix[ii]
-      agent_attr <- lapply(1:length(dat$attr), function(xx) dat$attr[[xx]][agent_index ] )
-      dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],agent_attr[[xx]]) )
+# wen agents die/age-out
+ix <- which(dat$attr$Time_Death == at)
+if(length(ix)>0 & at != dat$param$n_steps){  
+     if(length(dat$pop)==0){
+          if(dat$param$VL_Function != "aim3"){ 
+              dat$pop <- rep(list(NULL),length(dat$attr))  
+              names(dat$pop) <- names(dat$attr)
+          }else{
+            vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
+            non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
+            attr_list <- dat$attr[-non_vectors]
+            dat$pop <- rep(list(NULL),length(attr_list))#remove aim3 matrices
+            #browser()
+            names(dat$pop) <- names(attr_list)
+           }
+     }
+ 
+     for(ii in 1:length(ix)){
+       agent_index <- ix[ii]
+       if(dat$param$VL_Function != "aim3"){ 
+           agent_attr <- lapply(1:length(dat$attr), function(xx) dat$attr[[xx]][agent_index ] )
+           dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],agent_attr[[xx]]) )
+           names(dat$pop) <- names(dat$attr)
+      }else{
+
+            #if aim3 don't save attributes that are matrices
+            vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
+            non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
+            attr_list <- dat$attr[-non_vectors]
+            agent_attr <- lapply(1:length(attr_list), function(xx) attr_list[[xx]][agent_index ] )
+            pop_names <- names(dat$pop)
+            dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],agent_attr[[xx]]) )
+           if(length(dat$pop) != length(attr_list) ){browser()}
+             names(dat$pop) <- names(attr_list)
+        
+      }
+     }
+} #end of if(length(ix)>0) & at != dat$param$n_steps){
+ 
+#if end of model run, save all agent attributes
+if(at == dat$param$n_steps){
+  
+   if(dat$param$VL_Function != "aim3"){ 
+        #last time-step, fill in all agents on dat$attr
+        dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],dat$attr[[xx]]) )
+        names(dat$pop) <- names(dat$attr)
+    }else{
+          vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
+          non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
+          attr_list <- dat$attr[-non_vectors]
+          dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],attr_list[[xx]]) )
+          if(length(names(dat$pop) != names(attr_list))){browser()}
+          names(dat$pop) <- names(attr_list)
     }
-    #qaqc
-    #names(dat$pop) <- names(dat$attr)
-    #print("====")
-    #print(at)
-    #print(dat$pop$Status)
-  }
-  }else{
-    #last time-step, fill in all agents on dat$attr
-    dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],dat$attr[[xx]]) )
-    names(dat$pop) <- names(dat$attr)
-  }
+}
+
   
 #1
 #populate vl/cd4 list
@@ -111,7 +146,7 @@ if(!dat$param$hpc & dat$param$scrolling_output){
   
   
   if( (at%%dat$param$popsumm_frequency==0)){
-    index <- (at/dat$param$popsumm_frequency)+1
+    index <- (at/dat$param$popsumm_frequency)-1
     cat(
       dat$simulation,"\t",
       at,"\t",

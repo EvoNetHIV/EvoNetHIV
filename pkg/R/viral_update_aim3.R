@@ -37,7 +37,7 @@ viral_update_aim3 <-function(dat,at)
  
     out     <- do.call(viral_dynamics_aim3,arg_list)
     
-    dat$pop <- viral_update_aim3_rcpp_output(dat,out,ind)
+    dat$attr <- viral_update_aim3_rcpp_output(dat,out,ind)
 
     #if (arg_list$SecondLineTherapyStarted == 1) {
     # cat("pause here\n")
