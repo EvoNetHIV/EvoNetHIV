@@ -67,8 +67,13 @@ evo_nwupdate<- function(dat, at) {
       #deletes values for dead/aged-out agents except for non-scalar attributes
       vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
       non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
+      if(length(non_vectors)>0){
+        attrList <- dat$attr[-non_vectors]
+      }else{
+        attrList <- dat$attr
+      }
       
-      attrList <- dat$attr[-non_vectors]
+      
       if (class(attrList) != "list") {
         stop("dat object does not contain a valid attribute list", 
              call. = FALSE)
