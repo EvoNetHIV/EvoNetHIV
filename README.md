@@ -14,7 +14,7 @@ This project is supported by grants from the National Institutes of Health (NIAD
 * Steven M. Goodreau <goodreau@uw.edu>
 * Joshua T. Herbeck <herbeck@uw.edu>
 * James T. Murphy <jtm6@uw.edu>
-* Kathryn C. Peebles <kpeebles@uw.edu>
+* Kathryn C. Peebles <peebles.kathryn@gmail.com>
 * Sarah E. Stansfield <sestans@uw.edu>
 * Molly C. Reid <mollyr6@uw.edu>
 * Neil F. Abernethy <neila@uw.edu>
