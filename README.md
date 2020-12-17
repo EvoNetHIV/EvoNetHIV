@@ -19,7 +19,8 @@ This project is supported by grants from the National Institutes of Health (NIAD
 * Molly C. Reid <mollyr6@uw.edu>
 * Neil F. Abernethy <neila@uw.edu>
 * Juandalyn C. Burke <jcburke@uw.edu>
-* Geoffrey S. Gottlieb <gottlieb@uw.edu>  
+* Geoffrey S. Gottlieb <gottlieb@uw.edu>
+* Sam Jenness <samuel.m.jenness@emory.edu>
 
 [Model overview](https://github.com/EvoNetHIV/EvoNet/blob/master/documentation/Model_overview.md)  
 [Model details](https://evonethiv.github.io/EvoNetHIV/documentation/Model_details.html)    
