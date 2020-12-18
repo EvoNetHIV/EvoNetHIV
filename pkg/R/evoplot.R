@@ -49,13 +49,16 @@ summary_epi_mat <- function(model){
   epi_list <- vector("list",length=length(vars))
   names(epi_list) <- vars
   for(ii in 1:length(vars)){
-   # if(vars[ii]=="mean_vl_pop_untreated"){browser()}
+    #if(vars[ii]=="percent_donor_acute"){browser()}
     epi_list[[ii]]$values <- epi[[ vars[ii] ]]
+    if(all(is.na(epi_list[[ii]]$values))){
+      epi_list[[ii]]$min_max <- c(NA,NA)
+    }else{
     epi_list[[ii]]$mean_values <- rowMeans(epi_list[[ii]]$values,na.rm=T)
     mn <- 0.95 * min(unlist(epi_list[[ii]]$values),na.rm=T)
     mx <- 1.05 * max(unlist(epi_list[[ii]]$values),na.rm=T)
     epi_list[[ii]]$min_max <- c(mn,mx)
-    
+    }
   }
   
   model$epi_list <- epi_list
@@ -178,7 +181,7 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   
   for(ii in 1:length(vars)){
     #print(vars[ii])
-    
+   # if(vars[ii]=="percent_donor_acute"){browser()}
     #if(vars[ii]=="mean_vl_pop_untreated"){browser()}
     
     #plot incidence after prevalence
@@ -188,7 +191,7 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
     if(vars[ii] %in% not_plotted){next()}
     
     #all NAs
-    if(is.logical(epi_mats[[vars[ii]]]$min_max)){
+    if(is.logical(epi_mats[[vars[ii]]]$min_max[1])){
       plot(1:10,1:10,type='n',ylab="",xlab ="")
       text(4,5,"All values NA")
       title(vars[ii])
