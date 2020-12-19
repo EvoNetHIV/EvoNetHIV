@@ -26,7 +26,24 @@ summary_misc <- function(dat,at){
   
 #-----------------------------------------------------------------
 #0 fill in "pop" list (permanent record of agents)
-# wen agents die/age-out
+# when agents die/age-out
+  
+  
+agent_vars <- input_parameters_agent_attributes()$popVariables
+#add default epimodel agent attributes
+agent_vars <- c(agent_vars,c("active","entrTime","exitTime","status","infTime"  ))
+agent_var_flag <- any(!is.element(names(dat$attr),agent_vars))
+  
+if(agent_var_flag){
+  
+  ix=which(!is.element(names(dat$attr),agent_vars))
+  print("Unknown agent attribute")
+  print(names(dat$attr)[ix])
+  print("Please put this variable in agent attribute list in\n
+  input_parameters_agent_attributes()")
+  browser()
+  
+}  
 ix <- which(dat$attr$Time_Death == at)
 if(length(ix)>0 & at != dat$param$n_steps){  
      if(length(dat$pop)==0){
@@ -70,6 +87,7 @@ if(at == dat$param$n_steps){
   
    if(dat$param$VL_Function != "aim3"){ 
         #last time-step, fill in all agents on dat$attr
+       if(length(names(dat$pop)) != length(names(dat$attr)) ){browser()}
         dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],dat$attr[[xx]]) )
         names(dat$pop) <- names(dat$attr)
     }else{

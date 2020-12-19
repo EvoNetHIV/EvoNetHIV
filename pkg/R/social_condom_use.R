@@ -29,7 +29,7 @@ social_condom_use <- function(dat,at)
                       (dat$attr$vaccinated[dat$discord_coital_df$inf_id] == 1 & 
                          is.na(dat$attr$diag_status[dat$discord_coital_df$inf_id])) )
       if(length(ix_rc)>0){
-        condom_prob[ix] <- dat$param$condom_prob * dat$param$risk_comp_cond_rr
+        condom_prob[ix_rc] <- dat$param$condom_prob * dat$param$risk_comp_cond_rr
        }
                    
     }
