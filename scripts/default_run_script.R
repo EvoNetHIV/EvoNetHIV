@@ -29,7 +29,7 @@ param_list=list(
 nsims = 3,
 initial_pop = 200,
 initial_infected = 40,
-n_steps = 365*20,
+n_steps = 365*5,
 popsumm_frequency=30,
 fast_edgelist=T,
 plot_nw=T)
@@ -49,7 +49,8 @@ evoparams <- do.call(evonet_setup,param_list)
 
 #--------------------------------------------------------------
 
-#network setup
+#-------------------------------------------------------------
+#network setup 
 nw <- nw_setup(evoparams)
 
 #--------------------------------------------------------------
