@@ -13,10 +13,11 @@
 #' @export
 
 adherence<-function(dat,at){
-  
+  #-----------------------------------
   #note: adherence_type==1, is default (random), set in vital_new_additions
-  
   #type2 adherence: cyclic, asynchronous start
+  #-----------------------------------
+  
   adh2_ix <- which(dat$attr$adherence_type==2)
   if(length(adh2_ix)>0){
 
