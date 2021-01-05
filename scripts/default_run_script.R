@@ -1,4 +1,4 @@
-#NOTE: 
+#NOTE: 01/04/21
 #when working on CSDE Windows Server, R updates remove
 #installed libraries and evonet doesn't build, here is 
 #code to quickly re-install everythng. Uncomment code below
