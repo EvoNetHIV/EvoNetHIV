@@ -11,7 +11,7 @@ params_list=list()
 
 params_list$nsims                  <- 2
 params_list$ncores                 <- 1
-
+params$plot_nw                     <-  F
 ## Override selected default parameters
 params_list$initial_pop            <- 200
 params_list$initial_infected       <- 30
@@ -88,7 +88,7 @@ params_list$relation_dur  <- 1409
 #create parameter list with updated values
 evoparams <- do.call(evonet_setup,params_list)
 evoparams$plot_nw=F
-params_list$start_treatment_campaign  <- 3
+
 
 #network setup
 nw <- nw_setup(evoparams)
@@ -96,7 +96,6 @@ nw <- nw_setup(evoparams)
 
 #modules to run each timestep
 modules <- c(
-  "tempfxn",
   "aging",
   "testing",
   "social_treatment_sex_age",
