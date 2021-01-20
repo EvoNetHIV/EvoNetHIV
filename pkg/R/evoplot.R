@@ -181,7 +181,7 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   }
   
   for(ii in 1:length(vars)){
-    print(vars[ii])
+    #print(vars[ii])
     #if(vars[ii]=="prevalence"){browser()}
     #if(vars[ii]=="mean_vl_pop_untreated"){browser()}
     
