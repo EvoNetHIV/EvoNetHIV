@@ -181,6 +181,7 @@ input_params<-function(
     drug_2nd_decay2 = 0.1,   # Second-phase decay rate drug 2
     drug_2nd_decay3 = 0.1,   # Second-phase decay rate drug 3
     drug_2nd_decay4 = 0.1,   # Second-phase decay rate drug 4
+    aim3_decay_change = 2,   # used in line 74, "viral update aim 3 args list" function
     conc_2nd_phase1   = 1.0e-70,  # Drug concentration at which second-phase starts for drug 1
     conc_2nd_phase2   = 1.0e-70,  # Drug concentration at which second-phase starts for drug 2
     conc_2nd_phase3   = 1.0e-70,  # Drug concentration at which second-phase starts for drug 3
