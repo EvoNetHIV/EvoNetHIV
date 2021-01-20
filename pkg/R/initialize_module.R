@@ -27,10 +27,11 @@ initialize_module <- function(x, param, init, control, s)
   #filled in "summary_popsumm"
   #actual stats depend on type of model (msm/hetero/ART/aim3 )
   #adds evonet stats to the 2 default epimodel stats (i.num and s.num)
-  #popsumm_vars  <- summary_popsumm_vars(dat)
-  #for(ii in 1:length(popsumm_vars)){
-  #   add_epi(dat,popsumm_vars[ii])
-  #}
+  
+  popsumm_vars  <- summary_popsumm_vars(dat)
+  for(ii in 1:length(popsumm_vars)){
+    dat <-  add_epi(dat,popsumm_vars[ii])
+  }
 
   #3 Remove relationships specified as prohibited in network formation terms
   if(dat$param$rm_offset_rel) {

@@ -33,7 +33,9 @@ incidence_rate_plot<-function(model_obj){
       steps_per_year <- floor(nsteps/model$param[[nsim]]$popsumm_freq)
     
     sus <- model$epi$susceptibles[,nsim]
+    sus <- sus[which(!is.na(sus))]
     inf <- model$epi$new_infections[,nsim]
+    inf <- inf[which(!is.na(inf))]
     nsteps <- model$param[[nsim]]$n_steps
     nyears <- (nsteps/365)
     
@@ -48,14 +50,14 @@ incidence_rate_plot<-function(model_obj){
     #browser()
     for(ii in 1:(length(tli)-1))
     {
-      total_new_inf[ii] <- sum(inf[(tli[ii]+1):(tli[ii+1])])
+      total_new_inf[ii] <- sum(inf[(tli[ii]+1):(tli[ii+1])],na.rm = T)
       
       if(popsumm_freq>1){
-        number_sus[ii] <- mean(sus[(tli[ii]+1):(tli[ii+1])])
+        number_sus[ii] <- mean(sus[(tli[ii]+1):(tli[ii+1])],na.rm = T)
       }
       #note: this gives exact same results as above
       if(popsumm_freq==1){
-        number_sus[ii] <- sum(sus[(tli[ii]+1):(tli[ii+1])])/365
+        number_sus[ii] <- sum(sus[(tli[ii]+1):(tli[ii+1])],na.rm = T)/365
       }
     }
     
@@ -93,3 +95,4 @@ incidence_rate_plot<-function(model_obj){
   lines(1:nyears,colMeans(result_mat),type='o',pch=16,lwd=2,col="darkblue")
   mtext("incidence rate per 100 person years",side=3,line=2.7,col="blue")
 }
+

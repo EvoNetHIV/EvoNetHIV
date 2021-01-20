@@ -164,7 +164,8 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
     vars=variables
   }
   epi_mats=model$epi_list
-  timesteps=model$epi$timestep[,1]/365
+  #timesteps=model$epi$timestep[,1]/365
+  timesteps=(1:model$param[[1]]$n_steps)/365
   
   
   if(T){
@@ -180,8 +181,8 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
   }
   
   for(ii in 1:length(vars)){
-    #print(vars[ii])
-   # if(vars[ii]=="percent_donor_acute"){browser()}
+    print(vars[ii])
+    #if(vars[ii]=="prevalence"){browser()}
     #if(vars[ii]=="mean_vl_pop_untreated"){browser()}
     
     #plot incidence after prevalence
@@ -200,6 +201,13 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
     #variables plotted cumulatively
     if(vars[ii] %in% cumul_vars){
       values=as.data.frame(epi_mats[[vars[ii]]]$values)
+      for(kk in 1:ncol(values)){
+        i1=which(is.na(values[,kk]))
+        if(length(i1)>0){
+           values[i1,kk]=0  
+        }
+      }
+      remove(kk,i1)
       apply(values,2,function(xx) values[which(is.na(xx))]<<-0)
       values=(apply(values,2,cumsum))
       mean_values=rowMeans(values,na.rm=T)
@@ -233,13 +241,15 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
     }
     
     
+ 
     
     if(!is.element(vars[ii],loess_vars)){
-      apply(values,2,function(xx){do.call(lines,list(x=timesteps,y=xx,col="blue"))})
-      lines(timesteps,mean_values,col="blue",lwd=2)
+      ix=which(!is.na(values))
+      apply(values,2,function(xx){do.call(lines,list(x=timesteps[ix],y=xx[ix],col="blue"))})
+      lines(timesteps[ix],mean_values[ix],col="blue",lwd=2)
     }
     if(is.element(vars[ii],loess_vars)){
-      apply(values,2,function(xx){do.call(points,list(x=timesteps,y=xx,col="black"))})
+      apply(values,2,function(xx){do.call(points,list(x=timesteps[ix],y=xx[ix],col="black"))})
       navec<- is.na(mean_values)
       if(any(navec)){
         if(length(which(navec==FALSE))>=5)
@@ -251,8 +261,9 @@ evoplot_internal <- function(model,save=TRUE,name=NULL,outpath=getwd(),
       var2=unname(overlay_vars[ix])
       values=epi_mats[[var2]]$values
       mean_values =epi_mats[[var2]]$mean_values
-      apply(values,2,function(xx){do.call(lines,list(x=timesteps,y=xx,col="red"))})
-      lines(timesteps,mean_values,col="red",lwd=2)
+      ix2=which(!is.na(values))
+      apply(values,2,function(xx){do.call(lines,list(x=timesteps[ix2],y=xx[ix2],col="red"))})
+      lines(timesteps[ix2],mean_values[ix2],col="red",lwd=2)
       mtext(var2,side=3,line=.25,col="red",cex=.75)
     }
     
