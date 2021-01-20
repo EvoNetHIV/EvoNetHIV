@@ -3,7 +3,7 @@ summary_popsumm_vars <- function(dat){
   default_vars <- c("timestep", "prevalence", "new_infections", "susceptibles",
   "total_infections_alive", "births", "aids_deaths", "natural_deaths",
   "aged_out", "natural_deaths_infecteds", "natural_deaths_susceptibles",
-  "alive", "no_in_aids_gamma", "no_in_aids_cd4", "natural_deaths_infecteds", 
+  "alive", "no_in_aids_gamma", "no_in_aids_cd4", 
   "new_diagnoses", "percent_donor_acute",
   "mean_time_donor_infected_incident", "mean_age_incident", "mean_age_died_AIDS",
   "mean_spvl_pop_all", "mean_vl_pop_all", "mean_spvl_incident", "mean_spvl_pop_untreated",

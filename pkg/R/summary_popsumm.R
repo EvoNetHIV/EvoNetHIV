@@ -26,15 +26,15 @@ summary_popsumm<-function(dat,at){
   else
     time_index<- (at-dat$param$popsumm_frequency+1):at
 
-  #"popsumm_index" is an index for the "popsumm" vectors
+  #"at" is an index for the "popsumm" vectors
   #based on value of "at" and paramter "popsumm_frequency"
-  if(at==1)
-    popsumm_index <- 1
-  else
-    if(dat$param$popsumm_frequency==1)
-      popsumm_index <- at
-    else
-      popsumm_index <- (at/dat$param$popsumm_frequency)+1
+  #if(at==1)
+  #  at <- 1
+  #else
+   # if(dat$param$popsumm_frequency==1)
+   #   at <- at
+  #  else
+   #   at <- (at/dat$param$popsumm_frequency)+1
 
 
     #logical vectors and indices helpful to calculate summary stats
@@ -58,12 +58,12 @@ summary_popsumm<-function(dat,at){
   donor_time_inf_index <- which(donor_time_inf <= dat$param$t_acute)
   donor_acute_count <- length(donor_time_inf_index)  
   if(donor_acute_count>0){
-    dat$epi$percent_donor_acute[popsumm_index]<- donor_acute_count/new_infections_count
+    dat$epi$percent_donor_acute[at]<- donor_acute_count/new_infections_count
   }else{
-    dat$epi$percent_donor_acute[popsumm_index] <- 0
+    dat$epi$percent_donor_acute[at] <- 0
   }
  }else{
-   dat$epi$percent_donor_acute[popsumm_index] <- -999
+   dat$epi$percent_donor_acute[at] <- -999
  }
         
     cd4_aids <- dat$attr$CD4 == 4
@@ -110,86 +110,86 @@ summary_popsumm<-function(dat,at){
   #---------------------------------------------
   # stats calculated for every run
 
-  dat$epi$timestep[popsumm_index]<- at
-  dat$epi$prevalence[popsumm_index]<-length(which(inf_index))/length(which(alive_index))
-  dat$epi$new_infections[popsumm_index]<-new_infections_count
-  dat$epi$susceptibles[popsumm_index]<-length(which(sus_index))
-  dat$epi$total_infections_alive[popsumm_index]<-length(which(inf_index))
+  dat$epi$timestep[at]<- at
+  dat$epi$prevalence[at]<-length(which(inf_index))/length(which(alive_index))
+  dat$epi$new_infections[at]<-new_infections_count
+  dat$epi$susceptibles[at]<-length(which(sus_index))
+  dat$epi$total_infections_alive[at]<-length(which(inf_index))
   
   
   if(at==1){ #at model initialization, nothing has happened
-    dat$epi$births[popsumm_index]<- 0
-    dat$epi$aids_deaths[popsumm_index]<- 0
-    dat$epi$natural_deaths[popsumm_index]<-0
-    dat$epi$aged_out[popsumm_index]<- 0
+    dat$epi$births[at]<- 0
+    dat$epi$aids_deaths[at]<- 0
+    dat$epi$natural_deaths[at]<-0
+    dat$epi$aged_out[at]<- 0
   }else{
-    dat$epi$births[popsumm_index]<- dat$no_births
+    dat$epi$births[at]<- dat$no_births
     dat$no_births <- 0 #reset counter
-    dat$epi$aids_deaths[popsumm_index]<- dat$no_deaths_aids
+    dat$epi$aids_deaths[at]<- dat$no_deaths_aids
     dat$no_deaths_aids <- 0 #reset counter
-    dat$epi$natural_deaths[popsumm_index]<-dat$no_deaths_nonaids
+    dat$epi$natural_deaths[at]<-dat$no_deaths_nonaids
     dat$no_deaths_nonaids <- 0 #reset counter
-    dat$epi$aged_out[popsumm_index]<- dat$no_aged_out
+    dat$epi$aged_out[at]<- dat$no_aged_out
     dat$no_aged_out <- 0  #reset counter
   }
   
   
   #not really used anymore
-  #dat$epi$natural_deaths_infecteds[popsumm_index]<-length(which(died_non_aids_inf))
-  #dat$epi$natural_deaths_susceptibles[popsumm_index]<-length(which(died_non_aids_sus))
+  #dat$epi$natural_deaths_infecteds[at]<-length(which(died_non_aids_inf))
+  #dat$epi$natural_deaths_susceptibles[at]<-length(which(died_non_aids_sus))
   
-  dat$epi$alive[popsumm_index]<-length(which(alive_index))
+  dat$epi$alive[at]<-length(which(alive_index))
 
-  dat$epi$no_in_aids_cd4[popsumm_index]<-length(which(cd4_aids & inf_index ))
+  dat$epi$no_in_aids_cd4[at]<-length(which(cd4_aids & inf_index ))
 
-  dat$epi$new_diagnoses[popsumm_index]<-length(which(new_diagnoses))
+  dat$epi$new_diagnoses[at]<-length(which(new_diagnoses))
   
   out <- mean(dat$attr$Donors_Total_Time_Inf_At_Trans[which(new_infections)])
-  dat$epi$mean_time_donor_infected_incident[popsumm_index] <- ifelse(!is.na(out),out,-999)
+  dat$epi$mean_time_donor_infected_incident[at] <- ifelse(!is.na(out),out,-999)
   
   out <-  mean(dat$attr$age[which(new_infections)])
-  dat$epi$mean_age_incident[popsumm_index] <- ifelse(!is.na(out),out,-999)
+  dat$epi$mean_age_incident[at] <- ifelse(!is.na(out),out,-999)
   
   
   out <-mean(dat$attr$LogSetPoint[which(inf_index)])
-  dat$epi$mean_spvl_pop_all[popsumm_index]<- ifelse(!is.na(out),out,-999)
+  dat$epi$mean_spvl_pop_all[at]<- ifelse(!is.na(out),out,-999)
   
   out <- mean(log10_vl_values)
-  dat$epi$mean_vl_pop_all[popsumm_index]<-ifelse(!is.na(out),out,-999)
+  dat$epi$mean_vl_pop_all[at]<-ifelse(!is.na(out),out,-999)
   
   out <-mean(dat$attr$LogSetPoint[which(new_infections)])
-  dat$epi$mean_spvl_incident[popsumm_index] <- ifelse(!is.na(out),out,-999)
+  dat$epi$mean_spvl_incident[at] <- ifelse(!is.na(out),out,-999)
   
   out <- mean(dat$attr$age[which(inf_index)])
-  dat$epi$mean_age_infecteds[popsumm_index]<- ifelse(!is.na(out),out,-999)
+  dat$epi$mean_age_infecteds[at]<- ifelse(!is.na(out),out,-999)
   
   out <- mean(dat$attr$age[which(sus_index)])
-  dat$epi$mean_age_susceptibles[popsumm_index]<- ifelse(!is.na(out),out,-999)
+  dat$epi$mean_age_susceptibles[at]<- ifelse(!is.na(out),out,-999)
 
     
-  dat$epi$mean_trans_prob[popsumm_index]<- trans_probs_mean
-  dat$epi$no_edges[popsumm_index]<- number_edges
-  dat$epi$mean_degree[popsumm_index]<- number_edges*2/network_size
+  dat$epi$mean_trans_prob[at]<- trans_probs_mean
+  dat$epi$no_edges[at]<- number_edges
+  dat$epi$mean_degree[at]<- number_edges*2/network_size
   
   
   #--------------------------------------------
   #network
-  dat$epi$prop_nodes_degree_0[popsumm_index]<- nw_summary[1]/total_nodes
-  dat$epi$prop_nodes_degree_1[popsumm_index]<- nw_summary[2]/total_nodes
-  dat$epi$prop_nodes_concurrent[popsumm_index]<- nw_summary[3]/total_nodes
+  dat$epi$prop_nodes_degree_0[at]<- nw_summary[1]/total_nodes
+  dat$epi$prop_nodes_degree_1[at]<- nw_summary[2]/total_nodes
+  dat$epi$prop_nodes_concurrent[at]<- nw_summary[3]/total_nodes
   
   
   #not really used anymore
-  #dat$epi$mean_degree_under_30[popsumm_index]<- {
+  #dat$epi$mean_degree_under_30[at]<- {
   #  if (length(agents_under30) > 0) sum(edges_under30)/length(agents_under30)
   #else NA}
 
-  #dat$epi$mean_degree_30_50[popsumm_index]<- {
+  #dat$epi$mean_degree_30_50[at]<- {
   #if (length(agents_30to50) > 0)
   #sum(edges_30to50)/length(agents_30to50)
   #else NA}
 
-  #dat$epi$mean_degree_over_50[popsumm_index]<- {
+  #dat$epi$mean_degree_over_50[at]<- {
   #if (length(agents_over50) > 0)
   #sum(edges_over50)/length(agents_over50)
   #else NA}
@@ -206,10 +206,10 @@ summary_popsumm<-function(dat,at){
     no_females_alive <- length(which(female_index & alive_index))
     no_males_alive <- length(which(male_index & alive_index))
    
-    dat$epi$alive_female[popsumm_index]<-no_females_alive
-    dat$epi$alive_male[popsumm_index]<-no_males_alive
-    dat$epi$inf_men[popsumm_index]<-length(which(inf_male_index))/length(which(male_index))
-    dat$epi$inf_women[popsumm_index]<-length(which(inf_female_index))/length(which(female_index))
+    dat$epi$alive_female[at]<-no_females_alive
+    dat$epi$alive_male[at]<-no_males_alive
+    dat$epi$inf_men[at]<-length(which(inf_male_index))/length(which(male_index))
+    dat$epi$inf_women[at]<-length(which(inf_female_index))/length(which(female_index))
     
     # Age vectors to be used in sex- and age-specific prevalence and treatment
     #age_15to24 <- findInterval(dat$attr$age, c(15,25)) == 1
@@ -228,12 +228,12 @@ summary_popsumm<-function(dat,at){
     #prev_m_15to24 <- length(which(inf_male_index & age_15to24))/length(which(male_index & age_15to24))
     #prev_m_15to49 <- length(which(inf_male_index & age_15to49))/length(which(male_index & age_15to49))
     
-    #dat$epi$prev_15to24[popsumm_index] <-prev_15to24
-    #dat$epi$prev_15to49[popsumm_index] <-prev_15to49
-    #dat$epi$prev_f_15to24[popsumm_index] <-prev_f_15to24
-    #dat$epi$prev_f_15to49[popsumm_index] <-prev_f_15to49
-    #dat$epi$prev_m_15to24[popsumm_index] <-prev_m_15to24
-    #dat$epi$prev_m_15to49[popsumm_index] <-prev_m_15to49
+    #dat$epi$prev_15to24[at] <-prev_15to24
+    #dat$epi$prev_15to49[at] <-prev_15to49
+    #dat$epi$prev_f_15to24[at] <-prev_f_15to24
+    #dat$epi$prev_f_15to49[at] <-prev_f_15to49
+    #dat$epi$prev_m_15to24[at] <-prev_m_15to24
+    #dat$epi$prev_m_15to49[at] <-prev_m_15to49
     
     # todo: may be a faster way to calculate degree
     #edges_by_agent <- unname(summary(nw ~ sociality(base = 0),at=at))
@@ -243,14 +243,14 @@ summary_popsumm<-function(dat,at){
     #if(tot_grp>1){
     #  mean_degree_female <- sum(female_edges)/tot_grp
     #}else{mean_degree_female <- NA}
-    #dat$epi$mean_degree_female[popsumm_index]=mean_degree_female
+    #dat$epi$mean_degree_female[at]=mean_degree_female
     
     #male_edges <-  edges_by_agent[dat$attr$sex == 1]
     #tot_grp <- length(male_edges)
     #if(tot_grp>1){
     #  mean_degree_male <- sum(male_edges)/tot_grp
     #}else{mean_degree_male <- NA}
-    #dat$epi$mean_degree_male[popsumm_index]=mean_degree_male
+    #dat$epi$mean_degree_male[at]=mean_degree_male
     
     
   }
@@ -271,32 +271,32 @@ summary_popsumm<-function(dat,at){
     not_treated_agents <- which(not_treated_index)
     
     
-  dat$epi$no_treated[popsumm_index]<-length(which(inf_index & treated_index))
-  dat$epi$percent_suppressed[popsumm_index]<-((length(which(treated_index &
+  dat$epi$no_treated[at]<-length(which(inf_index & treated_index))
+  dat$epi$percent_suppressed[at]<-((length(which(treated_index &
                                         (log10(dat$attr$V)< dat$param$vl_full_supp ) )))/ length(which(inf_index)) )
-  dat$epi$total_infections_not_treated[popsumm_index] <-length(which(inf_index & not_treated_index))
+  dat$epi$total_infections_not_treated[at] <-length(which(inf_index & not_treated_index))
   
   spvl_untreated_values <- (
     dat$attr$LogSetPoint[which(inf_index & not_treated_index)])
   
   out <- mean(spvl_untreated_values)
-  dat$epi$mean_spvl_pop_untreated[popsumm_index]<- ifelse(!is.na(out),out,-999)
+  dat$epi$mean_spvl_pop_untreated[at]<- ifelse(!is.na(out),out,-999)
   
-  dat$epi$no_treated_undetectable[popsumm_index]<-length(which(treated_undetectable))
-  dat$epi$mean_vl_pop_untreated[popsumm_index]<-mean(log10(dat$attr$V[which(inf_index &  not_treated_index)]))
-  dat$epi$percent_treated_undetectable[popsumm_index]<- length(which(treated_undetectable))/length(which(treated_index))
+  dat$epi$no_treated_undetectable[at]<-length(which(treated_undetectable))
+  dat$epi$mean_vl_pop_untreated[at]<-mean(log10(dat$attr$V[which(inf_index &  not_treated_index)]))
+  dat$epi$percent_treated_undetectable[at]<- length(which(treated_undetectable))/length(which(treated_index))
   
   
   #edges_untreated <- edges_by_agent[dat$attr$id %in% not_treated_agents ]
-  #dat$epi$mean_degree_inf_untreated[popsumm_index]<- sum(edges_untreated)/length(not_treated_agents)
+  #dat$epi$mean_degree_inf_untreated[at]<- sum(edges_untreated)/length(not_treated_agents)
   
   # Sex- and age-specific treatment coverage
   #cd4_elig   <- dat$attr$CD4 %in% dat$param$cd4_treatment_threshold | dat$attr$CD4_at_trtmnt %in% dat$param$cd4_treatment_threshold
-  #dat$epi$cd4_gt_350[popsumm_index] <- length(which(inf_index & !treated_index & (dat$attr$CD4 == 1 | dat$attr$CD4 == 2)))
-  #dat$epi$cd4_200_350[popsumm_index] <- length(which(inf_index & !treated_index & dat$attr$CD4 == 3))
-  #dat$epi$cd4_0_200[popsumm_index] <- length(which(inf_index & !treated_index & dat$attr$CD4 == 4))
+  #dat$epi$cd4_gt_350[at] <- length(which(inf_index & !treated_index & (dat$attr$CD4 == 1 | dat$attr$CD4 == 2)))
+  #dat$epi$cd4_200_350[at] <- length(which(inf_index & !treated_index & dat$attr$CD4 == 3))
+  #dat$epi$cd4_0_200[at] <- length(which(inf_index & !treated_index & dat$attr$CD4 == 4))
   
-  #dat$epi$total_pills_taken[popsumm_index]<- sum(c(0,dat$epi$no_treated[1:popsumm_index]),na.rm=T)
+  #dat$epi$total_pills_taken[at]<- sum(c(0,dat$epi$no_treated[1:at]),na.rm=T)
   
   }
 
@@ -306,8 +306,8 @@ summary_popsumm<-function(dat,at){
   if (dat$param$model_sex!="msm" & dat$param$start_treatment_campaign[1] < 5e5) {  #only plot if treatment is available in model
 
     
-    dat$epi$treated_inf_men[popsumm_index]<-length(which(treated_inf_male_index))/length(which(inf_male_index))
-    dat$epi$treated_inf_women[popsumm_index]<-length(which(treated_inf_female_index))/length(which(inf_female_index))
+    dat$epi$treated_inf_men[at]<-length(which(treated_inf_male_index))/length(which(inf_male_index))
+    dat$epi$treated_inf_women[at]<-length(which(treated_inf_female_index))/length(which(inf_female_index))
     
     ###############################
     #These stats were calculated previously but now seldom used.
@@ -327,9 +327,9 @@ summary_popsumm<-function(dat,at){
     #agents_30to50 <- which(agents30to50_index)
     #agents_over50 <- which(over50_index)
     
-    #dat$epi$inf_under30[popsumm_index]<-length(which(inf_under30_index))/length(which(under30_index))
-    #dat$epi$inf_30to50[popsumm_index]<-length(which(inf_agents30to50_index))/length(which(agents30to50_index))
-    #dat$epi$inf_over50[popsumm_index]<-length(which(inf_over50_index))/length(which(over50_index))
+    #dat$epi$inf_under30[at]<-length(which(inf_under30_index))/length(which(under30_index))
+    #dat$epi$inf_30to50[at]<-length(which(inf_agents30to50_index))/length(which(agents30to50_index))
+    #dat$epi$inf_over50[at]<-length(which(inf_over50_index))/length(which(over50_index))
     
     
     # Proportion coverage among those eligible by CD4 threshold
@@ -367,14 +367,14 @@ summary_popsumm<-function(dat,at){
     #  length(which(inf_male_index & age_35plus))
     
     
-    #dat$epi$treated_inf_under30[popsumm_index]<-length(which(treated_inf_under30_index))/length(which(inf_under30_index))
-    #dat$epi$treated_inf_30to50[popsumm_index]<-length(which(treated_inf_agents30to50_index))/length(which(inf_agents30to50_index))
-    #dat$epi$treated_inf_over50[popsumm_index]<-length(which(treated_inf_over50_index))/length(which(inf_over50_index))
+    #dat$epi$treated_inf_under30[at]<-length(which(treated_inf_under30_index))/length(which(inf_under30_index))
+    #dat$epi$treated_inf_30to50[at]<-length(which(treated_inf_agents30to50_index))/length(which(inf_agents30to50_index))
+    #dat$epi$treated_inf_over50[at]<-length(which(treated_inf_over50_index))/length(which(inf_over50_index))
     
     
  
     #edges_treated <- edges_by_agent[dat$attr$id %in%  treated_agents]
-    #dat$epi$mean_degree_inf_treated[popsumm_index]<- sum(edges_treated)/length(treated_agents)
+    #dat$epi$mean_degree_inf_treated[at]<- sum(edges_treated)/length(treated_agents)
   }
 
   #--------------------------------------------
@@ -385,8 +385,8 @@ summary_popsumm<-function(dat,at){
     prop_on_prep <- length(which(alive_index & dat$attr$prep_list == 1))/total_alive
     prop_eligible_prep <- length(which(alive_index & dat$attr$prep_eligible_list == 1))/total_alive
     
-    dat$epi$prop_on_prep[popsumm_index] <-prop_on_prep
-    dat$epi$prop_eligible_prep[popsumm_index] <-prop_eligible_prep
+    dat$epi$prop_on_prep[at] <-prop_on_prep
+    dat$epi$prop_eligible_prep[at] <-prop_eligible_prep
   }
 
   #--------------------------------------------
@@ -400,29 +400,29 @@ summary_popsumm<-function(dat,at){
     new_infections_virus_vacc_notsens_count <- length(which(is.element(dat$attr$Time_Inf, time_index)&
                                                               dat$attr$virus_sens_vacc==0))
     
-    dat$epi$new_infections_vacc_sens_virus[popsumm_index]<- new_infections_virus_vacc_sens_count
-    dat$epi$new_infections_vacc_resist_virus[popsumm_index]<-  new_infections_virus_vacc_notsens_count
-    dat$epi$percent_virus_sensitive_vacc[popsumm_index]<- percent_virus_sensitive
-    dat$epi$percentAliveVaccinated[popsumm_index]<- percentVaccinated
+    dat$epi$new_infections_vacc_sens_virus[at]<- new_infections_virus_vacc_sens_count
+    dat$epi$new_infections_vacc_resist_virus[at]<-  new_infections_virus_vacc_notsens_count
+    dat$epi$percent_virus_sensitive_vacc[at]<- percent_virus_sensitive
+    dat$epi$percentAliveVaccinated[at]<- percentVaccinated
   }
   #--------------------------------------------
   #disease modifying vaccine
   #Note 2/11/19: intrinsic (formerly called genotypic) = spvl assigned to agents regardless of vaccine status, one that is passed on to infectees, 
   #as opposed to phenotypic spvl, which is the expressed spvl that reflects modification by vaccine. Intrinsic and phenotypic are the same in unvaccinated agents
   if(dat$param$vacc_therapeutic_campaign){
-    dat$epi$percentAliveVaccinated[popsumm_index]<- percentVaccinated
+    dat$epi$percentAliveVaccinated[at]<- percentVaccinated
     #prevalent spvl, maybe should remove, not too useful
     out<-mean(dat$attr$LogSetPoint_genotype[which(dat$attr$Status==1 &
                                                     dat$attr$vaccinated == 1 )],na.rm=T) 
-    dat$epi$mean_spvl_genotype[popsumm_index] <- ifelse(!is.na(out),out,-999)
+    dat$epi$mean_spvl_genotype[at] <- ifelse(!is.na(out),out,-999)
     
     out <- mean(dat$attr$LogSetPoint[which( dat$attr$vaccinated == 0  &
                                               dat$attr$Status==1)],na.rm=T)                                                                                        
-    dat$epi$mean_spvl_nonvacc[popsumm_index] <-ifelse(!is.na(out),out,-999)
+    dat$epi$mean_spvl_nonvacc[at] <-ifelse(!is.na(out),out,-999)
     
     out<-mean(dat$attr$LogSetPoint[which( is.na(dat$attr$vaccinated)&
                                             dat$attr$Status==1)],na.rm=T)
-     dat$epi$mean_spvl_nevervacc[popsumm_index] <- ifelse(!is.na(out),out,-999)
+     dat$epi$mean_spvl_nevervacc[at] <- ifelse(!is.na(out),out,-999)
     
     
     new_infections_nonvacc <- which(dat$attr$Time_Inf %in% time_index &   #all new infections occuring in nonvaccinated agents during the popsumm frequency window (default 30 days)
@@ -437,12 +437,12 @@ summary_popsumm<-function(dat,at){
                              dat$attr$vaccinated==1)
     ispvl_vacc <- dat$attr$LogSetPoint_genotype[new_infections_vacc] #spvls of newly infected nonvaccinees (intrinsic)
     ispvl_all <- c(ispvl_nonvacc,ispvl_vacc,ispvl_nevervacc)  #all spvls of agents infected in this time window, in vaccinated and unvaccinated agents
-    dat$epi$mean_ispvl_intrinsic_all[popsumm_index]<-mean(ispvl_all) #mean of all spvls of agents infected during this time window, provides mean incident SPVL
+    dat$epi$mean_ispvl_intrinsic_all[at]<-mean(ispvl_all) #mean of all spvls of agents infected during this time window, provides mean incident SPVL
     out<-mean(ispvl_nonvacc)
-    dat$epi$mean_ispvl_intrinsic_nonvacc[popsumm_index]<-ifelse(!is.na(out),out,-999) #mean of nonvaccinated spvls of agents infected during this time window, provides mean incident SPVL
+    dat$epi$mean_ispvl_intrinsic_nonvacc[at]<-ifelse(!is.na(out),out,-999) #mean of nonvaccinated spvls of agents infected during this time window, provides mean incident SPVL
     #mean of vaccinated spvls of agents infected during this time window, provides mean incident SPVL
     out<- mean(ispvl_vacc)
-    dat$epi$mean_ispvl_instrinsic_vacc[popsumm_index]<ifelse(!is.na(out),out,-999)  
+    dat$epi$mean_ispvl_instrinsic_vacc[at]<ifelse(!is.na(out),out,-999)  
     
     #never vaccinated
     eligible_index1 <- which(dat$attr$Status == 0 & 
@@ -456,7 +456,7 @@ summary_popsumm<-function(dat,at){
                                dat$attr$eligible_care == 1) 
     
     eligible_index <- c(eligible_index1,eligible_index2)
-    dat$epi$perc_eligible_vacc[popsumm_index] <- length(eligible_index)/total_alive
+    dat$epi$perc_eligible_vacc[at] <- length(eligible_index)/total_alive
   }
     
   
@@ -507,73 +507,73 @@ summary_popsumm<-function(dat,at){
     mutations4plusall <- length(which(dat$attr$aim3_no_muts>=4))
     
 
-    dat$epi$total_new_infections[popsumm_index]<- sum(c(0,dat$epi$new_infections[1:popsumm_index]))
+    dat$epi$total_new_infections[at]<- sum(c(0,dat$epi$new_infections[1:at]))
 
-    dat$epi$new_infections_drug_sens_virus[popsumm_index]<- new_infections_virus_drug_sens_count
+    dat$epi$new_infections_drug_sens_virus[at]<- new_infections_virus_drug_sens_count
 
-    dat$epi$new_infections_drug_part_res_virus[popsumm_index]<- new_infections_virus_drug_part_res_count
+    dat$epi$new_infections_drug_part_res_virus[at]<- new_infections_virus_drug_part_res_count
 
-    dat$epi$new_infections_drug_3_plus_res_virus[popsumm_index]<- new_infections_virus_drug_3_plus_res_count
+    dat$epi$new_infections_drug_3_plus_res_virus[at]<- new_infections_virus_drug_3_plus_res_count
 
-    dat$epi$mean_PPP_incident[popsumm_index]<- mean(dat$attr$PPP[which(new_infections)])
+    dat$epi$mean_PPP_incident[at]<- mean(dat$attr$PPP[which(new_infections)])
 
-    dat$epi$mean_PPP_infected[popsumm_index]<- mean(dat$attr$PPP[which(inf_index)])
+    dat$epi$mean_PPP_infected[at]<- mean(dat$attr$PPP[which(inf_index)])
 
-    dat$epi$"drug_muts_1+"[popsumm_index]<- mutations1
+    dat$epi$"drug_muts_1+"[at]<- mutations1
 
-    dat$epi$"drug_muts_3+"[popsumm_index]<- mutations1
+    dat$epi$"drug_muts_3+"[at]<- mutations1
 
-    dat$epi$"total_1+_drug_muts"[popsumm_index]<- {
-      sum(c(0,dat$epi[["new_infections_virus_1_drug_muts"]][1:popsumm_index]))}
+    dat$epi$"total_1+_drug_muts"[at]<- {
+      sum(c(0,dat$epi[["new_infections_virus_1_drug_muts"]][1:at]))}
 
-    dat$epi$"total_3+_drug_muts"[popsumm_index]<- {
-      sum(c(0,dat$epi[["new_infections_virus_drug_3_plus_res_count"]][1:popsumm_index]))}
+    dat$epi$"total_3+_drug_muts"[at]<- {
+      sum(c(0,dat$epi[["new_infections_virus_drug_3_plus_res_count"]][1:at]))}
 
-    dat$epi$Perc_0_drug_muts[popsumm_index]<- mutations0/no_inf_undect
+    dat$epi$Perc_0_drug_muts[at]<- mutations0/no_inf_undect
 
-    dat$epi$"Perc_1+_drug_muts"[popsumm_index]<- mutations1/no_inf_undect
+    dat$epi$"Perc_1+_drug_muts"[at]<- mutations1/no_inf_undect
 
-    dat$epi$"Perc_2+_drug_muts"[popsumm_index]<- mutations2/no_inf_undect
+    dat$epi$"Perc_2+_drug_muts"[at]<- mutations2/no_inf_undect
 
-    dat$epi$"Perc_3+_drug_muts"[popsumm_index]<- mutations3/no_inf_undect
+    dat$epi$"Perc_3+_drug_muts"[at]<- mutations3/no_inf_undect
 
-    dat$epi$"Perc_4+_drug_muts"[popsumm_index]<- mutations4/no_inf_undect
+    dat$epi$"Perc_4+_drug_muts"[at]<- mutations4/no_inf_undect
 
-    dat$epi$Perc_All_5_drug_muts[popsumm_index]<- mutations5/no_inf_undect
+    dat$epi$Perc_All_5_drug_muts[at]<- mutations5/no_inf_undect
 
-    dat$epi$Perc_1_drug_muts[popsumm_index]<- mutations1exact/no_inf_undect
+    dat$epi$Perc_1_drug_muts[at]<- mutations1exact/no_inf_undect
 
-    dat$epi$Perc_2_drug_muts[popsumm_index]<- mutations2exact/no_inf_undect
+    dat$epi$Perc_2_drug_muts[at]<- mutations2exact/no_inf_undect
 
-    dat$epi$Perc_3_drug_muts[popsumm_index]<- mutations3exact/no_inf_undect
+    dat$epi$Perc_3_drug_muts[at]<- mutations3exact/no_inf_undect
 
-    dat$epi$Perc_4_drug_muts[popsumm_index]<- mutations4exact/no_inf_undect
+    dat$epi$Perc_4_drug_muts[at]<- mutations4exact/no_inf_undect
     #not graphed/overlay  only
-    dat$epi$Perc_1_drug_muts_total_pop[popsumm_index]<- mutations1all/total_alive
+    dat$epi$Perc_1_drug_muts_total_pop[at]<- mutations1all/total_alive
     #not graphed/overlay  only
-    dat$epi$Perc_2_drug_muts_total_pop[popsumm_index]<- mutations2all/total_alive
+    dat$epi$Perc_2_drug_muts_total_pop[at]<- mutations2all/total_alive
     #not graphed/overlay  only
-    dat$epi$Perc_3_drug_muts_total_pop[popsumm_index]<- mutations3all/total_alive
+    dat$epi$Perc_3_drug_muts_total_pop[at]<- mutations3all/total_alive
 
-    dat$epi$Perc_4_drug_muts_total_pop[popsumm_index]<- mutations4all/total_alive
+    dat$epi$Perc_4_drug_muts_total_pop[at]<- mutations4all/total_alive
 
-    dat$epi$Perc_0_drug_muts_total_pop[popsumm_index]<- mutations0all/total_alive
+    dat$epi$Perc_0_drug_muts_total_pop[at]<- mutations0all/total_alive
 
-    dat$epi$"Perc_1+_drug_muts_total_pop"[popsumm_index]<- mutations1plusall/total_alive
+    dat$epi$"Perc_1+_drug_muts_total_pop"[at]<- mutations1plusall/total_alive
 
-    dat$epi$"Perc_2+_drug_muts_total_pop"[popsumm_index]<- mutations2plusall/total_alive
+    dat$epi$"Perc_2+_drug_muts_total_pop"[at]<- mutations2plusall/total_alive
 
-    dat$epi$"Perc_3+_drug_muts_total_pop"[popsumm_index]<- mutations3plusall/total_alive
+    dat$epi$"Perc_3+_drug_muts_total_pop"[at]<- mutations3plusall/total_alive
 
-    dat$epi$"Perc_4+_drug_muts_total_pop"[popsumm_index]<- mutations4plusall/total_alive
+    dat$epi$"Perc_4+_drug_muts_total_pop"[at]<- mutations4plusall/total_alive
 
-    dat$epi$Perc_All_5_drug_muts_total_pop[popsumm_index]<- mutations5all/total_alive
+    dat$epi$Perc_All_5_drug_muts_total_pop[at]<- mutations5all/total_alive
 
-    dat$epi$"Perc_3+_drug_muts_long"[popsumm_index]<- mutations3plus_long/total_inf
+    dat$epi$"Perc_3+_drug_muts_long"[at]<- mutations3plus_long/total_inf
 
-    dat$epi$"Perc_4+_drug_muts_long"[popsumm_index]<- mutations4plus_long/total_inf
+    dat$epi$"Perc_4+_drug_muts_long"[at]<- mutations4plus_long/total_inf
 
-    dat$epi$Perc_5_drug_muts_long[popsumm_index]<- mutations5_long/total_inf
+    dat$epi$Perc_5_drug_muts_long[at]<- mutations5_long/total_inf
   }#end of aim3 summary stats
   
   ####################################
@@ -611,7 +611,7 @@ summary_popsumm<-function(dat,at){
     
     for(zz in 1:length(temp_match)){
       namevec <- paste("generic_att_percent_cat_",temp_match[zz],sep="")
-      dat$epi[[namevec]][popsumm_index]=temp_table[zz]/sum_temp_table
+      dat$epi[[namevec]][at]=temp_table[zz]/sum_temp_table
     }
     for(zz in 1:temp_length){
       namevec2 <- paste("generic_att_percent_inf_cat_",zz,sep="")
@@ -621,7 +621,7 @@ summary_popsumm<-function(dat,at){
       if(length(ix2)>0){
         val<- temp_table2[ix2]/temp_table[ix1]  
       }else{val<-0}
-      dat$epi[[namevec2]][popsumm_index] <- val
+      dat$epi[[namevec2]][at] <- val
     }
     for(zz in 1:temp_length) {
       namevec3 <- paste("generic_att_percent_vacc_cat_", zz, sep = "")
@@ -630,7 +630,7 @@ summary_popsumm<-function(dat,at){
       if(length(ix2) > 0) {
         val <- temp_table3[ix2]/temp_table[ix1]
       } else { val <- 0 }
-      dat$epi[[namevec3]][popsumm_index] <- val
+      dat$epi[[namevec3]][at] <- val
     }
     for(zz in 1:length(temp_match)){
       namevec <- paste("generic_att_mean_degree_cat_",temp_match[zz],sep="")
@@ -640,7 +640,7 @@ summary_popsumm<-function(dat,at){
        if(tot_grp>1){
        mean_degree_group <- sum(edges)/tot_grp
        }else{mean_degree_group <- NA}
-       dat$epi[[namevec]][popsumm_index]=mean_degree_group
+       dat$epi[[namevec]][at]=mean_degree_group
     }
     for(zz in 1:length(temp_match)){
       namevec <- paste("prevalence_attr_",temp_match[zz],sep="")
@@ -650,7 +650,7 @@ summary_popsumm<-function(dat,at){
       if(tot_grp>1){
         prev_group   <- length(inf_grp)/length(risk_group)
       }else{prev_group <- NA}
-      dat$epi[[namevec]][popsumm_index]=prev_group
+      dat$epi[[namevec]][at]=prev_group
     }
     for(zz in 1:length(temp_match)){
       namevec <- paste("new_infections_attr_",temp_match[zz],sep="")
@@ -661,7 +661,7 @@ summary_popsumm<-function(dat,at){
       if(tot_grp>1){
         new_inf_group   <- length(which(is.element(time_inf_group, time_index)))
       }else{new_inf_group <- NA}
-      dat$epi[[namevec]][popsumm_index]=new_inf_group
+      dat$epi[[namevec]][at]=new_inf_group
     }
     for(zz in 1:length(temp_match)){
       namevec <- paste("susceptibles_attr_",temp_match[zz],sep="")
@@ -671,7 +671,7 @@ summary_popsumm<-function(dat,at){
       if(tot_grp>1){
         sus_group   <- length(susceptible) 
       }else{sus_group <- NA}
-      dat$epi[[namevec]][popsumm_index]=sus_group
+      dat$epi[[namevec]][at]=sus_group
     }
     for(zz in 1:length(temp_match)){
       namevec <- paste("mean_spvl_incident_attr_",temp_match[zz],sep="")
@@ -683,7 +683,7 @@ summary_popsumm<-function(dat,at){
       if(tot_grp>1){
         mean_spvl_inf_group <- mean(dat$attr$LogSetPoint[new_group_infections])
       }else{mean_spvl_inf_group <- NA}
-      dat$epi[[namevec]][popsumm_index]=mean_spvl_inf_group
+      dat$epi[[namevec]][at]=mean_spvl_inf_group
     }
     for(zz in 1:length(temp_match)){
       namevec <- paste("prop_on_prep_attr_",temp_match[zz],sep="")
@@ -693,7 +693,7 @@ summary_popsumm<-function(dat,at){
       if(tot_grp>1){
         prep_group <- length(on_prep_group)/length(risk_group)
       }else{prep_group <- NA}
-      dat$epi[[namevec]][popsumm_index]=prep_group
+      dat$epi[[namevec]][at]=prep_group
     }
     for(zz in 1:length(temp_match)){
       namevec <- paste("prop_eligible_prep_attr_",temp_match[zz],sep="")
@@ -703,7 +703,7 @@ summary_popsumm<-function(dat,at){
       if(tot_grp>1){
         prep_eligible_group <- length(eligible_prep_group)/length(risk_group)
       }else{prep_group <- NA}
-      dat$epi[[namevec]][popsumm_index]=prep_eligible_group
+      dat$epi[[namevec]][at]=prep_eligible_group
     }
   }
   # end of calculating summary stats for generic attributes    
