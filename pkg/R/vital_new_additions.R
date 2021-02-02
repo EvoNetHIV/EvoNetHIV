@@ -179,15 +179,15 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
     }
     
     # Assign time since last negative HIV test
-    index_male <- index[input_list$sex[index] == 'm'] 
-    index_female <- index[input_list$sex[index] == 'f']
+    index_male <- index[input_list$sex[index] == 1] 
+    index_female <- index[input_list$sex[index] == 0]
     index_under25 <- index[input_list$age[index] <= 25]
         
     input_list$last_neg_test[index_male] = sample( - dat$param$mean_test_interval_male:0, 
                                                   length(index_male),
                                                   replace = TRUE)
     if(!is.logical(dat$param$generic_nodal_att_mean_test_interval_male)){
-      index_male_2 <- index[input_list$sex[index] == 'm' & input_list$att1[index]==2] 
+      index_male_2 <- index[input_list$sex[index] == 1 & input_list$att1[index]==2] 
       input_list$last_neg_test[index_male_2] = sample( - dat$param$generic_nodal_att_mean_test_interval_male:0, 
                                                      length(index_male_2),
                                                      replace = TRUE) }
@@ -210,9 +210,9 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
   if(type=="births")
   {
     
-    # Assign sex (either all "m" or "m" and "f")
+    # Assign sex (either all 1(male) or 0(female) and 1
     if(dat$param$model_sex=="msm"){
-      input_list$sex[index] <- "m"
+      input_list$sex[index] <- 1
     } else {
       input_list$sex[index]<- sample(c(0,1),length(index),prob=c(0.5,0.5),replace=T)
     }
@@ -291,8 +291,8 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
     # end of ages for new additions --------------------------      
     
     # Assign time from last negative HIV test
-    index_male <- index[input_list$sex[index] == 'm'] 
-    index_female <- index[input_list$sex[index] == 'f'] 
+    index_male <- index[input_list$sex[index] == 1] 
+    index_female <- index[input_list$sex[index] == 0] 
     index_under25 <- index[input_list$age[index] <= 25] 
     
     temp_sample_times_male <- (at - dat$param$mean_test_interval_male):at 
@@ -300,7 +300,7 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
                                                    length(index_male), 
                                                    replace = TRUE) 
     if(!is.logical(dat$param$generic_nodal_att_mean_test_interval_male)){
-      index_male_2 <- index[input_list$sex[index] == 'm' & input_list$att1[index]==2]
+      index_male_2 <- index[input_list$sex[index] == 1 & input_list$att1[index]==2]
       temp_sample_times_male_2 <- (at - dat$param$generic_nodal_att_mean_test_interval_male):at 
       input_list$last_neg_test[index_male_2] <- sample(temp_sample_times_male_2, 
                                                      length(index_male_2), 

@@ -208,32 +208,34 @@ summary_popsumm<-function(dat,at){
    
     dat$epi$alive_female[at]<-no_females_alive
     dat$epi$alive_male[at]<-no_males_alive
+    
     dat$epi$inf_men[at]<-length(which(inf_male_index))/length(which(male_index))
     dat$epi$inf_women[at]<-length(which(inf_female_index))/length(which(female_index))
     
     # Age vectors to be used in sex- and age-specific prevalence and treatment
-    #age_15to24 <- findInterval(dat$attr$age, c(15,25)) == 1
-    #age_15to49 <- findInterval(dat$attr$age, c(15,50)) == 1
-    #age_25to34 <- findInterval(dat$attr$age, c(25,35)) == 1
-    #age_35plus <- findInterval(dat$attr$age, c(35,100)) == 1
+    age_15to24 <- findInterval(dat$attr$age, c(15,25)) == 1
+    age_15to49 <- findInterval(dat$attr$age, c(15,50)) == 1
+    age_25to34 <- findInterval(dat$attr$age, c(25,35)) == 1
+    age_35plus <- findInterval(dat$attr$age, c(35,100)) == 1
     
     
     # Prevalence vectors to be used in model fitting
-    #prev_15to24   <- length(which(inf_index & age_15to24))/length(which(alive_index & age_15to24))
-    #prev_15to49   <- length(which(inf_index & age_15to49))/length(which(alive_index & age_15to49))
+    prev_15to24   <- length(which(inf_index & age_15to24))/length(which(alive_index & age_15to24))
+    prev_15to49   <- length(which(inf_index & age_15to49))/length(which(alive_index & age_15to49))
     
-    #prev_f_15to24 <- length(which(inf_female_index & age_15to24))/length(which(female_index & age_15to24))
-    #prev_f_15to49 <- length(which(inf_female_index & age_15to49))/length(which(female_index & age_15to49))
+    prev_f_15to24 <- length(which(inf_female_index & age_15to24))/length(which(female_index & age_15to24))
+    prev_f_15to49 <- length(which(inf_female_index & age_15to49))/length(which(female_index & age_15to49))
     
-    #prev_m_15to24 <- length(which(inf_male_index & age_15to24))/length(which(male_index & age_15to24))
-    #prev_m_15to49 <- length(which(inf_male_index & age_15to49))/length(which(male_index & age_15to49))
+    prev_m_15to24 <- length(which(inf_male_index & age_15to24))/length(which(male_index & age_15to24))
+    prev_m_15to49 <- length(which(inf_male_index & age_15to49))/length(which(male_index & age_15to49))
     
-    #dat$epi$prev_15to24[at] <-prev_15to24
-    #dat$epi$prev_15to49[at] <-prev_15to49
-    #dat$epi$prev_f_15to24[at] <-prev_f_15to24
-    #dat$epi$prev_f_15to49[at] <-prev_f_15to49
-    #dat$epi$prev_m_15to24[at] <-prev_m_15to24
-    #dat$epi$prev_m_15to49[at] <-prev_m_15to49
+    dat$epi$prev_15to24[at] <-prev_15to24
+    dat$epi$prev_15to49[at] <-prev_15to49
+    dat$epi$prev_f_15to24[at] <-prev_f_15to24
+    dat$epi$prev_f_15to49[at] <-prev_f_15to49
+    dat$epi$prev_m_15to24[at] <-prev_m_15to24
+    dat$epi$prev_m_15to49[at] <-prev_m_15to49
+    
     
     # todo: may be a faster way to calculate degree
     #edges_by_agent <- unname(summary(nw ~ sociality(base = 0),at=at))

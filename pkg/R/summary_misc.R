@@ -176,7 +176,9 @@ if(!dat$param$hpc & dat$param$scrolling_output){
   
   
   if( (at%%dat$param$popsumm_frequency==0)){
-    index <- (at/dat$param$popsumm_frequency)-1
+
+    index <- at
+    
     cat(
       dat$simulation,"\t",
       at,"\t",
