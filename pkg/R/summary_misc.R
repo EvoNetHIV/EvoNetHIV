@@ -87,9 +87,15 @@ if(at == dat$param$n_steps){
   
    if(dat$param$VL_Function != "aim3"){ 
         #last time-step, fill in all agents on dat$attr
+     if(length(dat$pop)==0){
+       dat$pop <- dat$attr 
+       names(dat$pop) <- names(dat$attr)
+     }else{
+     
        if(length(names(dat$pop)) != length(names(dat$attr)) ){browser()}
         dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],dat$attr[[xx]]) )
         names(dat$pop) <- names(dat$attr)
+     }
     }else{
       
       vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
