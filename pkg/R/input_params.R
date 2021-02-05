@@ -39,7 +39,9 @@ input_params<-function(
     save_RData_file= F, # for John's scripts,
     save_summary_figs = F, # for John's scripts,
     vital=FALSE, #epimodel requires this parameter, should be False
-    
+    save_trans_probs= F, #in "trans main module" , saves timestep/susc. ids/ trans. probs in list "trans_probs_list"
+  
+  
     # new parameters for alternative restart routines
     start_timestep = 1, #parameter for EpiModel, should be "1" if new simulation if re-starting simulation, value should be "n_steps+1" (n_steps from original sim.)
     restart_val = "none", # "save" = save simulation, "restart" = restart simulation

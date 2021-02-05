@@ -200,6 +200,14 @@ transmission_main_module <- function(dat,at)
     dat$discord_coital_df$infection[index] <- 1
   }
   
+  if(dat$param$save_trans_probs){
+    
+    trans_probs_matrix <- cbind(dat$discord_coital_df$timestep,
+             dat$discord_coital_df$trans_probs,
+             dat$discord_coital_df$sus_id)
+    dat$trans_probs_list[[at]] <- trans_probs_matrix
+  }
+  
   return(dat)
   
 }
