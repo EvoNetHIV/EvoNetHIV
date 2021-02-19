@@ -137,13 +137,18 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
   #these variables need different functions for initial population and births
   if(type=="initial")
   {
-    # note: for attributes "sex","att1","role", initial values created in 
+    # note: for attributes "sex","att1","role", "trial_status" initial values created in 
     # "setup_nw()" and set on nw, these values then transferred to "pop" list
     
  
     input_list$sex[index] <- dat$attr$sex
     input_list$age[index] <- dat$attr$age
     input_list$sqrt_age[index] <- sqrt(dat$attr$age)
+    
+    if(dat$param$vaccine_trial){
+    #vaccination trial status (0 for all new agents)
+    input_list$trial_status[index] <- dat$attr$trial_status
+    }
     
     # Assign generic nodal attribute values
     if(!is.logical(dat$param$generic_nodal_att_values)){
@@ -218,6 +223,13 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
     } else {
       input_list$sex[index]<- sample(c(0,1),length(index),prob=c(0.5,0.5),replace=T)
     }
+    
+    if(dat$param$vaccine_trial){
+      #vaccination trial status (0 for all new agents)
+      input_list$trial_status[index] <- 0
+    }
+    
+    
     
     # Assign generic nodal attribute
     if(!is.logical(dat$param$generic_nodal_att_values)){
