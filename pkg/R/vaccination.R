@@ -1,5 +1,13 @@
 vaccination <- function(dat, at) {
   
+  #if vaccine trial, choose agents and give them value "1", on vaccine trial
+  if( (dat$param$start_vacc_campaign[1]-at) == 365 &    dat$param$vaccine_trial ) {
+    trial_samples <- round(length(dat$attr$Status)*dat$param$perc_vacc_trial)
+    trial_index <-  sample(1:length(dat$attr$Status), trial_samples,replace=F)
+    dat$attr$trial_status[trial_index] <- 1
+    }
+  
+  
   if(at < dat$param$start_vacc_campaign[1]) {return(dat)}
   #temp qaqc
   #if(at==dat$param$start_vacc_campaign[1]){browser()}

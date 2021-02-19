@@ -130,8 +130,10 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
   #first added for AgeAndSPVL model (Steve); note that the log of RR tends to be approx normal, not the RR itself
   input_list$susceptibility[index] <- exp(rnorm(total_new, 0 , dat$param$susceptibility_var))
   
+  #vaccination trial status (0 for all new agents)
+  input_list$trial_status[index] <- 0
 
-  #-----------------------------
+    #-----------------------------
   #these variables need different functions for initial population and births
   if(type=="initial")
   {

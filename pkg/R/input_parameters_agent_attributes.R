@@ -100,7 +100,7 @@ input_parameters_agent_attributes <-function(){
     "condom_user",                       "partner_recent_test", 
     "have_suppressed_partner",           "have_unknown_status_partner",
     "agent_condom_user",                 "vacc_eff",
-    "vacc_rr",
+    "vacc_rr",                            "trial_status",
     "last_ts_relationship",              "last_ts_multiple_relationships")
     ##############################
   ) #end of  list
