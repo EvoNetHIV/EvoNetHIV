@@ -143,6 +143,17 @@ vaccination <- function(dat, at) {
     }
     
     dat$attr$vaccinated[vaccinated_index] <- 1
+    
+    #placebos! may or may not be used
+    if( dat$param$perc_vaccinated_placebo>0){
+      ix1 <- rbinom(length(vaccinated_index),1,dat$param$perc_vaccinated_placebo)
+      ix2 <- which(ix1==1)
+      if(length(ix2)>0){
+        ix3 <- vaccinated_index[ix2]
+        dat$attr$vaccinated[ix3] <- 2
+      }
+    }
+    
     dat$attr$vacc_init_time[vaccinated_index] <- at
     
   }

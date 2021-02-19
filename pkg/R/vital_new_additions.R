@@ -11,7 +11,7 @@
 #' example function call here
 
 #' @export
-new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),at=NULL)
+new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","initial"),at=NULL)
 {
   #description:
   #main argument: type="births" or type="initial"
@@ -30,7 +30,7 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
   #------------------------------
   
   #agent-specific id
-  input_list$id[index] <-  index 
+  input_list$id[index] <-  evo_index 
   
   
   #functions for these variables are same initial population and for new births

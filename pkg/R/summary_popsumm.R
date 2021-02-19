@@ -69,7 +69,7 @@ summary_popsumm<-function(dat,at){
     cd4_aids <- dat$attr$CD4 == 4
     new_diagnoses <- dat$attr$diag_status == 1 &  is.element(dat$attr$diag_time,time_index)
     percent_virus_sensitive <- round(100*(length(which(dat$attr$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
-    percentVaccinated <- round(100*(length(which(dat$attr$vaccinated == 1 & alive_index))/total_alive))
+    percentVaccinated <- round(100*(length(which(dat$attr$vaccinated >= 1 & alive_index))/total_alive))
 
     
     #network statistics

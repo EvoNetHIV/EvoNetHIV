@@ -114,5 +114,10 @@ initialize_module <- function(x, param, init, control, s)
   dat$no_deaths_nonaids <- 0
   dat$no_aged_out <- 0
   
+  #17 this is used to help create a permanent id for agents
+     # as new arrivals occur, these are updated in the vital_new_births_bookeeping_pop function
+
+   dat$total_agents <- dat$param$initial_pop
+  
   return(dat)
 }

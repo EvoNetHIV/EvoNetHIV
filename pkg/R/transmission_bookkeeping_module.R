@@ -190,7 +190,7 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   dat$attr$Donors_Generation[recipient] <- dat$attr$Generation[infector]
   dat$attr$Donors_SetPoint[recipient] <- dat$attr$SetPoint[infector]
   dat$attr$Donors_LogSetPoint[recipient] <- dat$attr$LogSetPoint[infector]
-  dat$attr$Donors_Index[recipient] <-   infector
+  dat$attr$Donors_Index[recipient] <-   dat$attr$id[infector] #evonet id not network id
   dat$attr$Donors_age[recipient] <-   dat$attr$age[infector]
   dat$attr$Donors_diag_status[recipient] <-   dat$attr$diag_status[infector]
   dat$attr$Donors_treated[recipient] <-   dat$attr$treated[infector]

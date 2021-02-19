@@ -204,7 +204,7 @@ transmission_main_module <- function(dat,at)
     
     trans_probs_matrix <- cbind(dat$discord_coital_df$timestep,
              dat$discord_coital_df$trans_probs,
-             dat$discord_coital_df$sus_id)
+             dat$attr$id[dat$discord_coital_df$sus_id]) #use evonet id, not network id (network position)
     dat$trans_probs_list[[at]] <- trans_probs_matrix
   }
   

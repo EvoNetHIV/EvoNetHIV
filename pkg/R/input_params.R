@@ -396,9 +396,11 @@ input_params<-function(
     preventative_campaign    = F,
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.99,
-    max_perc_vaccinated  =       1.0, #maximum proportion of alive pop to vaccinate
+    max_perc_vaccinated      = 1.0, #maximum proportion of alive pop to vaccinate
     vacc_per_day             = 0,  #used internally to calibrate vaccination rollout (vaccination.R file)
-    vacc_rollout_dur           =1*365, #desired time (in days) to reach "max_perc_vaccinated"
+    vacc_rollout_dur         = 1*365, #desired time (in days) to reach "max_perc_vaccinated"
+    perc_vaccinated_placebo  = 0, # what % of vaccinated get placebo 
+    vaccine_trial            = FALSE, #trial scenario? FALSE or TRUE
     target_vacc_att          = FALSE,
     vacc_eff_duration        =  365*3,
     risk_comp_cond           = F,    # Set to T to induce reduction in condom use among vaccinated susceptibles and vaccinated, infected, undiagnosed individuals.
@@ -406,7 +408,7 @@ input_params<-function(
     risk_comp_degree         = F,    # Set to T to induce increase in degree among vaccinated susceptible and vaccinated, infected, undiagnosed individuals
     risk_comp_degree_rr      = 1.3,
     vacc_therapeutic_campaign = F, #flag whether protective (=F) or therapeutic vaccine(=T) in effect
-    spvl_decrement_vaccine    = 1.0,
+    spvl_decrement_vaccine   = 1.0,
     vacc_multi_eff           = F, # flag for vaccine model with distribution of vaccine efficacies
     vacc_multi_fxn = "function(xx,...){runif(xx)}", #function to determine values of vaccine efficacies for "vacc_mulit_eff" models, default is random 
 #midas vaccine
