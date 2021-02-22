@@ -46,8 +46,7 @@ attr_new <- lapply(1:length(dat$attr),
   evo_index <- (dat$total_agents+1):(dat$total_agents+no_births)
   dat$total_agents <- dat$total_agents+no_births
   
-  if(timestep>500){browser()}
-  
+
 attr_final <- new_additions(input_list = attr_new, dat = dat,
                                 index = ix_start:ix_end,
                                 evo_index = evo_index,

@@ -1,7 +1,7 @@
 vaccination <- function(dat, at) {
   
   #if vaccine trial, choose agents and give them value "1", on vaccine trial
-  if( (dat$param$start_vacc_campaign[1]-at) == 365 &    dat$param$vaccine_trial ) {
+  if( (dat$param$start_vacc_campaign[1]-at) == dat$param$trial_status_time_switch &    dat$param$vaccine_trial ) {
     trial_samples <- round(length(dat$attr$Status)*dat$param$perc_vacc_trial)
     trial_index <-  sample(1:length(dat$attr$Status), trial_samples,replace=F)
     dat$attr$trial_status[trial_index] <- 1
@@ -77,7 +77,7 @@ vaccination <- function(dat, at) {
     if(proportion_vacc > dat$param$max_perc_vaccinated){return(dat)}
     
     #dat$param$vacc_per_day <- dat$param$vacc_per_day+((dat$param$max_perc_vaccinated)*length(which(dat$attr$Status>=0)) )/(5*365)
-     vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(5*365)
+     vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(dat$param$vacc_rollout_dur *365)
     
      time_index <- (dat$param$start_vacc_campaign[1]+dat$param$vacc_rollout_dur) - at
      if(time_index>0){

@@ -401,6 +401,7 @@ input_params<-function(
     vacc_rollout_dur         = 1*365, #desired time (in days) to reach "max_perc_vaccinated"
     perc_vaccinated_placebo  = 0, # what % of vaccinated get placebo 
     vaccine_trial            = FALSE, #trial scenario? FALSE or TRUE
+    trial_status_time_switch  = 365, #how many days before start of vacc campaign/trial should trial_status be switched from 0 to 1
     perc_vacc_trial          = 0,  #what percent of agents enter vaccination trial
     target_vacc_att          = FALSE,
     vacc_eff_duration        =  365*3,
