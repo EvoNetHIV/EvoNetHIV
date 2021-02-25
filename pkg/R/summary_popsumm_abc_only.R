@@ -15,16 +15,10 @@ summary_popsumm_abc_only<-function(dat,at){
 
   #----------------------------------------------------------------
   #calculation of summary stats: main section
-  
-  
-
     #logical vectors and indices helpful to calculate summary stats
     inf_index     <-  dat$attr$Status == 1
-    alive_index   <-  dat$attr$Status > 0
-    
-
-
-
+    alive_index   <-  dat$attr$Status >= 0
+  
   #---------------------------------------------
   # stats calculated for every run
 
@@ -50,6 +44,7 @@ summary_popsumm_abc_only<-function(dat,at){
     age_25to34 <- findInterval(dat$attr$age, c(25,35)) == 1
     age_35plus <- findInterval(dat$attr$age, c(35,100)) == 1
     
+    #if(at>330){browser()}
     
     # Prevalence vectors to be used in model fitting
     prev_15to24   <- length(which(inf_index & age_15to24))/length(which(alive_index & age_15to24))
@@ -69,32 +64,35 @@ summary_popsumm_abc_only<-function(dat,at){
     dat$epi$prev_m_15to49[at] <-prev_m_15to49
     
     
-    # todo: may be a faster way to calculate degree
-    #edges_by_agent <- unname(summary(nw ~ sociality(base = 0),at=at))
+    out1 <- dat$epi$prev_15to49[at] # Ages 15-49, 1990-2001, 2002, 2005, 2008, 2012
     
-    #female_edges <-  edges_by_agent[dat$attr$sex == 0]
-    #tot_grp <- length(female_edges)
-    #if(tot_grp>1){
-    #  mean_degree_female <- sum(female_edges)/tot_grp
-    #}else{mean_degree_female <- NA}
-    #dat$epi$mean_degree_female[at]=mean_degree_female
+    out2 <- c(dat$epi$prev_m_15to24[at], # 2002, males 15-24
+              dat$epi$prev_f_15to24[at], # 2002, females 15-24
+              dat$epi$prev_m_15to49[at], # 2002, males 15-49
+              dat$epi$prev_f_15to49[at]) # 2002, females 15-49
     
-    #male_edges <-  edges_by_agent[dat$attr$sex == 1]
-    #tot_grp <- length(male_edges)
-    #if(tot_grp>1){
-    #  mean_degree_male <- sum(male_edges)/tot_grp
-    #}else{mean_degree_male <- NA}
-    #dat$epi$mean_degree_male[at]=mean_degree_male
+    out3 <- c(dat$epi$prev_m_15to24[at], # 2005, males 15-24
+              dat$epi$prev_f_15to24[at], # 2005, females 15-24
+              dat$epi$prev_m_15to49[at], # 2005, males 15-49
+              dat$epi$prev_f_15to49[at]) # 2005, females 15-49
+    
+    out4 <- dat$epi$prev_15to24[at] # 2008, 15-24
+    
+    out5 <- c(dat$epi$prev_m_15to24[at], # 2012, males 15-24
+              dat$epi$prev_f_15to24[at], # 2012, females 15-24
+              dat$epi$prev_m_15to49[at], # 2012, males 15-49
+              dat$epi$prev_f_15to49[at]) # 2012, females 15-49
+    
+    out <- c(out1, out2, out3, out4, out5)
     
     
-  #}
-
-  
-  #--------------------------------------------
-  
-  #--------------------------------------------
-
-
+    #if(at %% 100  == 0){
+    #print(at)
+    #print( round( dat$epi$prevalence[at],3))
+    #print(round(out,2))
+    #}
+    
+    
 
   #################################################
   return(dat)
