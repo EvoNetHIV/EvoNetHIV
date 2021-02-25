@@ -39,7 +39,9 @@ input_params<-function(
     save_RData_file= F, # for John's scripts,
     save_summary_figs = F, # for John's scripts,
     vital=FALSE, #epimodel requires this parameter, should be False
-    
+    save_trans_probs= F, #in "trans main module" , saves timestep/susc. ids/ trans. probs in list "trans_probs_list"
+  
+  
     # new parameters for alternative restart routines
     start_timestep = 1, #parameter for EpiModel, should be "1" if new simulation if re-starting simulation, value should be "n_steps+1" (n_steps from original sim.)
     restart_val = "none", # "save" = save simulation, "restart" = restart simulation
@@ -394,9 +396,13 @@ input_params<-function(
     preventative_campaign    = F,
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.99,
-    max_perc_vaccinated  =       1.0, #maximum proportion of alive pop to vaccinate
+    max_perc_vaccinated      = 1.0, #maximum proportion of alive pop to vaccinate
     vacc_per_day             = 0,  #used internally to calibrate vaccination rollout (vaccination.R file)
-    vacc_rollout_dur           =1*365, #desired time (in days) to reach "max_perc_vaccinated"
+    vacc_rollout_dur         = 1*365, #desired time (in days) to reach "max_perc_vaccinated"
+    perc_vaccinated_placebo  = 0, # what % of vaccinated get placebo 
+    vaccine_trial            = FALSE, #trial scenario? FALSE or TRUE
+    trial_status_time_switch  = 365, #how many days before start of vacc campaign/trial should trial_status be switched from 0 to 1
+    perc_vacc_trial          = 0,  #what percent of agents enter vaccination trial
     target_vacc_att          = FALSE,
     vacc_eff_duration        =  365*3,
     risk_comp_cond           = F,    # Set to T to induce reduction in condom use among vaccinated susceptibles and vaccinated, infected, undiagnosed individuals.
@@ -404,7 +410,7 @@ input_params<-function(
     risk_comp_degree         = F,    # Set to T to induce increase in degree among vaccinated susceptible and vaccinated, infected, undiagnosed individuals
     risk_comp_degree_rr      = 1.3,
     vacc_therapeutic_campaign = F, #flag whether protective (=F) or therapeutic vaccine(=T) in effect
-    spvl_decrement_vaccine    = 1.0,
+    spvl_decrement_vaccine   = 1.0,
     vacc_multi_eff           = F, # flag for vaccine model with distribution of vaccine efficacies
     vacc_multi_fxn = "function(xx,...){runif(xx)}", #function to determine values of vaccine efficacies for "vacc_mulit_eff" models, default is random 
 #midas vaccine

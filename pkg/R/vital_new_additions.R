@@ -11,7 +11,7 @@
 #' example function call here
 
 #' @export
-new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),at=NULL)
+new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","initial"),at=NULL)
 {
   #description:
   #main argument: type="births" or type="initial"
@@ -30,7 +30,7 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
   #------------------------------
   
   #agent-specific id
-  input_list$id[index] <-  index 
+  input_list$id[index] <-  evo_index 
   
   
   #functions for these variables are same initial population and for new births
@@ -130,18 +130,25 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
   #first added for AgeAndSPVL model (Steve); note that the log of RR tends to be approx normal, not the RR itself
   input_list$susceptibility[index] <- exp(rnorm(total_new, 0 , dat$param$susceptibility_var))
   
+  #vaccination trial status (0 for all new agents)
+  input_list$trial_status[index] <- 0
 
-  #-----------------------------
+    #-----------------------------
   #these variables need different functions for initial population and births
   if(type=="initial")
   {
-    # note: for attributes "sex","att1","role", initial values created in 
+    # note: for attributes "sex","att1","role", "trial_status" initial values created in 
     # "setup_nw()" and set on nw, these values then transferred to "pop" list
     
  
     input_list$sex[index] <- dat$attr$sex
     input_list$age[index] <- dat$attr$age
     input_list$sqrt_age[index] <- sqrt(dat$attr$age)
+    
+    if(dat$param$vaccine_trial){
+    #vaccination trial status (0 for all new agents)
+    input_list$trial_status[index] <- dat$attr$trial_status
+    }
     
     # Assign generic nodal attribute values
     if(!is.logical(dat$param$generic_nodal_att_values)){
@@ -216,6 +223,13 @@ new_additions <- function(input_list=NULL,dat,index,type=c("births","initial"),a
     } else {
       input_list$sex[index]<- sample(c(0,1),length(index),prob=c(0.5,0.5),replace=T)
     }
+    
+    if(dat$param$vaccine_trial){
+      #vaccination trial status (0 for all new agents)
+      input_list$trial_status[index] <- 0
+    }
+    
+    
     
     # Assign generic nodal attribute
     if(!is.logical(dat$param$generic_nodal_att_values)){

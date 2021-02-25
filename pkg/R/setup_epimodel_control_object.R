@@ -68,7 +68,7 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
               module.order  = c(names(module_list),"nwupdate.FUN","resim_nets.FUN"),
               save.other    = c("attr","pop","param","nw","coital_acts_list",
                            "popsumm","vl_list","InfMat","age_list","el",
-                           "sessionInfo","partner_list"))   
+                           "sessionInfo","partner_list","trans_probs_list"))   
   
   
   

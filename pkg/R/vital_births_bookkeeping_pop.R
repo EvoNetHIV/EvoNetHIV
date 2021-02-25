@@ -42,8 +42,14 @@ attr_new <- lapply(1:length(dat$attr),
     ix_end  <-  ix_start
   }
   
+  #note: "births" includes initial population
+  evo_index <- (dat$total_agents+1):(dat$total_agents+no_births)
+  dat$total_agents <- dat$total_agents+no_births
+  
+
 attr_final <- new_additions(input_list = attr_new, dat = dat,
                                 index = ix_start:ix_end,
+                                evo_index = evo_index,
                                 type= "births", at = timestep)   
 #add epimodel specific attributes (not part of evonet)
 attr_final$status     <- c(dat$attr$status,   rep("s",no_births))
@@ -52,6 +58,7 @@ attr_final$entrTime   <- c(dat$attr$entrTime, rep(timestep, no_births ) )
 attr_final$exitTime   <- c(dat$attr$exitTime, rep(NA_real_, no_births ) )
 attr_final$infTime    <- c(dat$attr$infTime,  rep(NA_real_, no_births ) )
 
-  
-  return(attr_final)
+dat$attr <- attr_final
+
+return(dat)
 }

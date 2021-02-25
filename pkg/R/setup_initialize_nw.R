@@ -58,6 +58,13 @@ if(any(is.na(age_vec))){browser()}
 
 network::set.vertex.attribute(x=nw, attr="age", value=age_vec)
 network::set.vertex.attribute(x=nw, attr="sqrt_age", value=sqrt(age_vec))
+#--------------------------------
+if(params$vaccine_trial){
+  index <- sample(1:params$initial_pop,2,replace=F)
+  trial_vector <- numeric(params$initial_pop)
+  trial_vector[index] <- 1
+  network::set.vertex.attribute(x=nw, attr="trial_status", value=trial_vector)
+}
 
 #--------------------------------
 #set generic atts on nw if in use

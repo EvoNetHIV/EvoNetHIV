@@ -31,8 +31,9 @@ initialize_agents <- function(dat,at)
   names(pop) <- popVars
   
   pop <- new_additions(input_list = pop, dat = dat,
-                           index = 1 : dat$param$initial_pop,
-                           type = "initial", at = at)
+                       index = 1 : dat$param$initial_pop,
+                       evo_index = 1 : dat$param$initial_pop,
+                       type = "initial", at = at)
   
   #Aim 3 variables (ask john for clarification); each agent gets a row in matrix
   #V,I,M,L that tracs number of mutations

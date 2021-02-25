@@ -35,7 +35,7 @@ evo_arrivals <- function(dat, at) {
   dat$no_births <- dat$no_births + nBirths 
   
   #expand "attr" lists and fill in default values as needed
-  dat$attr <- vital_births_bookkeeping_pop(no_births = nBirths, 
+  dat  <- vital_births_bookkeeping_pop(no_births = nBirths, 
                                           dat=dat, timestep = at)
   
   

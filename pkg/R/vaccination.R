@@ -1,5 +1,13 @@
 vaccination <- function(dat, at) {
   
+  #if vaccine trial, choose agents and give them value "1", on vaccine trial
+  if( (dat$param$start_vacc_campaign[1]-at) == dat$param$trial_status_time_switch &    dat$param$vaccine_trial ) {
+    trial_samples <- round(length(dat$attr$Status)*dat$param$perc_vacc_trial)
+    trial_index <-  sample(1:length(dat$attr$Status), trial_samples,replace=F)
+    dat$attr$trial_status[trial_index] <- 1
+    }
+  
+  
   if(at < dat$param$start_vacc_campaign[1]) {return(dat)}
   #temp qaqc
   #if(at==dat$param$start_vacc_campaign[1]){browser()}
@@ -69,7 +77,7 @@ vaccination <- function(dat, at) {
     if(proportion_vacc > dat$param$max_perc_vaccinated){return(dat)}
     
     #dat$param$vacc_per_day <- dat$param$vacc_per_day+((dat$param$max_perc_vaccinated)*length(which(dat$attr$Status>=0)) )/(5*365)
-     vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(5*365)
+     vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(dat$param$vacc_rollout_dur *365)
     
      time_index <- (dat$param$start_vacc_campaign[1]+dat$param$vacc_rollout_dur) - at
      if(time_index>0){
@@ -143,6 +151,17 @@ vaccination <- function(dat, at) {
     }
     
     dat$attr$vaccinated[vaccinated_index] <- 1
+    
+    #placebos! may or may not be used
+    if( dat$param$perc_vaccinated_placebo>0){
+      ix1 <- rbinom(length(vaccinated_index),1,dat$param$perc_vaccinated_placebo)
+      ix2 <- which(ix1==1)
+      if(length(ix2)>0){
+        ix3 <- vaccinated_index[ix2]
+        dat$attr$vaccinated[ix3] <- 2
+      }
+    }
+    
     dat$attr$vacc_init_time[vaccinated_index] <- at
     
   }

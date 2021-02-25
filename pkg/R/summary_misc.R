@@ -251,6 +251,14 @@ if(at == dat$param$n_steps){
    }
    
  }
+################
+#10 
+if(dat$param$save_trans_probs & at == dat$param$n_steps){
+ out_list <-  do.call(rbind, dat$trans_probs_list)
+dat$trans_probs_list <- out_list
+colnames(dat$trans_probs_list) <- c("timestep","trans_prob","agent_id")
 
+}
+###################
 return(dat)
 }
