@@ -71,36 +71,20 @@ vaccination <- function(dat, at) {
     }
   } else {
     
-    #if designated vacc. level reached (percent of pop vaccianted), don't vacc anymore
-    proportion_vacc <- length(which(dat$attr$vaccinated == 1 & dat$attr$Status>=0 ))/length(which(dat$attr$Status>=0))
+    #if designated vacc. level reached (percent of pop vaccinated based on initial popn. size), don't vacc anymore
+    proportion_vacc <- length(which(dat$attr$vaccinated >= 1 & dat$attr$Status>=0 ))/dat$param$initial_pop
                                                                        
     if(proportion_vacc > dat$param$max_perc_vaccinated){return(dat)}
     
-    #dat$param$vacc_per_day <- dat$param$vacc_per_day+((dat$param$max_perc_vaccinated)*length(which(dat$attr$Status>=0)) )/(5*365)
-     vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(dat$param$vacc_rollout_dur *365)
+    vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(dat$param$vacc_rollout_dur)
+    #poisson draw should give more or less correct total number after a while
+    no_vaccinated <- rpois(1,vacc_rate)
+    if(no_vaccinated==0){return(dat)}  
     
-     time_index <- (dat$param$start_vacc_campaign[1]+dat$param$vacc_rollout_dur) - at
-     if(time_index>0){
-       vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(time_index)
-       
-     }else{
-        target <- dat$param$max_perc_vaccinated- proportion_vacc
-        vacc_rate <- target*length(which( dat$attr$Status>=0 ))
-     }
-     
-    dat$param$vacc_per_day <- dat$param$vacc_per_day+vacc_rate
-    
-    if(dat$param$vacc_per_day>=1){
-      no_vaccinated <- round(dat$param$vacc_per_day)
-      dat$param$vacc_per_day <- 0
-    }else{
-      return(dat)
-      }
     
     # Eligible_patients: eligible for care, not vaccinated, not infected
     #note:dat$attr$vaccinated == 0 is an agent whose vaccine effect ended (waned)
 
-    
     #never been vaccinated
     eligible_index1 <- which(dat$attr$Status == 0 & 
                               is.na(dat$attr$vaccinated) &
@@ -114,31 +98,18 @@ vaccination <- function(dat, at) {
     
     eligible_index <- c(eligible_index1,eligible_index2)
     
-    
+    #if trial in place, remove agents deemed eligible but not in trial
+    if(dat$param$vaccine_trial){
+      trial_status = dat$attr$trial_status[eligible_index]
+      trial_index <- which(trial_status==1)
+      if(length(trial_index)>0){
+        eligible_index <- eligible_index[trial_index]
+      }else{
+        eligible_index <- NULL
+      }
+    }
     
     if(length(eligible_index) == 0) {return(dat)}  #if no agents are eligible
-    
-    #default  
-    #no_vaccinated <- sum(rbinom(length(which(dat$attr$Status>=0)), 1, dat$param$perc_vaccinated)) #denominator is total population alive 
-    #test 3/27/20
-    #no_vaccinated <- rbinom(1,length(which(dat$attr$Status>=0)), dat$param$perc_vaccinated) #denominator is total population alive 
-    #no_vaccinated <- sum(rbinom(length(which(dat$attr$Status==0)), 1, dat$param$perc_vaccinated)) #denominator is total population alive 
-    
-    #test 3/27/20
-    #if(at==1828){browser()}
-    
-    # if(dat$param$vacc_per_day<1){
-    #    vacc_scalar <- round(1/dat$param$vacc_per_day)
-    #    if((at%%vacc_scalar)==0){
-    #      no_vaccinated <- 1
-    #    }else{no_vaccinated <- 0}
-    # }else{
-    #   if((at%%2)==0){
-    #     no_vaccinated <- floor(dat$param$vacc_per_day) 
-    #   }else{
-    #     no_vaccinated <- ceiling(dat$param$vacc_per_day) 
-    #   }
-    # }
     
     if(no_vaccinated == 0) {return(dat)}
     
