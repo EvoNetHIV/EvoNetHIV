@@ -80,8 +80,20 @@ social_coital_acts <-function(dat,at)
   acts_by_agent_index <- as.numeric(names(acts_by_agent))
   
   #discordonant total acts
-  dat$attr$total_acts[acts_by_agent_index] <-  
-    ( dat$attr$total_acts[acts_by_agent_index]+as.numeric(acts_by_agent) ) 
+  dat$attr$total_disc_acts[acts_by_agent_index] <-  
+    ( dat$attr$total_disc_acts[acts_by_agent_index]+as.numeric(acts_by_agent) ) 
+  
+  #all total sex acts
+  #frequency of agent_id in vector 3 is how many sex acts agent had in timestep
+  #vector 4 summarizes that frequency
+  vector1 <- rep(discord_edgelist_df$agent1,times=discord_edgelist_df$no_acts)
+  vector2 <- rep(discord_edgelist_df$agent2,times=discord_edgelist_df$no_acts)
+  vector3 <- c(vector1,vector2)
+  vector4 <- table(vector3)
+  
+  dat$attr$total_acts[as.numeric(names(vector4))] <-  
+    ( dat$attr$total_acts[as.numeric(names(vector4))]+as.numeric(vector4) ) 
+  
   
   #add couple id
   discord_edgelist_df$couple_id <- 1:nrow(discord_edgelist_df)
