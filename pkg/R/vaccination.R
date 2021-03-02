@@ -52,7 +52,7 @@ vaccination <- function(dat, at) {
   if(!is.element(at,dat$param$start_vacc_campaign)) {return(dat)}
   #------------------------------------------------
   
-  # If vaccine is targeted to attribute groups
+  # Identifying agents for vaccination if vaccine is targeted to attribute groups, not used much
   if(dat$param$target_vacc_att) {
     for(i in 1:dat$param$generic_nodal_att_no_categories) {
       eligible_index <- which(dat$attr$Status == 0 & 
@@ -68,15 +68,19 @@ vaccination <- function(dat, at) {
       
       dat$attr$vaccinated[vaccinated_index] <- 1
       dat$attr$vacc_init_time[vaccinated_index] <- at
-    }
+    } #end of targeted groups
   } else {
     
+   #Identifying agents for vaccination for standard scenario (no targeted groups)
+    
     #if designated vacc. level reached (percent of pop vaccinated based on initial popn. size), don't vacc anymore
-    proportion_vacc <- length(which(dat$attr$vaccinated >= 1 & dat$attr$Status>=0 ))/dat$param$initial_pop
+    
+    current_pop_size <- length(dat$attr$Status) #could be any attribute vector in "attr" list
+    proportion_vacc <- length(which(dat$attr$vaccinated >= 1 & dat$attr$Status>=0 ))/ current_pop_size
                                                                        
     if(proportion_vacc > dat$param$max_perc_vaccinated){return(dat)}
     
-    vacc_rate <- (dat$param$max_perc_vaccinated*dat$param$initial_pop  )/(dat$param$vacc_rollout_dur)
+    vacc_rate <- (dat$param$max_perc_vaccinated * current_pop_size  )/(dat$param$vacc_rollout_dur)
     #poisson draw should give more or less correct total number after a while
     no_vaccinated <- rpois(1,vacc_rate)
     if(no_vaccinated==0){return(dat)}  
