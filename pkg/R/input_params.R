@@ -403,6 +403,8 @@ input_params<-function(
     vaccine_trial            = FALSE, #trial scenario? FALSE or TRUE
     trial_status_time_switch  = 365, #how many days before start of vacc campaign/trial should trial_status be switched from 0 to 1
     perc_vacc_trial          = 0,  #what percent of agents enter vaccination trial
+    initial_trial_participants = 100, #used in "setup_initialize_nw", though trial doesn't start immediately,
+                                      #need to seed initial network with a sufficient number for proper estimation
     target_vacc_att          = FALSE,
     vacc_eff_duration        =  365*3,
     risk_comp_cond           = F,    # Set to T to induce reduction in condom use among vaccinated susceptibles and vaccinated, infected, undiagnosed individuals.

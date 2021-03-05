@@ -82,7 +82,11 @@ vaccination <- function(dat, at) {
     
     vacc_rate <- (dat$param$max_perc_vaccinated * current_pop_size  )/(dat$param$vacc_rollout_dur)
     #poisson draw should give more or less correct total number after a while
-    no_vaccinated <- rpois(1,vacc_rate)
+    if(dat$param$vacc_rollout_dur==1){
+      no_vaccinated <- ceiling(vacc_rate)
+    }else{
+      no_vaccinated <- rpois(1,vacc_rate)
+    }
     if(no_vaccinated==0){return(dat)}  
     
     
