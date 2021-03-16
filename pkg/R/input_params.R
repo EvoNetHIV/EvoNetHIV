@@ -57,7 +57,7 @@ input_params<-function(
     modes         = 1, #epimodel param, will change to 2 in "input_params_derived" if hetero model
     nw_form_terms = "~edges + offset(nodematch('role', diff=TRUE, keep=1:2))",
     nw_coef_form  = c(-Inf, -Inf),
-    target_stats  = 100*0.7/2,
+    target_stats  = initial_pop*0.7/2,
     relation_dur  = 50,
     d_rate =        3e-05, # default value in epimodel's netest
     nw_constraints = " ~.",

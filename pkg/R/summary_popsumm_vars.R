@@ -2,7 +2,7 @@ summary_popsumm_vars <- function(dat){
 
   default_vars <- c("timestep", "prevalence", "new_infections", "susceptibles",
   "total_infections_alive", "births", "aids_deaths", "natural_deaths",
-  "aged_out", "natural_deaths_infecteds", "natural_deaths_susceptibles",
+  "aged_out",
   "alive", "no_in_aids_gamma", "no_in_aids_cd4", 
   "new_diagnoses", "percent_donor_acute",
   "mean_time_donor_infected_incident", "mean_age_incident", "mean_age_died_AIDS",
@@ -13,6 +13,8 @@ summary_popsumm_vars <- function(dat){
   "prop_nodes_degree_1", "prop_nodes_concurrent",
   "cd4_gt_350", "cd4_200_350","cd4_0_200")
 
+  #deprecated older default vars (can be put in if necessary)
+   #"natural_deaths_infecteds", "natural_deaths_susceptibles",
 
  hetero_vars <-  c("alive_female", "alive_male",
   "prev_15to24", "prev_15to49", "prev_f_15to24", "prev_f_15to49",
@@ -34,10 +36,12 @@ summary_popsumm_vars <- function(dat){
 
   vaccine_vars = c("new_infections_vacc_sens_virus",
                      "new_infections_vacc_resist_virus", "percent_virus_sensitive_vacc",
-                     "percentAliveVaccinated")
+                     "percentAliveVaccinated","no_vaccinated")
   
   dmv_vaccine_vars = c("mean_spvl_genotype","mean_spvl_nonvacc","mean_spvl_incident_vacc","percentAliveVaccinated",
                        "perc_eligible_vacc")
+  
+  vaccine_trial_vars <- c("new_infections_vacc","new_infections_notvacc","new_infections_placebo")
   
   aim3_vars <-  c("total_new_infections", "new_infections_drug_sens_virus",
   "new_infections_drug_part_res_virus", "new_infections_drug_3_plus_res_virus",
@@ -97,6 +101,8 @@ summary_popsumm_vars <- function(dat){
   if(dat$param$vacc_therapeutic_campaign){
     popsumm_vars <- c(popsumm_vars,dmv_vaccine_vars)
   }
+  #vaccine trial
+  if(dat$param$vaccine_trial){ popsumm_vars <- c(popsumm_vars,vaccine_trial_vars)}
     
     return(popsumm_vars)
 }

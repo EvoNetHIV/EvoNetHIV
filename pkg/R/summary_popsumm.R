@@ -70,7 +70,7 @@ summary_popsumm<-function(dat,at){
     new_diagnoses <- dat$attr$diag_status == 1 &  is.element(dat$attr$diag_time,time_index)
     percent_virus_sensitive <- round(100*(length(which(dat$attr$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
     percentVaccinated <- round(100*(length(which(dat$attr$vaccinated >= 1 & alive_index))/total_alive))
-
+    no_vaccinated <- length(which(dat$attr$vaccinated >= 1 & alive_index))
     
     #network statistics
     # some of these can't be computed if we are in edgelist mode
@@ -405,7 +405,16 @@ summary_popsumm<-function(dat,at){
     dat$epi$new_infections_vacc_sens_virus[at]<- new_infections_virus_vacc_sens_count
     dat$epi$new_infections_vacc_resist_virus[at]<-  new_infections_virus_vacc_notsens_count
     dat$epi$percent_virus_sensitive_vacc[at]<- percent_virus_sensitive
-    dat$epi$percentAliveVaccinated[at]<- percentVaccinated
+    dat$epi$no_vaccinated[at]<- no_vaccinated
+  }
+  #vaccine trial
+  if(dat$param$vaccine_trial){
+    dat$epi$new_infections_vacc[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & 
+                                                       dat$attr$vaccinated==1))
+    not_vacc_index <- (is.na(dat$attr$vacccinated) | dat$attr$vacccinated==0)
+    dat$epi$new_infections_notvacc[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & not_vacc_index))
+    dat$epi$new_infections_placebo[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & 
+                                                          dat$attr$vaccinated==2))
   }
   #--------------------------------------------
   #disease modifying vaccine
