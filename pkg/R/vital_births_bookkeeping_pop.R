@@ -18,18 +18,24 @@ vital_births_bookkeeping_pop <- function(no_births,dat,timestep)
   # Inputs: dat$param$no_loci, no_births, dat$pop
   # Outputs: attr_new
   
-  V_vec_length <- 2^dat$param$Max_Allowable_Loci
-  temp_matrix  <- matrix(0, nrow = no_births, ncol = V_vec_length)
-  
+#for scalar (single value) attributes (age,sex,etc)  
 attr_new <- lapply(1:length(dat$attr),
                      function(jj){
-                       if(is.vector(dat$attr[[jj]])){
-                         dat$attr[[jj]] <- c(dat$attr[[jj]],rep(NA_real_,no_births))}
-                       else{dat$attr[[jj]] <- rbind(dat$attr[[jj]],temp_matrix) } 
-                     })
+                         dat$attr[[jj]] <- c(dat$attr[[jj]],rep(NA_real_,no_births))} )
+names(attr_new) <- names(dat$attr)
+
+#aim3 matrices 
+if (dat$param$VL_Function == "aim3") {
+  V_vec_length <- 2^dat$param$Max_Allowable_Loci
+  temp_matrix  <- matrix(0, nrow = no_births, ncol = V_vec_length)
+  dat$V_vec <- rbind(dat$V_vec,temp_matrix)
+  dat$I_vec <- rbind(dat$I_vec,temp_matrix)
+  dat$M_vec <- rbind(dat$M_vec,temp_matrix)
+  dat$L_vec <- rbind(dat$L_vec,temp_matrix)
+}
+
+
   
-  
-  names(attr_new) <- names(dat$attr)
   
   #this assumes all pop list elements have the same length, so it doesn't matter
   #which one you use to create an index.

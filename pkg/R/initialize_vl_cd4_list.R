@@ -52,27 +52,27 @@ if(dat$param$save_vl_list){
                                dat$attr$CD4[vl_ix],#CD4
                                dat$attr$CD4count[vl_ix]/200, # CD4c
                                at, #Time
-                               dat$attr$V_vec[vl_ix,seq0], # Muts0
-                               rowSums(dat$attr$V_vec[vl_ix,seq1,drop=F]), # Muts1
-                               rowSums(dat$attr$V_vec[vl_ix,seq2,drop=F]), # Muts2
-                               rowSums(dat$attr$V_vec[vl_ix,seq3,drop=F]), # Muts3
-                               rowSums(dat$attr$V_vec[vl_ix,seq4,drop=F]), # Muts4
-                               dat$attr$V_vec[vl_ix,seq5], # Muts5
+                               dat$V_vec[vl_ix,seq0], # Muts0
+                               rowSums(dat$V_vec[vl_ix,seq1,drop=F]), # Muts1
+                               rowSums(dat$V_vec[vl_ix,seq2,drop=F]), # Muts2
+                               rowSums(dat$V_vec[vl_ix,seq3,drop=F]), # Muts3
+                               rowSums(dat$V_vec[vl_ix,seq4,drop=F]), # Muts4
+                               dat$V_vec[vl_ix,seq5], # Muts5
                                dat$attr$Drug1[vl_ix], #D1
                                dat$attr$Drug2[vl_ix], #D2
                                dat$attr$Drug3[vl_ix], #D3
                                rowSums(dat$attr$I_vec[vl_ix,,drop=F]), #I
                                rowSums(dat$attr$M_vec[vl_ix,,drop=F]), #M
                                rowSums(dat$attr$L_vec[vl_ix,,drop=F]), #L
-                               rowSums(dat$attr$V_vec[vl_ix,K65R,drop=F])/dat$attr$V[vl_ix],#K65R
-                               rowSums(dat$attr$V_vec[vl_ix,M184V,drop=F])/dat$attr$V[vl_ix], #M184V
-                               rowSums(dat$attr$V_vec[vl_ix,K103N,drop=F])/dat$attr$V[vl_ix], #K103N
-                               rowSums(dat$attr$V_vec[vl_ix,K103N_gEFV,drop=F])/dat$attr$V[vl_ix], # K103N + generic EFV 
-                               rowSums(dat$attr$V_vec[vl_ix,M184V_K65R,drop=F])/dat$attr$V[vl_ix], #M184VK65R
-                               rowSums(dat$attr$V_vec[vl_ix,GenericTDF,drop=F])/dat$attr$V[vl_ix],
-                               rowSums(dat$attr$V_vec[vl_ix,GenericEFV,drop=F])/dat$attr$V[vl_ix],
+                               rowSums(dat$V_vec[vl_ix,K65R,drop=F])/dat$attr$V[vl_ix],#K65R
+                               rowSums(dat$V_vec[vl_ix,M184V,drop=F])/dat$attr$V[vl_ix], #M184V
+                               rowSums(dat$V_vec[vl_ix,K103N,drop=F])/dat$attr$V[vl_ix], #K103N
+                               rowSums(dat$V_vec[vl_ix,K103N_gEFV,drop=F])/dat$attr$V[vl_ix], # K103N + generic EFV 
+                               rowSums(dat$V_vec[vl_ix,M184V_K65R,drop=F])/dat$attr$V[vl_ix], #M184VK65R
+                               rowSums(dat$V_vec[vl_ix,GenericTDF,drop=F])/dat$attr$V[vl_ix],
+                               rowSums(dat$V_vec[vl_ix,GenericEFV,drop=F])/dat$attr$V[vl_ix],
                                dat$attr$Drug4[vl_ix], # Second line therapy
-                               dat$attr$V_vec[vl_ix,seq0]/dat$attr$V[vl_ix]) #WT
+                               dat$V_vec[vl_ix,seq0]/dat$attr$V[vl_ix]) #WT
   } # end of aim 3 initial values
  
 } else{dat$vl_list<-NULL}

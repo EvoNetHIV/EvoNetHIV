@@ -13,7 +13,8 @@ options(error=recover) # go into debug mode on error
 ## Function to be passed to ABC_sequential function
 
 get_params <- function(x) {
-
+  library(evonet)
+  
   set.seed(x[1])
   require(evonet)
   
@@ -25,7 +26,7 @@ get_params <- function(x) {
   params_list$plot_nw                     <-  F
 
   ## Override selected default parameters
-  params_list$initial_pop            <- 500
+  params_list$initial_pop            <- 1000
   params_list$initial_infected       <- 10
   params_list$model_sex              <- "hetero"
   params_list$n_steps                <- 365*25
@@ -181,7 +182,7 @@ print(runtime)
 
 #
 #plotting
-
+if(F){
 vars=c("trans_lambda","prop_AI",'mean_prop_acts_AI',"sd_prop_acts_AI","fem_conc","male_conc","rel_dur")
 if(T){
 load("abc_out_original_small.RData")
@@ -198,4 +199,10 @@ for(ii in 1:7){
 }
 mtext("Posterior density (unnormalized) and prior density",outer=T,side=3,line=1)
 }
+
+}
  
+library(Hmisc)
+pairs(abc_out_original_small$param)
+res2 <- rcorr(as.matrix(abc_out_original_small$param))
+res2

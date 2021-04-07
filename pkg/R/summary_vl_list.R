@@ -65,33 +65,36 @@ GenericTDF <- c(17:32)
 namesvec<-c("id","vl","cd4","cd4c","time","muts0","muts1","muts2","muts3","muts4","muts5","drug1","drug2",
             "drug3","I","M","L","Mut1","Mut2","Mut3","Muts35","Muts12","Mut4","Mut5","drug4")
 
+#if(at==251){browser()}
 
 if(dat$param$Max_Allowable_Loci==5){
   
-dat$vl_list[[at]] <- cbind(dat$attr$id[vl_ix], #Agent
+  id=dat$attr$id[vl_ix]
+  
+  dat$vl_list[[at]] <- cbind(dat$attr$id[vl_ix], #Agent
                         dat$attr$V[vl_ix], #VL, viral load
                         dat$attr$CD4[vl_ix],#CD4
                         dat$attr$CD4count[vl_ix]/200, # CD4c
                         at, #Time, in days
-                        dat$attr$V_vec[vl_ix,seq0], # muts0, wildtype virus, no mutations
-                        rowSums(dat$attr$V_vec[vl_ix,seq1,drop=F]), # muts1, all single mutations regardless of locus position
-                        rowSums(dat$attr$V_vec[vl_ix,seq2,drop=F]), # muts2, all double mutations regardless of locus position
-                        rowSums(dat$attr$V_vec[vl_ix,seq3,drop=F]), # muts3, all triple mutations regardless of locus position
-                        rowSums(dat$attr$V_vec[vl_ix,seq4,drop=F]), # muts4, all quadruple mutations regardless of locus position
-                        dat$attr$V_vec[vl_ix,seq5], # muts5, all quintuple mutations regardless of locus position
+                        dat$V_vec[id,seq0], # muts0, wildtype virus, no mutations
+                        rowSums(dat$V_vec[id,seq1,drop=F]), # muts1, all single mutations regardless of locus position
+                        rowSums(dat$V_vec[id,seq2,drop=F]), # muts2, all double mutations regardless of locus position
+                        rowSums(dat$V_vec[id,seq3,drop=F]), # muts3, all triple mutations regardless of locus position
+                        rowSums(dat$V_vec[id,seq4,drop=F]), # muts4, all quadruple mutations regardless of locus position
+                        dat$V_vec[id,seq5], # muts5, all quintuple mutations regardless of locus position
                         dat$attr$Drug1[vl_ix], #D1, drug 1, tenofovir
                         dat$attr$Drug2[vl_ix], #D2, drug 2, lamivudine
                         dat$attr$Drug3[vl_ix], #D3, drug 3, efavirenz
-                        rowSums(dat$attr$I_vec[vl_ix,,drop=F]), #I
-                        rowSums(dat$attr$M_vec[vl_ix,,drop=F]), #M
-                        rowSums(dat$attr$L_vec[vl_ix,,drop=F]), #L
-                        rowSums(dat$attr$V_vec[vl_ix,K65R,drop=F]),#Mut1, K65R mutations, not mutually exclusive 
-                        rowSums(dat$attr$V_vec[vl_ix,M184V,drop=F]), #Mut2, M184V mutations, not mutually exclusive
-                        rowSums(dat$attr$V_vec[vl_ix,K103N,drop=F]), #Mut3, K103N mutations, not mutually exclusive
-                        rowSums(dat$attr$V_vec[vl_ix,K103N_gEFV,drop=F]), # Muts35, K103N + Generic EFV (e.g. G190A, Y181C)
-                        rowSums(dat$attr$V_vec[vl_ix,M184V_K65R,drop=F]), # Muts12, M184VK65R double mut
-                        rowSums(dat$attr$V_vec[vl_ix,GenericEFV,drop=F]), # Mut4, GenericEFV  
-                        rowSums(dat$attr$V_vec[vl_ix,GenericTDF,drop=F]), # Mut5, GenericTDF
+                        rowSums(dat$I_vec[id,,drop=F]), #I
+                        rowSums(dat$M_vec[id,,drop=F]), #M
+                        rowSums(dat$L_vec[id,,drop=F]), #L
+                        rowSums(dat$V_vec[id,K65R,drop=F]),#Mut1, K65R mutations, not mutually exclusive 
+                        rowSums(dat$V_vec[id,M184V,drop=F]), #Mut2, M184V mutations, not mutually exclusive
+                        rowSums(dat$V_vec[id,K103N,drop=F]), #Mut3, K103N mutations, not mutually exclusive
+                        rowSums(dat$V_vec[id,K103N_gEFV,drop=F]), # Muts35, K103N + Generic EFV (e.g. G190A, Y181C)
+                        rowSums(dat$V_vec[id,M184V_K65R,drop=F]), # Muts12, M184VK65R double mut
+                        rowSums(dat$V_vec[id,GenericEFV,drop=F]), # Mut4, GenericEFV  
+                        rowSums(dat$V_vec[id,GenericTDF,drop=F]), # Mut5, GenericTDF
                         dat$attr$Drug4[vl_ix]) #D4, drug4, Second line therapy
 
   colnames(dat$vl_list[[at]]) <- namesvec

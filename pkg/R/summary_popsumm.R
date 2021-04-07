@@ -71,7 +71,7 @@ summary_popsumm<-function(dat,at){
     percent_virus_sensitive <- round(100*(length(which(dat$attr$virus_sens_vacc==1 & inf_index))/length(which(inf_index))))
     percentVaccinated <- round(100*(length(which(dat$attr$vaccinated >= 1 & alive_index))/total_alive))
     no_vaccinated <- length(which(dat$attr$vaccinated >= 1 & alive_index))
-    
+   
     #network statistics
     # some of these can't be computed if we are in edgelist mode
     # so need to create a network from the edgelist
@@ -407,15 +407,29 @@ summary_popsumm<-function(dat,at){
     dat$epi$percent_virus_sensitive_vacc[at]<- percent_virus_sensitive
     dat$epi$no_vaccinated[at]<- no_vaccinated
   }
-  #vaccine trial
-  if(dat$param$vaccine_trial){
-    dat$epi$new_infections_vacc[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & 
-                                                       dat$attr$vaccinated==1))
-    not_vacc_index <- (is.na(dat$attr$vacccinated) | dat$attr$vacccinated==0)
-    dat$epi$new_infections_notvacc[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & not_vacc_index))
-    dat$epi$new_infections_placebo[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & 
-                                                          dat$attr$vaccinated==2))
-  }
+  
+  
+  
+  #"new" vaccine model
+  if(dat$param$vaccine_model){
+    
+    vacc_status <- unlist(lapply(dat$attr$phi,function(x) x[1]))
+    no_vaccinated  <- length(which(vacc_status==1))
+    dat$epi$no_vaccinated[at] <- no_vaccinated 
+    #vaccine trial (component of "new vaccine model)
+    if(dat$param$vaccine_trial){
+      
+      no_placebo <- length(which(vacc_status==2))
+      dat$epi$no_placebo[at] <- no_placebo 
+      
+      dat$epi$new_infections_vacc[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & 
+                                                         vacc_status==1))
+      not_vacc_index <- (is.na(vacc_status) | vacc_status==0)
+      dat$epi$new_infections_notvacc[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & not_vacc_index))
+      dat$epi$new_infections_placebo[at] <- length(which( is.element(dat$attr$Time_Inf, time_index) & 
+                                                            vacc_status==2))
+    }
+  } #end of "new" vaccine model
   #--------------------------------------------
   #disease modifying vaccine
   #Note 2/11/19: intrinsic (formerly called genotypic) = spvl assigned to agents regardless of vaccine status, one that is passed on to infectees, 

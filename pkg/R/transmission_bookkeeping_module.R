@@ -139,13 +139,16 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   #aim 3 bookkeeping (ask john)
   if (dat$param$VL_Function == "aim3") {
 
+     aim3recip = dat$attr$id[recipient] #for matrices only
+     aim3infector = dat$attr$id[infector] #for matrices only
+     
     V_vec_length <- 2^dat$param$Max_Allowable_Loci
-    inf_ix <- apply(dat$attr$V_vec[infector,,drop=F],1,function(x) sample(1:V_vec_length,1,prob=x))
-    dat$attr$V_vec[recipient,inf_ix] <- dat$param$V0
-    dat$attr$I_vec[recipient,inf_ix] = (dat$param$c *dat$attr$V_vec[recipient,inf_ix] / 
+    inf_ix <- apply(dat$V_vec[ aim3infector,,drop=F],1,function(x) sample(1:V_vec_length,1,prob=x))
+    dat$V_vec[ aim3recip,inf_ix] <- dat$param$V0
+    dat$I_vec[ aim3recip,inf_ix] = (dat$param$c *dat$V_vec[  aim3recip ,inf_ix] / 
                                          dat$param$p_inf_cells)
-    dat$attr$M_vec[recipient,] <- 0
-    dat$attr$L_vec[recipient,] <- 0
+    dat$M_vec[ aim3recip,] <- 0
+    dat$L_vec[ aim3recip,] <- 0
     
     dat$attr$K[recipient] <- vl_peak
     dat$attr$CD4tot[recipient] <- 1000
@@ -190,7 +193,7 @@ transmission_bookkeeping_module <- function(dat,timeIndex)
   dat$attr$Donors_Generation[recipient] <- dat$attr$Generation[infector]
   dat$attr$Donors_SetPoint[recipient] <- dat$attr$SetPoint[infector]
   dat$attr$Donors_LogSetPoint[recipient] <- dat$attr$LogSetPoint[infector]
-  dat$attr$Donors_Index[recipient] <-   dat$attr$id[infector] #evonet id not network id
+  dat$attr$Donors_Index[recipient] <-   infector #evonet id not network id
   dat$attr$Donors_age[recipient] <-   dat$attr$age[infector]
   dat$attr$Donors_diag_status[recipient] <-   dat$attr$diag_status[infector]
   dat$attr$Donors_treated[recipient] <-   dat$attr$treated[infector]

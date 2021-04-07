@@ -27,7 +27,10 @@ summary_misc <- function(dat,at){
 #-----------------------------------------------------------------
 #0 fill in "pop" list (permanent record of agents)
 # when agents die/age-out
+#if(at==20){browser()}
   
+if(!dat$param$vaccine_model) #skip pop structure for now with midas vaccine model
+  {
   
 agent_vars <- input_parameters_agent_attributes()$popVariables
 #add default epimodel agent attributes
@@ -47,45 +50,21 @@ if(agent_var_flag){
 ix <- which(dat$attr$Time_Death == at)
 if(length(ix)>0 & at != dat$param$n_steps){  
      if(length(dat$pop)==0){
-          if(dat$param$VL_Function != "aim3"){ 
-              dat$pop <- rep(list(NULL),length(dat$attr))  
-              names(dat$pop) <- names(dat$attr)
-          }else{
-            vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
-            non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
-            attr_list <- dat$attr[-non_vectors]
-            dat$pop <- rep(list(NULL),length(attr_list))#remove aim3 matrices
-            #browser()
-            names(dat$pop) <- names(attr_list)
-           }
+            dat$pop <- rep(list(NULL),length(dat$attr))#remove aim3 matrices
+            names(dat$pop) <- names(dat$attr)
      }
- 
      for(ii in 1:length(ix)){
-       agent_index <- ix[ii]
-       if(dat$param$VL_Function != "aim3"){ 
-           agent_attr <- lapply(1:length(dat$attr), function(xx) dat$attr[[xx]][agent_index ] )
-           dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],agent_attr[[xx]]) )
-           names(dat$pop) <- names(dat$attr)
-      }else{
-
-            #if aim3 don't save attributes that are matrices
-            vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
-            non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
-            attr_list <- dat$attr[-non_vectors]
-            agent_attr <- lapply(1:length(attr_list), function(xx) attr_list[[xx]][agent_index ] )
-            pop_names <- names(dat$pop)
-            dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],agent_attr[[xx]]) )
-           if(length(dat$pop) != length(attr_list) ){browser()}
-             names(dat$pop) <- names(attr_list)
         
-      }
-     }
+           agent_index <- ix[ii]
+           agent_attr <- lapply(1:length(dat$attr), function(xx) dat$attr[[xx]][agent_index ] )
+           aa=try({dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],agent_attr[[xx]]) ) })
+           if(class(aa)=="try-error"){browser()}
+           names(dat$pop) <- names(dat$attr)
+        }
 } #end of if(length(ix)>0) & at != dat$param$n_steps){
  
 #if end of model run, save all agent attributes
 if(at == dat$param$n_steps){
-  
-   if(dat$param$VL_Function != "aim3"){ 
         #last time-step, fill in all agents on dat$attr
      if(length(dat$pop)==0){
        dat$pop <- dat$attr 
@@ -93,32 +72,15 @@ if(at == dat$param$n_steps){
      }else{
      
        if(length(names(dat$pop)) != length(names(dat$attr)) ){browser()}
-        dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],dat$attr[[xx]]) )
+       aa=try({ dat$pop <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],dat$attr[[xx]]) )  })
+       if(class(aa)=="try-error"){browser()}
         names(dat$pop) <- names(dat$attr)
      }
-    }else{
-      
-      vector_flag <- unlist(lapply(dat$attr,function(x) is.vector(x)))
-      non_vectors <- which(!vector_flag) #e.g., aim3 matrices etc.
-      attr_list <- dat$attr[-non_vectors]
-      
-      if(length(dat$pop)>0){ #at least one agent has died/aged-out
-      # browser()
-          
-          aa=try({
-            out <- lapply(1:length(dat$pop),function(xx) c(dat$pop[[xx]],attr_list[[xx]]) )
-          })
-          if(class(aa)=="try-error"){browser()}
-          dat$pop <- out
-          if(length(names(dat$pop) != names(attr_list))){browser()}
-          names(dat$pop) <- names(attr_list)
-      }else{ #if no agents died pop list is attribute list minus matrices
-        dat$pop <- attr_list 
-      }
-    }
-}
-
+ }
+ 
+}#end of if(!dat$param$vaccine_model)
   
+###################################  
 #1
 #populate vl/cd4 list
 
@@ -220,9 +182,9 @@ dat$age_list[[5]]<-dat$attr$age[which(dat$attr$Status>=0)]
 
 #-----------------------------------------------------------------
 #7
-if(at == dat$param$n_steps){    
-  dat$sessionInfo <-  sessionInfo()
-}
+#if(at == dat$param$n_steps){    
+#  dat$sessionInfo <-  sessionInfo()
+#}
 
 #-----------------------------------------------------------------
 #8

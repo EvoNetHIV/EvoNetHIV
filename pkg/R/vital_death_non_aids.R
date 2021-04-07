@@ -44,7 +44,7 @@ vital_death_non_aids <- function(dat,at)
   
   #  bookkeeping
 
-  if(no_dead) {
+  if(no_dead>0) {
     
     index <- active_evo[nat_deaths]
     

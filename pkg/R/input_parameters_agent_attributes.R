@@ -41,9 +41,6 @@ input_parameters_agent_attributes <-function(){
     "Donors_LogSetPoint",              "Donors_SetPoint",
     "Donors_d_acute",                  "Time_Death",
     "Donors_diag_status",              
-    
-    "V_vec",                           "I_vec",
-    "M_vec",                           "L_vec",
     "K",                               "Imm_Trig", 
     "CD4count",                        "CD4tot",
     "ChronPhase",                      "OnDrug",
@@ -102,7 +99,9 @@ input_parameters_agent_attributes <-function(){
     "have_suppressed_partner",           "have_unknown_status_partner",
     "agent_condom_user",                 "vacc_eff",
     "vacc_rr",                            "trial_status",
-    "last_ts_relationship",              "last_ts_multiple_relationships")
+    "last_ts_relationship",              "last_ts_multiple_relationships",
+    #vaccination model
+   "phi","mu","sigma","theta","m","vaccination.dates.stack")
     ##############################
   ) #end of  list
   

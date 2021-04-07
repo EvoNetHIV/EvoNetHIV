@@ -133,7 +133,7 @@ viral_update_gamma <- function(dat, at) {
   
   #update aim3 V_vec matrix (per john's request)
   if(dat$param$VL_Function=="aim3"){
-    dat$attr$V_vec[,1]<-dat$attr$V
+    dat$V_vec[match(dat$attr$id,1:nrow(dat$V_vec)),1]<-dat$attr$V
   }
   
   

@@ -20,6 +20,8 @@ viral_update_aim3_args_list_2 <- function(dat,timeIndex,ind)
   #"viral_update_modified_logistic_args_list_1" as list components are 
   #derived model quantities, not raw input parameters
   
+  id=dat$attr$id[ind]
+  
   list(Agent = ind,
        time_0     =  timeIndex-1,
        time_final =  timeIndex,
@@ -30,10 +32,10 @@ viral_update_aim3_args_list_2 <- function(dat,timeIndex,ind)
        Adherence3  =  dat$attr$Adherence3[ind],
        Adherence4  =  dat$attr$Adherence4[ind],
        Virus_DT   =  data.table::data.table(
-         V = dat$attr$V_vec[ind,],
-         I = dat$attr$I_vec[ind,],
-         M = dat$attr$M_vec[ind,],
-         L = dat$attr$L_vec[ind,]
+         V = dat$V_vec[id,],
+         I = dat$I_vec[id,],
+         M = dat$M_vec[id,],
+         L = dat$L_vec[id,]
        ),
        K          =  dat$attr$K[ind],
        CD4        =  dat$attr$CD4[ind],

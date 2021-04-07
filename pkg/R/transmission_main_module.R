@@ -29,8 +29,8 @@ transmission_main_module <- function(dat,at)
   #output: dat$discord_coital_df$infection (0/1)
   
   #either no discordant couples or discordant couples but no sex
-  if(is.null(  dat$discord_coital_df)){
-    return(dat)}
+  #if(is.null(  dat$discord_coital_df)){
+  #  return(dat)}
   
   condom_use <- dat$discord_coital_df$condom
   insert_id  <- dat$discord_coital_df$insert_id 
@@ -191,6 +191,12 @@ transmission_main_module <- function(dat,at)
   }
   dat$discord_coital_df$trans_probs <- trans_probs
   
+  return(dat)
+}
+ 
+
+transmission_inf_calc<-function(dat,at) 
+{  
   #####################################################
   # generate uniform random number, infection if less than trans probs 
   dat$discord_coital_df$uniform_prob <- runif(nrow(dat$discord_coital_df))
@@ -200,6 +206,8 @@ transmission_main_module <- function(dat,at)
     dat$discord_coital_df$infection[index] <- 1
   }
   
+  ####################################
+  #if saving transmission probabilities (as exposure metric)
   if(dat$param$save_trans_probs){
     
     trans_probs_matrix <- cbind(dat$discord_coital_df$timestep,

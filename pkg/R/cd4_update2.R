@@ -34,6 +34,7 @@ cd4_update2 <- function(dat,at)
   
   #ask john about aim3
   if(dat$param$VL_Function=="aim3"){
+
     # Aim 3 code allows virus to rebound due to drug resistance.  For aim 3 code, don't assume that treated
     # patients wont progress (i.e., don't restrict the list of infectees to those who aren't treated)
     # Note: It would probably be harmless to apply this to aim 2 code as well, but I am restricting this change

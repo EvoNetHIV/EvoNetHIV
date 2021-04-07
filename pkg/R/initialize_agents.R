@@ -35,22 +35,25 @@ initialize_agents <- function(dat,at)
                        evo_index = 1 : dat$param$initial_pop,
                        type = "initial", at = at)
   
-  #Aim 3 variables (ask john for clarification); each agent gets a row in matrix
-  #V,I,M,L that tracs number of mutations
+ 
   if(dat$param$VL_Function == "aim3"){
+    #Below code is for Aim3 runs which are uncommon, most users can ignore
+    #Aim 3 variables (ask john for clarification); each agent gets a row in matrix
+    #V,I,M,L that tracs number of mutations
+    
   V_vec_length   <- 2^dat$param$Max_Allowable_Loci 
-  pop$V_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
-  pop$I_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
-  pop$M_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
-  pop$L_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
+  dat$V_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
+  dat$I_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
+  dat$M_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
+  dat$L_vec <- matrix(0,nrow=dat$param$initial_pop, ncol=V_vec_length)
   }
   
-  #remove duplicates
+  #remove duplicate agent attributes
   #Depending on network attributes, there may be redundancy of agent attributes
   #created by "new_addtions()" and attributes on network. The way epimodel is
   #setup, requires values for network attributes before the creation of the
   #agent "population". Kind of involved explanation, but this removes 
-  #attributes that were already created  as they were necessry for network
+  #attributes that were already created  as they were necessary for network
   #estimation
   while(T){
   ix=which(names(pop) %in% names(dat$attr))
@@ -63,8 +66,8 @@ initialize_agents <- function(dat,at)
   }
   
   #assigns "pop" object to main "dat" epimodel data structure
-  
   dat$attr <- c(dat$attr,pop)  
+  
   
   return(dat)
 }

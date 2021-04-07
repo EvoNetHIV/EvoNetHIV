@@ -392,17 +392,28 @@ input_params<-function(
     max_age_recruit_for_care  = 100,   # Parameter that allows targeting of people of intermediate ages to get under care
 
 # -- vaccine parameters  --------#
- #"vaccination" fxn
+ #"vaccination" 
+    vaccine_model           = FALSE, # midas vaccine model being used?
+    evonet.initialization.timestep = 1, #used to distinguish between initial model agent setup or not
+    daily.vaccine.reversion.rate = 1/365,
+    vaccine.efficacy.by.mark = c( "sensitive" = 0.8 ),  #proportion (percentage) decrease in trans probs due to vaccine for vaccine model "1" (baseline vaccine model),
+    initial.mark.distribution = c( "sensitive" = 1 ), #distribution of marks in infected population
+    fraction.vaccinated = 0.60,
+    vaccine.rollout.year = 5,
+    vaccine.rollout.duration.years = 1,
+    vaccine.efficacy.years = 3, #not currently used for anything
+    revaccination.eligibility.years = 3,
+    no_marks                 = 1, #simplest,baseline model
     preventative_campaign    = F,
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.99,
     max_perc_vaccinated      = 1.0, #maximum proportion of alive pop to vaccinate
     vacc_per_day             = 0,  #used internally to calibrate vaccination rollout (vaccination.R file)
     vacc_rollout_dur         = 1*365, #desired time (in days) to reach "max_perc_vaccinated"
-    perc_vaccinated_placebo  = 0, # what % of vaccinated get placebo 
+    prop_vaccinated_placebo  = 0, # what % of vaccinated get placebo 
     vaccine_trial            = FALSE, #trial scenario? FALSE or TRUE
     trial_status_time_switch  = 365, #how many days before start of vacc campaign/trial should trial_status be switched from 0 to 1
-    perc_vacc_trial          = 0,  #what percent of agents enter vaccination trial
+    prop_vacc_trial          = 0,  #what percent of agents enter vaccination trial
     initial_trial_participants = 100, #used in "setup_initialize_nw", though trial doesn't start immediately,
                                       #need to seed initial network with a sufficient number for proper estimation
     target_vacc_att          = FALSE,
@@ -415,10 +426,6 @@ input_params<-function(
     spvl_decrement_vaccine   = 1.0,
     vacc_multi_eff           = F, # flag for vaccine model with distribution of vaccine efficacies
     vacc_multi_fxn = "function(xx,...){runif(xx)}", #function to determine values of vaccine efficacies for "vacc_mulit_eff" models, default is random 
-#midas vaccine
-   perc_vaccinated_rate          = 0.99, #daily proportion of eligible recipients that will be vaccinated
-   vaccine_model_id=1, #for Paul and Josh's vaccine model, currently only one model (1) but in future 1,2,3...
-   vacc_trans_prob_decrease = 1, # percentage (proportion) decrease in transm. probs due to vaccination for vaccine model 1
 
 #coital acts module
   #social_coital-acts

@@ -3,6 +3,16 @@
 #' @export
 evo_nwupdate<- function(dat, at) {
   
+  if(dat$param$vaccine_model){
+    if(length(dat$attr$Status) != length(dat$attr$phi)){browser()}
+    if(length(dat$attr$Status) != length(dat$attr$mu)){browser()}
+    if(length(dat$attr$Status) != length(dat$attr$m)){browser()}
+    if(length(dat$attr$Status) != length(dat$attr$m)){browser()}
+    if(length(dat$attr$Status) != length(dat$attr$sigma)){browser()}
+  }
+  
+  
+  
   ## Attributes
   type <- get_control(dat, "type", override.null.error = TRUE)
   tergmLite <- get_control(dat, "tergmLite")

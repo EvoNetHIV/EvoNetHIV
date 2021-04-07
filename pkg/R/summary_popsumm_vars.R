@@ -41,7 +41,8 @@ summary_popsumm_vars <- function(dat){
   dmv_vaccine_vars = c("mean_spvl_genotype","mean_spvl_nonvacc","mean_spvl_incident_vacc","percentAliveVaccinated",
                        "perc_eligible_vacc")
   
-  vaccine_trial_vars <- c("new_infections_vacc","new_infections_notvacc","new_infections_placebo")
+  vaccine_trial_vars <- c("new_infections_vacc","new_infections_notvacc","new_infections_placebo",
+                          "no_vaccinated","no_placebo")
   
   aim3_vars <-  c("total_new_infections", "new_infections_drug_sens_virus",
   "new_infections_drug_part_res_virus", "new_infections_drug_3_plus_res_virus",

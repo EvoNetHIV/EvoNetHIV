@@ -37,7 +37,7 @@ viral_update_aim3 <-function(dat,at)
  
     out     <- do.call(viral_dynamics_aim3,arg_list)
     
-    dat$attr <- viral_update_aim3_rcpp_output(dat,out,ind)
+    dat <- viral_update_aim3_rcpp_output(dat,out,ind)
 
     #if (arg_list$SecondLineTherapyStarted == 1) {
     # cat("pause here\n")
@@ -56,34 +56,30 @@ viral_update_aim3 <-function(dat,at)
  
     # See summary_vl_list for notes about convertion of binary to decimals
 
+    id=dat$attr$id[ind]
     
-    mutation_vec <- c( sum(dat$attr$V_vec[ind,seq0]), 
-                       sum(dat$attr$V_vec[ind,seq1]),
-                       sum(dat$attr$V_vec[ind,seq2]),
-                       sum(dat$attr$V_vec[ind,seq3]),
-                       sum(dat$attr$V_vec[ind,seq4]),
-                       sum(dat$attr$V_vec[ind,seq5]))
+    mutation_vec <- c( sum(dat$V_vec[id,seq0]), 
+                       sum(dat$V_vec[id,seq1]),
+                       sum(dat$V_vec[id,seq2]),
+                       sum(dat$V_vec[id,seq3]),
+                       sum(dat$V_vec[id,seq4]),
+                       sum(dat$V_vec[id,seq5]))
     
     no_mutations <- which.max(mutation_vec)-1
     dat$attr$aim3_no_muts[ind] <- no_mutations
     
-    if((dat$attr$M_vec[ind,seq0]+dat$attr$L_vec[ind,seq0])>0)
+    if((dat$M_vec[id,seq0]+dat$L_vec[id,seq0])>0)
       dat$attr$aim3_mutations_long[ind] <- 0
-    if(sum(dat$attr$M_vec[ind,seq1])+sum(dat$attr$L_vec[ind,seq1])>0)
+    if(sum(dat$M_vec[id,seq1])+sum(dat$L_vec[id,seq1])>0)
       dat$attr$aim3_mutations_long[ind]<- 1
-    if(sum(dat$attr$M_vec[ind,seq2])+sum(dat$attr$L_vec[ind,seq2])>0)
+    if(sum(dat$M_vec[id,seq2])+sum(dat$L_vec[id,seq2])>0)
       dat$attr$aim3_mutations_long[ind]<- 2
-    if(sum(dat$attr$M_vec[ind,seq3])+sum(dat$attr$L_vec[ind,seq3])>0)
+    if(sum(dat$M_vec[id,seq3])+sum(dat$L_vec[id,seq3])>0)
       dat$attr$aim3_mutations_long[ind]<- 3
-    if(sum(dat$attr$M_vec[ind,seq4])+sum(dat$attr$L_vec[ind,seq4])>0)
+    if(sum(dat$M_vec[id,seq4])+sum(dat$L_vec[id,seq4])>0)
       dat$attr$aim3_mutations_long[ind]<- 4
-    if((dat$attr$M_vec[ind,seq5]+dat$attr$L_vec[ind,seq5])>0)
+    if((dat$M_vec[id,seq5]+dat$L_vec[id,seq5])>0)
       dat$attr$aim3_mutations_long[ind]<- 5
-    
-    
-    
-    
-    
     
     }
   } #end of   for (ind in List_HIV_Infected) loop

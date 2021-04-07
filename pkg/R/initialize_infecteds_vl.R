@@ -158,13 +158,13 @@ initialize_infecteds_vl <- function(dat,at)
   #Aim3 dynamics
   if(param$VL_Function=="aim3"){
   initial_vec <- rep(0,"^"(2, param$Max_Allowable_Loci))                
-  pop$V_vec[ind,] <- initial_vec
-  pop$I_vec[ind,] <- initial_vec
-  pop$M_vec[ind,] <- initial_vec
-  pop$L_vec[ind,] <- initial_vec
+  dat$V_vec[ind,] <- initial_vec
+  dat$I_vec[ind,] <- initial_vec
+  dat$M_vec[ind,] <- initial_vec
+  dat$L_vec[ind,] <- initial_vec
   
-  pop$V_vec[ind,1] <- pop$V[ind] # Assume 100% WT at time 0. (everything else left at zero)
-  pop$I_vec[ind,1] <- pop$V[ind] * param$c / param$p_inf_cells
+  dat$V_vec[ind,1] <- pop$V[ind] # Assume 100% WT at time 0. (everything else left at zero)
+  dat$I_vec[ind,1] <- pop$V[ind] * param$c / param$p_inf_cells
   
   pop$CD4count[ind] <- param$s_CD4 /param$m_CD4 # Initial concentration of CD4 T-cells
   pop$CD4tot[ind] <- param$s_CD4 /param$m_CD4 # Initial concentration of CD4 T-cells

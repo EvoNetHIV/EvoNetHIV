@@ -89,13 +89,13 @@ vital_death_aids <-function(dat,at)
       
     no_dead <- length(dead_agents)
        
-    if (no_dead) {
+    if (no_dead>0) {
       dat$attr$Status[dead_agents] <- (-2)
       dat$attr$active[dead_agents] <- 0
       dat$attr$exitTime [dead_agents] <- at
       dat$attr$Time_Death[dead_agents]<-at
       #update counter
-      dat$no_deaths_aids <- no_dead 
+      dat$no_deaths_aids <- dat$no_deaths_aids+no_dead 
     }
   
   return(dat)

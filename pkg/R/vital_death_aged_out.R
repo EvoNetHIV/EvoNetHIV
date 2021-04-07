@@ -26,7 +26,7 @@ vital_death_aged_out <- function(dat,at)
   aged_out_index <- which(ages>=dat$param$max_age)
   no_aged_out <- length(aged_out_index)
   
-  if(no_aged_out){
+  if(no_aged_out>0){
     
     index <- active_evo[aged_out_index]
     #bookkeeping
