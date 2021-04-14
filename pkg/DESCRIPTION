@@ -19,7 +19,7 @@ Imports:
     ape
 Depends:
     Rcpp (>= 0.11.5),
-    EpiModel (>= 1.2.6),
+    EpiModel (>= 2.0.0),
     ergm (>= 3.2.4),
     tergm
 Suggests:
