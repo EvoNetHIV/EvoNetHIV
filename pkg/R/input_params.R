@@ -15,7 +15,9 @@ input_params<-function(
     hyak_par     = FALSE, #on hyak and parallelized run?
     cp_int        = NULL, #checpoint save interval on nestim_hpc hyak runs
     output_path  =  getwd(),
-    fast_edgelist = FALSE,
+    fast_edgelist = FALSE, #legacy parameter 
+    tergmlite     = TRUE, #default setting to use tergmLite package (e.g., fast edgelist),
+                          #possible that tergmLite package doesn't support desired network dynamics though
     nsims        = 1,
     initial_pop  = 100, #initial popn
     n_steps      = 365*2,

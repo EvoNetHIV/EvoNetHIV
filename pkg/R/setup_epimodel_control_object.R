@@ -54,7 +54,7 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
               nsims =  evonet_params$nsims,
               ncores =   evonet_params$ncores,
               resimulate.network = TRUE,
-              tergmLite = TRUE,
+              tergmLite = evonet_params$tergmlite,
               save.nwstats = TRUE,
               nwstats.formula = "formation",
               verbose = F,
@@ -62,21 +62,13 @@ setup_epimodel_control_object <- function(evonet_params,module_list)
               skip.check = TRUE,
               raw.output = FALSE,
               initialize.FUN = initialize_module,
-              #resim_nets.FUN = resim_nets,
-              #nwupdate.FUN = evo_nwupdate,
+              nwupdate.FUN = evo_nwupdate,
               verbose.FUN = f1,
               module.order  = c(names(module_list),"nwupdate.FUN","resim_nets.FUN"),
               save.other    = c("attr","pop","param","nw","coital_acts_list",
                            "popsumm","vl_list","InfMat","age_list","el",
                            "sessionInfo","partner_list","trans_probs_list"))   
-  
-  
-  
- 
-  #base EpiModel, do. call wasn't working, replaced with "invoke"
-  #control <- do.call(EpiModel::control.net,  
-   #                  control_epimodel_params_list )
-  
+
   control <- rlang::invoke(EpiModel::control.net,  
                      c(module_list,control_epimodel_params_list) )
   
