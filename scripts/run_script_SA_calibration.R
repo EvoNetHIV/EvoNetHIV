@@ -9,14 +9,14 @@ model_name      <- "vacc_sens_0.625_ve_0.8_cov_0.5_rc_0.7"
 
 params_list=list()
 
-params_list$nsims                  <- 2
-params_list$ncores                 <- 1
-params$plot_nw                     <-  F
+params_list$nsims                  <- 10
+params_list$ncores                 <- 10
+params_list$plot_nw               <-  F
 ## Override selected default parameters
-params_list$initial_pop            <- 200
-params_list$initial_infected       <- 30
+params_list$initial_pop            <- 30000
+params_list$initial_infected       <- 60
 params_list$model_sex              <- "hetero"
-params_list$n_steps                <- 365 * 20
+params_list$n_steps                <- 365 * 30
 params_list$popsumm_frequency      <- 30
 #params_list$poisson_birth_lambda   <- 0.0137*(params_list$initial_pop/100)
 params_list$vl_peak_agent_flag     <- T
@@ -59,7 +59,7 @@ params_list$tx_in_acute_phase         <- T
 params_list$cov_prob                  <- c(0, 0.010, 0.021, 0.030, 0.049, 0.100, 0.191, 0.283, 0.402, 0.560) # 0.56 from UNAIDS estimate, 2016
 params_list$cov_prob_yrs              <- c(0, 11:18, 27) # Years at which coverage changes 
 params_list$cov_prob_scal <- matrix(c(0.569, 1.240, 1.240, 0.421, 0.919, 0.919), ncol = 2, 
-                                  dimnames = list(c("15-24", "25-34", "35+"), c("f", "m")))
+                                  dimnames = list(c("15-24", "25-34", "35+"), c(0, 0)))
 params_list$cov_prob_ageg <- list(c(15, 25), c(25, 35), c(35, params_list$max_age + 1))
 
 ## Vaccination parameters
