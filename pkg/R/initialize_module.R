@@ -19,10 +19,23 @@ initialize_module <- function(x, param, init, control, s)
   #1st step is epimodel function, rest evonet specific
   
 
-  #1 sets up basic EpiModel structure with EpiModel function initialize.net
+  #1 
+  # sets up basic EpiModel structure with EpiModel function initialize.net
   dat  <-  initialize.net(x, param, init, control,s)
   
-  #2 create empty list of population summary stats
+  #1b 
+  #if evonet parameters are to be sampled from distributions calculated here
+  #e.g., a different value for each replicate 
+  if(length(dat$param$random_params)>0){
+    random_params <-  names(param_list$random_params)
+    for(ii in 1:length(random_params)){
+      parameter <- random_params[ii]
+      dat$param[[parameter]]= do.call(dat$param$random_params[[ii]],list())
+    }
+  }
+  
+  #2 
+  # create empty list of population summary stats
   # e.g. dat$epi$prevalence,dat$epi$incidence, etc.
   #filled in "summary_popsumm"
   #actual stats depend on type of model (msm/hetero/ART/aim3 )
@@ -33,12 +46,14 @@ initialize_module <- function(x, param, init, control, s)
     dat <-  add_epi(dat,popsumm_vars[ii])
   }
 
-  #3 Remove relationships specified as prohibited in network formation terms
+  #3 
+  # Remove relationships specified as prohibited in network formation terms
   if(dat$param$rm_offset_rel) {
     dat <- remove_offset_relationships(dat)
   }
   
-  #4 sets up agent attributes and initial values 
+  #4 
+  # sets up agent attributes and initial values 
   dat  <-  initialize_agents(dat, 1)
   
   #fills in vl variable values for initial infecteds

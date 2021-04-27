@@ -25,6 +25,13 @@ input_params<-function(
     model_sex    = "msm",
     popsumm_frequency=1, #frequency of timesteps should popsumm stats be calculated
     ncores =1, #16 if running on hyak using EpiModelHPC
+    random_params = list(),# can be used to specify use of randomly sampled parameters across simulations
+                            #e.g., param_list$random_params = list(trans_lambda=function() {runif(1,0,1)})
+                           #names of list must be official evonet parameter (e.g., found in this list) and
+                           # not have any function arguments, these functions are then called in 
+                           #"initialize_module" and more than one parameter can be specified:
+                            #param_list$random_params = list(trans_lambda=function() {runif(1,0,1)}, t_acute=
+                            # function(){runif(1,80,100)})
   #runtime printing options  
     scrolling_output = TRUE,
     print_frequency = 10, # Set to 10 to print to output screen every 10 days. Default should be 1.
@@ -403,9 +410,16 @@ input_params<-function(
     fraction.vaccinated = 0.60,
     vaccine.rollout.year = 5,
     vaccine.rollout.duration.years = 1,
-    vaccine.efficacy.years = 3, #not currently used for anything
+    vaccine.efficacy.years = 3, # not currently used (?)
     revaccination.eligibility.years = 3,
-    no_marks                 = 1, #simplest,baseline model
+    no_marks                 = 1, # simplest,baseline model
+    initial_phi_value        =1, # simplest, baseline model 
+    vacc_type               ="standard", #baseline model phi=0/1
+                                         #"linear", phi increases from 0 to 1 linearly over specified time frame
+    vacc_phi_daily_increase  = 0, # if "vacc_type" = "linear', then this specifies daily rate of increase of phi
+                                  # e.g.,   vacc_phi_daily_increase= 1/365, then phi
+                                  # increases from 0 to one over a year
+    vacc_min_efficacy_duration  = 0, #minimum time in days vaccine is effective
     preventative_campaign    = F,
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.99,

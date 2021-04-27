@@ -274,7 +274,7 @@ initialize_phi <- function(dat, at) {
   phi.values <- unlist(getPhi(dat));
   
   # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
-  is.vaccinated.by.agent <- (!is.na( phi.values ) & phi.values == 1)
+  is.vaccinated.by.agent <- (!is.na( phi.values ) & (phi.values > 0 |phi.values <= 1))
   vaccinated.placebo <- (!is.na(phi.values) & (phi.values == 2))
   is.unvaccinated.by.agent <- is.na( phi.values );
   is.previously.vaccinated.by.agent <- (!is.na( phi.values ) & phi.values == 0)
@@ -369,7 +369,14 @@ initialize_phi <- function(dat, at) {
        }
     }
   }else{
-    dat <- setPhi( dat, 1, vaccinated_indices );
+    
+    #simple case of phi equal to single numeric value (assumed (0,1] )
+    if(is.numeric(dat$param$initial_phi_value) & length(dat$param$initial_phi_value)==1){
+    dat <- setPhi( dat, dat$param$initial_phi_value, vaccinated_indices )
+    }else{
+      #placeholder for more complicated values of phi (e.g., other than single numberic value)
+    }
+    
   }
   
   dat <- addVaccinationDate( dat, at, vaccinated_indices );
@@ -386,38 +393,68 @@ initialize_phi <- function(dat, at) {
 #' @export
 update_phi <- function(dat, at) {
   if(at <= dat$param$vaccine.rollout.year*365  ){return(dat)}
-  
-  phi.values <- unlist(getPhi(dat))
-  
+
+
   # Each agent is either vaccinated, unvaccinated, or previously vaccinated (and presently unvaccinated)
-  is.vaccinated.by.agent <- (!is.na(phi.values) & (phi.values == 1))
+  # get vaccination status of agents 
+  phi.values <- unlist(getPhi(dat))
+  is.vaccinated.by.agent <- (!is.na(phi.values) & (phi.values > 0 |phi.values <= 1))
   vaccinated.placebo <- (!is.na(phi.values) & (phi.values == 2))
   is.unvaccinated.by.agent <- is.na( phi.values )
   is.previously.vaccinated.by.agent <- (!is.na(phi.values) & (phi.values == 0))
   stopifnot(all(as.numeric(is.vaccinated.by.agent + is.unvaccinated.by.agent +  vaccinated.placebo+
                              is.previously.vaccinated.by.agent) == 1))
+ ###############################################
+  #increasing vaccine efficacy
+ if(dat$param$vacc_type=="linear"){
+   vacc_indices <- which( is.vaccinated.by.agent & isUninfectedByAgent(dat) & phi.values< 1 )
+   new_values <- phi.values[vacc_indices]+ dat$param$vacc_phi_daily_increase
+   new_values <- pmin(new_values,1)
+   dat <- setPhi( dat, new_values, vacc_indices )
+ }  
   
-  ## NOTE/THOUGHT:
-  ## This builds in that they are not already infected; later we
-  ## might consider that there is some state of knowledge of infected
-  ## status, which might differ from actual infected status (eg
-  ## when enrollment is within the window period of the
-  ## diagnostic assay; this is a common enough occurrance it's
-  ## important in our downstream work to distinguish sometimes
-  ## -- probably not important here, but just noting this for
-  ## the record). For preserving existing code it'd probably be better to keep
-  ## Status meaning known-status, and add some delay from exposure to the time at
-  ## which you update to Status==1.
+  ################################################
+  #start of end of vaccine protection
   
-  # Here phi is just turning from 1 to 0 with some small probability; I like that, as
-  ## it is Markov and should obviate the need to store the date of vaccination.
-  vacc_indices <- which( is.vaccinated.by.agent & isUninfectedByAgent( dat ) );
-  if (length( vacc_indices) > 0) {
-    # With a small probability each day we might switch a person to being (effectively)
-    # not vaccinated (aka no vaccine-induced protection).
-    new_values <- rbinom( length( vacc_indices ), 1, 1 - dat$param$daily.vaccine.reversion.rate );
-    dat <- setPhi( dat, new_values, vacc_indices );
+  if(dat$param$vaccine_waning_type=="daily"){
+    vacc_indices <- which( is.vaccinated.by.agent & isUninfectedByAgent(dat) )
+    vacc_dates <- getMostRecentVaccinationDate(dat,indices = vacc_indices) 
+    vacc_duration <-  at - vacc_dates
+    vacc_elapsed_index <- which(vacc_duration > dat$param$vacc_min_efficacy_duration)
+    if(length(vacc_elapsed_index)>0){
+      new_values <- rbinom( length( vacc_indices ), 1, 1 - dat$param$daily.vaccine.reversion.rate );
+      dat <- setPhi( dat, new_values,vacc_elapsed_index )
+    }
   }
+  
+  if(dat$param$vaccine_waning_type=="cliff-edge"){
+    vacc_indices <- which( is.vaccinated.by.agent & isUninfectedByAgent(dat) )
+    vacc_dates <- getMostRecentVaccinationDate(dat,indices = vacc_indices) 
+    vacc_duration <-  at - vacc_dates
+    vacc_elapsed_index <- which(vacc_duration > dat$param$vacc_min_efficacy_duration)
+    if(length(vacc_elapsed_index)>0){
+      new_values <- 0  
+      dat <- setPhi( dat, new_values,vacc_elapsed_index )
+    }
+  }
+  
+  if(dat$param$vaccine_waning_type=="exponential"){
+    vacc_indices <- which( is.vaccinated.by.agent & isUninfectedByAgent(dat) )
+    vacc_dates <- getMostRecentVaccinationDate(dat,indices = vacc_indices) 
+    vacc_duration <- (at - vacc_dates)/365
+    if(dat$param$vacc_exp_decline_rate>0){
+      exp_decline <-  (-1* dat$param$vacc_exp_decline_rate)
+    }else{
+      exp_decline <- dat$param$vacc_exp_decline_rate
+    }
+    decay_rate <- exp_decline * vacc_duration
+    new_values <- phi.values[vacc_indices]*exp(decay_rate*vacc_duration)
+    new_values[new_phi_values<0.01] <- 0
+    dat <- setPhi( dat, new_values, vacc_indices )
+  }
+  
+  # end of end of vaccine protection
+  ################################################  
   return( dat );
 }
 
