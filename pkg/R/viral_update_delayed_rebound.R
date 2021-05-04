@@ -132,8 +132,10 @@ viral_update_delayed_rebound <- function(dat, at) {
   #}
   
   #update aim3 V_vec matrix (per john's request)
+  if(dat$param$VL_Function=="aim3"){
   aa=try(dat$V_vec[match(dat$attr$id,1:nrow(dat$V_vec)),1] <- dat$attr$V)
   if(class(aa)=="try-error"){browser()}
+  }
   
   #for agents on treatment
   treatment_ix <- which(dat$attr$treated==1 & dat$attr$V> dat$param$vl_full_supp)
