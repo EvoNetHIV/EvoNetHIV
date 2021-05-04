@@ -59,7 +59,7 @@ params_list$tx_in_acute_phase         <- T
 params_list$cov_prob                  <- c(0, 0.010, 0.021, 0.030, 0.049, 0.100, 0.191, 0.283, 0.402, 0.560) # 0.56 from UNAIDS estimate, 2016
 params_list$cov_prob_yrs              <- c(0, 11:18, 27) # Years at which coverage changes 
 params_list$cov_prob_scal <- matrix(c(0.569, 1.240, 1.240, 0.421, 0.919, 0.919), ncol = 2, 
-                                  dimnames = list(c("15-24", "25-34", "35+"), c(0, 0)))
+                                  dimnames = list(c("15-24", "25-34", "35+"), c(0, 1)))
 params_list$cov_prob_ageg <- list(c(15, 25), c(25, 35), c(35, params_list$max_age + 1))
 
 ## Vaccination parameters
