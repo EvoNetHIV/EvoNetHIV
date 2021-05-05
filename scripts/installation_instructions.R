@@ -1,5 +1,5 @@
 ##########################################
-#install evonet as a regular package 
+#install evonet as a regular package (not going to work on code)
 # first close all open R or RStudio instances and open new one
 if(!require("devtools")){
     install.packages("devtools")
@@ -11,25 +11,11 @@ install_github("EvoNetHIV/EvoNet",subdir="pkg", dependencies=T)
 #note: On CSDE servers, various errors may arise when installing/updating various packages,
 #      easiest to shut down all open RStudio instances and repeat these steps until all packages
 #      updated and installed
-library(evonet)
 
 ##########################################
-#install as RStudio project
+#install as RStudio project (going to work on code and update evonet package)
 
-# 1)install necessary dependencies and packages
-# first close all open R or RStudio instances and open new one
-
-if(!require("devtools")){
-    install.packages("devtools")
-}
-
-#note: if prompted probably best to choose to update all packages
-#      but not necessary to build from source (if prompted)
-#note: On CSDE servers, various errors may arise when installing/updating various packages,
-#      easiest to shut down all open RStudio instances and repeat these steps until all packages
-#      updated and installed
-install_github("EvoNetHIV/EvoNet",subdir="pkg", dependencies=T)
-
+#1) follow steps above 
 
 #2) In Rstudio, choose "new project", then "version control", then "git"
 #3) url: https://github.com/EvoNetHIV/EvoNetHIV/
