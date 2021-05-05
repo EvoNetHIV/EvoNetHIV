@@ -20,8 +20,9 @@ Imports:
 Depends:
     Rcpp (>= 0.11.5),
     EpiModel (>= 2.0.0),
-    ergm (>= 3.2.4),
-    tergm
+    ergm (>= 3.10),
+    tergm (>= 3.5),
+    tergmLite (>= 2.2.0)
 Suggests:
     testthat,
     knitr,
