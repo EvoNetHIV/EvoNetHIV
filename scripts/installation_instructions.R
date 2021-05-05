@@ -1,22 +1,34 @@
 ##########################################
 #install evonet as a regular package 
-
+# first close all open R or RStudio instances and open new one
 if(!require("devtools")){
     install.packages("devtools")
-    library(devtools)
- }
-install_github("EvoNetHIV/EvoNet",subdir="pkg")
+}
+
+install_github("EvoNetHIV/EvoNet",subdir="pkg", dependencies=T)
+#note: if prompted probably best to choose to update all packages
+#      but not necessary to build from source (if prompted)
+#note: On CSDE servers, various errors may arise when installing/updating various packages,
+#      easiest to shut down all open RStudio instances and repeat these steps until all packages
+#      updated and installed
 library(evonet)
 
 ##########################################
 #install as RStudio project
 
-# 1)install necessary dependencies
-if(!require("devtools")){install.packages("devtools")}
-if(!require("EpiModel")){install.packages("EpiModel")}
-if(!require("data.table")){install.packages("data.table")}
-if(!require("plotrix")){install.packages("plotrix")}
-if(!require("testthat")){install.packages("testthat")}
+# 1)install necessary dependencies and packages
+# first close all open R or RStudio instances and open new one
+
+if(!require("devtools")){
+    install.packages("devtools")
+}
+
+#note: if prompted probably best to choose to update all packages
+#      but not necessary to build from source (if prompted)
+#note: On CSDE servers, various errors may arise when installing/updating various packages,
+#      easiest to shut down all open RStudio instances and repeat these steps until all packages
+#      updated and installed
+install_github("EvoNetHIV/EvoNet",subdir="pkg", dependencies=T)
 
 
 #2) In Rstudio, choose "new project", then "version control", then "git"
