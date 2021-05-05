@@ -57,7 +57,8 @@ if(dat$param$condom_use_rel_dur){
   }
   condom_user_modifier_non_users <- (dat$attr$condom_user[dat$discord_coital_df$sus_id] + 
                                     dat$attr$condom_user[dat$discord_coital_df$inf_id])/2
-  condom_prob <- condom_prob*condom_user_modifier_non_users
+  ix <- which(dat$discord_coital_df$infected==1)
+  condom_prob[ix] <- condom_prob[ix] * condom_user_modifier_non_users
                           
 }
 
@@ -71,10 +72,15 @@ if(dat$param$condom_use_age){
     # For age_condom_use_halves = 50, average age = 50, min_age = 16, modifier below will be (50-16)/(50+50-2*16) = (50-16)/(50-16+50-16) = 0.5
     condom_user_modifier_age <-  (dat$param$age_condom_use_halves - dat$param$min_age)/( dat$param$age_condom_use_halves + average_age - 2*dat$param$min_age)
     
-    condom_prob <- condom_prob*condom_user_modifier_age
+    ix <- which(dat$discord_coital_df$infected==1)
+    #if(length(ix)!=length(condom_user_modifier_age)){browser()}
+    condom_prob[ix] <- condom_prob[ix]*condom_user_modifier_age[ix]
     
 }
 
+  #qaqc
+  #if(any(is.na(condom_prob))){browser()}
+    
   #fill in "condom" column in table "discord_coital_df" (0s or 1s)
   dat$discord_coital_df$condom <- rbinom(n = nrow(dat$discord_coital_df),
                                          size = 1,
