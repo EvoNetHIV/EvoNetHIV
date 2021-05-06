@@ -16,12 +16,33 @@ initialize_module <- function(x, param, init, control, s)
 {  
   #Description:
   # Sets up model structure in 15 steps
-  #1st step is epimodel function, rest evonet specific
   
+  #0: If model is restarting previous model, load 
+  #   dat file from previous model from current directory, then end function
+  #   (dat file can be saved with flag "save_dat_file=T" &
+  #   "save_dat_file_step = xyz" where xyz is desired time step)
+  #if(param$restart){
+  #  if(file.exists(param$restart_dat_path)){
+  #    load(param$restart_dat_name)
+  #    dat$control$start <- param$restart_step
+  #    return(dat)
+  #  }else{
+  #    stop("Incorrect path for original dat file")
+  #  }
+  #}
+  
+  if(control$start>1){
+    dat <- initialize_restart(x, param, init, control, s)
+    return(dat)
+  }
 
+  
+  
+  #1st step is epimodel function, rest evonet specific
   #1 
   # sets up basic EpiModel structure with EpiModel function initialize.net
   dat  <-  initialize.net(x, param, init, control,s)
+  
   
   #1b 
   #if evonet parameters are to be sampled from distributions calculated here
@@ -133,6 +154,6 @@ initialize_module <- function(x, param, init, control, s)
      # as new arrivals occur, these are updated in the vital_new_births_bookeeping_pop function
 
    dat$total_agents <- dat$param$initial_pop
-  
+   
   return(dat)
 }

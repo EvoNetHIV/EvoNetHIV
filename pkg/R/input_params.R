@@ -19,10 +19,12 @@ input_params<-function(
     tergmlite     = TRUE, #default setting to use tergmLite package (e.g., fast edgelist),
                           #possible that tergmLite package doesn't support desired network dynamics though
     nsims        = 1,
-    initial_pop  = 100, #initial popn
-    n_steps      = 365*2,
+    initial_pop  = 100, #initial population size
+    start        = 1, #timestep model starts, always 1 unless restarting a model
+    n_steps      = 365*2, #total model timestep in days
     initial_infected  = 20,
     model_sex    = "msm",
+    raw_output   = FALSE, #save "dat" object (epimodel fxn)
     popsumm_frequency=1, #frequency of timesteps should popsumm stats be calculated
     ncores =1, #16 if running on hyak using EpiModelHPC
     random_params = list(),# can be used to specify use of randomly sampled parameters across simulations

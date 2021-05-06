@@ -13,46 +13,120 @@
 
 #' @export
 initialize_restart<-function(x,param,init,control,s){
-  #if(s==2){browser()}
+  #browser()
   #------------------------------
-  #code directly from EpiModel for sim. restart
+  #code directly from EpiModel initalize_net() for sim. restart
   dat <- list()
-  dat$nw <- x$network[[s]]
-  dat$param <- x$param[[s]] #modified slighly from original EpiModel code (dat$param <- x$param)
+  if("network" %in% names(x[[s]])){
+   dat$nw <- x[[s]]$network
+  }else{
+    dat$el <- x[[s]]$el
+  }
+  dat$param <- x[[s]]$param #modified slighly from original EpiModel code (dat$param <- x$param)
   dat$control <- control
-  dat$nwparam <- x$nwparam
-  dat$epi <- sapply(x$epi, function(var) var[s])
-  names(dat$epi) <- names(x$epi)
-  dat$attr <- x$attr[[s]]
-  dat$stats <- sapply(x$stats, function(var) var[[s]])
+  dat$nwparam <- x[[s]]$nwparam
+  #dat$epi <- sapply(x$epi, function(var) var[s])
+  #dat$epi <- sapply(1:length(x[[1]]$epi), function(yy) x[[s]]$epi[[yy]])
+  #names(dat$epi) <- names(x[[1]]$epi)
+  dat$epi <- x[[s]]$epi
+  dat$attr <- x[[s]]$attr
+  #dat$stats <- sapply(x$stats, function(var) var[[s]])
+  #dat$stats <- sapply(1:length(x[[1]]$stats), function(yy) x[[s]]$stats[[yy]])
+  dat$stats <- x[[s]]$stats
   dat$temp <- list()
+  dat$p <- x[[1]]$p
   #---------------------
   # evonet code for sim. restart
-  dat$pop<-x$pop[[s]]
-  dat$popsumm <-x$popsumm[[s]]
-  if(s==1){
-  dat$coital_acts_list <- x$coital_acts_list[[s]]
-  dat$vl_list <- x$vl_list[[s]]
-  dat$InfMat <- x$InfMat[[s]]
+  #note below data structures are evonet specific output that may or may not be present
+  #based on whether appropriate flags were set (though "pop" and "age_list" are always output)
+
+  
+  if(length(x[[s]]$pop)>=0){
+    dat$pop<-x[[s]]$pop
   }
-  if(s>1){
-    if(length(x$coital_acts_list)>=s){
-    dat$coital_acts_list <- x$coital_acts_list[[s]]
-    }
-    if(length(x$vl_list)>=s){
-      dat$vl_list <- x$vl_list[[s]]
-    }
-    if(length(x$InfMat)>=s){
-      dat$InfMat<- x$InfMat[[s]]
-    }
+  if(length(x[[s]]$age_list)>=0){
+    dat$age_list<-x[[s]]$age_list
   }
   
-  #attach fxns to calculte population statistics to "dat" object
-  fast_el <- param$fast_edgelist
-  aim3 <- param$VL_Function=="aim3"
-  popsumm_fxns <- summary_popsumm_fxns(generic_nodal_att_values= param$generic_nodal_att_values,aim3,fast_el)
-  dat$popsumm_fxns <- lapply(1:length(popsumm_fxns),function(x) popsumm_fxns[[x]]$model_value_fxn)
-  names(dat$popsumm_fxns)<- names(popsumm_fxns)
+  if(length(x[[s]]$no_births)>=0){
+    dat$no_births<-x[[s]]$no_births
+  }
+  if(length(x[[s]]$no_deaths_aids)>=0){
+    dat$no_deaths_aids<-x[[s]]$no_deaths_aids
+  }
+  if(length(x[[s]]$no_deaths_nonaids)>=0){
+    dat$no_deaths_nonaids<-x[[s]]$no_deaths_nonaids
+  }
+  if(length(x[[s]]$no_aged_out)>=0){
+    dat$no_aged_out <- x[[s]]$no_aged_out
+  }
+  if(length(x[[s]]$total_agents)>=0){
+    dat$total_agents  <- x[[s]]$total_agents 
+  }
+  if(length(x[[s]]$coital_acts_list)>=0){
+      dat$coital_acts_list <- x[[s]]$coital_acts_list
+  }
+  if(length(x[[s]]$vl_list)>=0){
+    dat$vl_list <- x[[s]]$vl_list
+  }
+  if(length(x[[s]]$InfMat)>=0){
+    dat$InfMat <- x[[s]]$InfMat
+  }
+  if(length(x[[s]]$coital_acts_list)>=0){
+    dat$coital_acts_list <- x[[s]]$coital_acts_list
+  }
+  if(length(x[[s]]$vl_list)>=0){
+      dat$vl_list <- x[[s]]$vl_list
+  }
+  if(length(x[[s]]$InfMat)>=0){
+      dat$InfMat<- x[[s]]$InfMat
+  }
+###############################
+  if(F){
+    
+    if(length(x$pop)>=0){
+      dat$pop<-x$pop[[s]]
+    }
+    if(length(x$age_list)>=0){
+      dat$age_list<-x$age_list[[s]]
+    }
+    
+    if(length(x$no_births)>=0){
+      dat$no_births<-x$no_births[[s]]
+    }
+    if(length(x$no_deaths_aids)>=0){
+      dat$no_deaths_aids<-x$no_deaths_aids[[s]]
+    }
+    if(length(x$no_deaths_nonaids)>=0){
+      dat$no_deaths_nonaids<-x$no_deaths_nonaids[[s]]
+    }
+    if(length(x$no_aged_out)>=0){
+      dat$no_aged_out <- x$no_aged_out[[s]]
+    }
+    if(length(x$total_agents)>=0){
+      dat$total_agents  <- x$total_agents [[s]]
+    }
+    if(length(x$coital_acts_list)>=0){
+      dat$coital_acts_list <- x$coital_acts_list[[s]]
+    }
+    if(length(x$vl_list)>=0){
+      dat$vl_list <- x$vl_list[[s]]
+    }
+    if(length(x$InfMat)>=0){
+      dat$InfMat <- x$InfMat[[s]]
+    }
+    if(length(x$coital_acts_list)>=0){
+      dat$coital_acts_list <- x$coital_acts_list[[s]]
+    }
+    if(length(x$vl_list)>=0){
+      dat$vl_list <- x$vl_list[[s]]
+    }
+    if(length(x$InfMat)>=0){
+      dat$InfMat<- x$InfMat[[s]]
+    }
+    
+  }
+############################################  
   #---------------------
   return(dat)
 }

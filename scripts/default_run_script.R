@@ -31,7 +31,6 @@ initial_pop = 200,
 initial_infected = 40,
 n_steps = 365*5,
 popsumm_frequency=30,
-fast_edgelist=T,
 plot_nw=T)
 
 #create parameter list with updated values
