@@ -1,16 +1,5 @@
-#NOTE: 01/04/21
-#when working on CSDE Windows Server, R updates remove
-#installed libraries and evonet doesn't build, here is 
-#code to quickly re-install everythng. Uncomment code below
-# to run. Also might have to rebuild evonet (Build tab)
-  #install.packages("devtools")
-  #install.packages("EpiModel")
-  #install.packages("data.table")
-  #install.packages("plotrix")
-  #install.packages("testthat")
-  #devtools::install_github( "statnet/tergmLite",force=T)
-  #devtools::install_github( "statnet/EpiModel", ref ="fast_edgelist")
-#--------------------------------------------------------------
+#See installation instructions to install evonet
+# https://github.com/EvoNetHIV/EvoNetHIV/blob/master/scripts/installation_instructions.R
 
 #--------------------------------------------------------------
 
@@ -36,17 +25,6 @@ plot_nw=T)
 #create parameter list with updated values
 evoparams <- do.call(evonet_setup,param_list)
 
-#Alternative 1, without argument list:
-# evoparams <- evonet_setup(nsims=1,initial_pop=initial_pop,
-#   initial_infected=20)
-
-#Alternative 2:
-#evoparams <- evonet_setup()
-#evoparams$nsim=1
-#evoparams$initial_pop=initial_pop
-
-
-#--------------------------------------------------------------
 
 #-------------------------------------------------------------
 #network setup 
