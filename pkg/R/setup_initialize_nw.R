@@ -75,5 +75,19 @@ if(!is.logical(params$generic_nodal_att_values))
 if(!is.logical(params$role_props) && params$model_sex=="msm")
   nw<-social_set_msm_role_on_nw(params,nw)
 
+if(length(params$age_nw_groups)>1){
+  att1 <- rep(NA,length(age_vec))
+  age_cats <- 1:length(params$age_nw_groups)
+  for(ii in 1:length(age_cats)){
+     age1 <- params$age_nw_groups[[ii]][1]
+     age2 <- params$age_nw_groups[[ii]][2]
+     ix <- which(age_vec > age1 & age_vec < age2+1)
+     att1[ix] <- ii
+  }
+  if(any(is.na(att1))){stop("ages in age_nw_groups don't match with population age structure")}
+  network::set.vertex.attribute(x=nw, attr="att1", value=att1)
+}
+
+
 return(nw)
 }

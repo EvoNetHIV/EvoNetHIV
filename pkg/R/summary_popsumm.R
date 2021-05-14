@@ -414,7 +414,7 @@ summary_popsumm<-function(dat,at){
   if(dat$param$vaccine_model){
     
     vacc_status <- unlist(lapply(dat$attr$phi,function(x) x[1]))
-    no_vaccinated  <- length(which(vacc_status==1))
+    no_vaccinated  <- length(which(vacc_status>0 & vacc_status< 1))
     dat$epi$no_vaccinated[at] <- no_vaccinated 
     #vaccine trial (component of "new vaccine model)
     if(dat$param$vaccine_trial){
@@ -483,9 +483,27 @@ summary_popsumm<-function(dat,at){
     eligible_index <- c(eligible_index1,eligible_index2)
     dat$epi$perc_eligible_vacc[at] <- length(eligible_index)/total_alive
   }
-    
   
   #--------------------------------------------
+  
+  #models with mean degree differing between 2 age groups (GF model)
+  if(length(dat$param$age_nw_groups)>1){
+    edges_by_agent <- suppressWarnings(unname(summary(nw ~ sociality(base = 0),at=at)))
+    age_cats <- 1:length(dat$param$age_nw_groups)
+    for(ii in 1:length(age_cats)){
+      age1 <- dat$param$age_nw_groups[[ii]][1]
+      age2 <- dat$param$age_nw_groups[[ii]][2]
+      ix <- which(dat$attr$age > age1 & dat$attr$age < age2+1 & dat$attr$entrTime<at)
+      edges <-  edges_by_agent[ix]
+      mean_degree_group <- sum(edges)/length(ix)
+      if(ii==1){dat$epi$mean_degree_high_risk[at] <- mean_degree_group}
+      if(ii==2){dat$epi$mean_degree_low_risk[at] <- mean_degree_group}
+    }
+  }
+
+  #--------------------------------------------
+ 
+  
   #"aim3"
   if(dat$param$VL_Function=="aim3"){
     
@@ -617,7 +635,7 @@ summary_popsumm<-function(dat,at){
   if(temp_length>1){  
     
     #used below
-    edges_by_agent <- unname(summary(nw ~ sociality(base = 0),at=at))
+    edges_by_agent <- suppressWarnings(unname(summary(nw ~ sociality(base = 0),at=at)))
     
     
     #how many alive agents in each category

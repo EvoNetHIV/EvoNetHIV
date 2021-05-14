@@ -138,7 +138,7 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
   if(type=="initial")
   {
     # note: for attributes "sex","att1","role", "trial_status" initial values created in 
-    # "setup_nw()" and set on nw, these values then transferred to "pop" list
+    # "setup_nw()" and set on nw, these values then transferred to "attr" list
     
  
     input_list$sex[index] <- dat$attr$sex
@@ -149,7 +149,11 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
     #vaccination trial status (0 for all new agents)
     input_list$trial_status[index] <- dat$attr$trial_status
     }
-    
+
+    if(length(dat$param$age_nw_groups)>1){
+      input_list$att1[index] <- dat$attr$att1
+      
+    }
     # Assign generic nodal attribute values
     if(!is.logical(dat$param$generic_nodal_att_values)){
       input_list$att1[index] <- dat$attr$att1
@@ -302,7 +306,21 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
         }
     
     input_list$sqrt_age[index] <- sqrt(input_list$age[index])
-    # end of ages for new additions --------------------------      
+    # end of ages for new additions --------------------------   
+    
+    #if mean degree by age (risk groups) for GF model
+    if(length(dat$param$age_nw_groups)>1){
+      age_vec <-  input_list$age[index]
+      age_cats <- 1:length(dat$param$age_nw_groups)
+      for(ii in 1:length(age_cats)){
+        age1 <- dat$param$age_nw_groups[[ii]][1]
+        age2 <- dat$param$age_nw_groups[[ii]][2]
+        ix <- which(age_vec > age1 & age_vec < age2+1)
+        if(length(ix)>0){
+          input_list$att1[index[ix]] <- ii
+        }
+      }
+    }
     
     # Assign time from last negative HIV test
     index_male <- index[input_list$sex[index] == 1] 

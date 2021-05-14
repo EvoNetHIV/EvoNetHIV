@@ -134,8 +134,9 @@ if(dat$param$save_coital_acts)
 # }
 
 
+
 # 5 (Version 5b -- Don't over-write screen each time step)
-if(!dat$param$hpc & dat$param$scrolling_output){
+ if(!dat$param$hpc & dat$param$scrolling_output){
   
   if (at == 2) {
     cat("\nStarting simulation of ",dat$control$nsteps," time steps\n")
@@ -163,10 +164,9 @@ if(!dat$param$hpc & dat$param$scrolling_output){
   }
 }
 
-if (at == dat$control$nsteps) { # Remind users what the columns mean
+ if (at == dat$control$nsteps) { # Remind users what the columns mean
   cat ("Sim\t Time\t Alive\t Inf\t Sus\t VL \t SPVL\n") # dAIDS\t dNat\t AgeOut\n")# Pills\n")
-}
-
+ }
 #----------------------------------------------
 #6
 if(at==2)
@@ -190,7 +190,7 @@ dat$age_list[[5]]<-dat$attr$age[which(dat$attr$Status>=0)]
 #8
 #-----------------------------------------------------------------
 #9
- if(dat$param$fast_edgelist & dat$param$save_partner_list){
+ if(dat$param$save_partner_list){
    if(at==2){
      aa <- dat$el[[1]]
      attr(aa,"changes")=cbind(aa,1)

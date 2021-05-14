@@ -44,6 +44,8 @@ summary_popsumm_vars <- function(dat){
   vaccine_trial_vars <- c("new_infections_vacc","new_infections_notvacc","new_infections_placebo",
                           "no_vaccinated","no_placebo")
   
+  risk_group_vars <- c("mean_degree_high_risk", "mean_degree_low_risk")
+  
   aim3_vars <-  c("total_new_infections", "new_infections_drug_sens_virus",
   "new_infections_drug_part_res_virus", "new_infections_drug_3_plus_res_virus",
   "mean_PPP_incident", "mean_PPP_infected", "drug_muts_1+", "drug_muts_3+",
@@ -104,6 +106,9 @@ summary_popsumm_vars <- function(dat){
   }
   #vaccine trial
   if(dat$param$vaccine_trial){ popsumm_vars <- c(popsumm_vars,vaccine_trial_vars)}
-    
+  
+  #age_based risk groups
+  if(length(dat$param$age_nw_groups)>1){popsumm_vars <- c(popsumm_vars,risk_group_vars) }
+  
     return(popsumm_vars)
 }

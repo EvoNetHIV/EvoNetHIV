@@ -1,33 +1,25 @@
-#Toy example of using ABC estimation with EvoNet to calibrate to
-# external data (South Africa prevalence data for this example)
-#Population size is deliberately small to decrease runtime
-#Runtime about 13 hours
-###############################################
-
-
 library(evonet)
 library(EasyABC)
+
 options(error=recover) # go into debug mode on error
 
 
 ## Function to be passed to ABC_sequential function
 
 get_params <- function(x) {
-  library(evonet)
   
   set.seed(x[1])
   require(evonet)
-  
   
   params_list=list()
   
   params_list$nsims                  <- 1
   params_list$ncores                 <- 1
-  params_list$plot_nw                     <-  F
-
+  params_list$plot_nw                 <-  F
+  
   ## Override selected default parameters
-  params_list$initial_pop            <- 1000
-  params_list$initial_infected       <- 10
+  params_list$initial_pop            <- 20000
+  params_list$initial_infected       <- 40
   params_list$model_sex              <- "hetero"
   params_list$n_steps                <- 365*25
   params_list$popsumm_frequency      <- 1
@@ -72,11 +64,11 @@ get_params <- function(x) {
   params_list$cov_prob                  <- c(0, 0.01, 0.021, 0.030, 0.049, 0.100, 0.191, 0.283, 0.402, 0.78)
   params_list$cov_prob_yrs              <- c(0, 11:18, 23) # Years at which coverage changes 
   params_list$cov_prob_scal <- matrix(c(0.718571, 1.000558, 1.239242, 0.584926, 0.814467, 1.008758), ncol = 2, 
-                                 dimnames = list(c("15-24", "25-34", "35+"),c(0, 1)))
+                                      dimnames = list(c("15-24", "25-34", "35+"),c(0, 1)))
   params_list$cov_prob_ageg <- list(c(15, 25), c(25, 35), c(35, params_list$max_age + 1))
   
   
-
+  
   ## Network formation parameters
   
   params_list$nw_form_terms <- "~edges + concurrent('sex') + absdiffby('age', 'sex', 3) + offset(nodematch('sex', diff=FALSE))"
@@ -88,60 +80,55 @@ get_params <- function(x) {
   params_list$relation_dur  <- x[8]
   
   
-#create parameter list with updated values
-evoparams <- do.call(evonet_setup,params_list)
-
-#network setup
-nw <- nw_setup(evoparams)
-
-
-#modules to run each timestep
-modules <- c(
-  "aging",
-  "testing",
-  "social_treatment_sex_age",
-  "viral_update",
-  "coital_acts",
-  "transmission",
-  "evo_departures",
-  "evo_arrivals",
-  "summary_popsumm_abc_only") 
+  #create parameter list with updated values
+  evoparams <- do.call(evonet_setup,params_list)
   
-   #note: "summary_popsumm_abc_only" only calculates prevalence data, the only data
-   # needed for model fitting to speed things up.
-
-
-
-evomodel <- evorun(modules,evoparams,nw)
-
-## Calculate prevalence summary statistic from simulated data at years for which empirical data is available
-sa.year   <- c(seq(1,13,1), 16, 19, 23) # Year 1 corresponds to end of 1990, 16 to end of 2005
-#model.year <- sa.year * 365/evomodel$param[[1]]$popsumm_freq
-
-model.year <- sa.year * 365
-
-out1 <- evomodel$epi$prev_15to49[model.year,1] # Ages 15-49, 1990-2001, 2002, 2005, 2008, 2012
-
-out2 <- c(evomodel$epi$prev_m_15to24[13 * 365,1], # 2002, males 15-24
-          evomodel$epi$prev_f_15to24[13 * 365,1], # 2002, females 15-24
-          evomodel$epi$prev_m_15to49[13 * 365,1], # 2002, males 15-49
-          evomodel$epi$prev_f_15to49[13 * 365,1]) # 2002, females 15-49
-
-out3 <- c(evomodel$epi$prev_m_15to24[16 * 365,1], # 2005, males 15-24
-          evomodel$epi$prev_f_15to24[16 * 365,1], # 2005, females 15-24
-          evomodel$epi$prev_m_15to49[16 * 365,1], # 2005, males 15-49
-          evomodel$epi$prev_f_15to49[16 * 365,1]) # 2005, females 15-49
-
-out4 <- evomodel$epi$prev_15to24[19 * 365,1] # 2008, 15-24
-
-out5 <- c(evomodel$epi$prev_m_15to24[23 * 365,1], # 2012, males 15-24
-          evomodel$epi$prev_f_15to24[23 * 365,1], # 2012, females 15-24
-          evomodel$epi$prev_m_15to49[23 * 365,1], # 2012, males 15-49
-          evomodel$epi$prev_f_15to49[23 * 365,1]) # 2012, females 15-49
-
-out <- c(out1, out2, out3, out4, out5)
-
-return(out)
+  #network setup
+  nw <- nw_setup(evoparams)
+  
+  
+  #modules to run each timestep
+  modules <- c(
+    "aging",
+    "testing",
+    "social_treatment_sex_age",
+    "viral_update",
+    "coital_acts",
+    "transmission",
+    "evo_departures",
+    "evo_arrivals",
+    "summary_popsumm") 
+  
+  evomodel <- evorun(modules,evoparams,nw)
+  
+  ## Calculate prevalence summary statistic from simulated data at years for which empirical data is available
+  sa.year   <- c(seq(1,13,1), 16, 19, 23) # Year 1 corresponds to end of 1990, 16 to end of 2005
+  #model.year <- sa.year * 365/evomodel$param[[1]]$popsumm_freq
+  
+  model.year <- sa.year * 365
+  
+  out1 <- evomodel$epi$prev_15to49[model.year,1] # Ages 15-49, 1990-2001, 2002, 2005, 2008, 2012
+  
+  out2 <- c(evomodel$epi$prev_m_15to24[13 * 365,1], # 2002, males 15-24
+            evomodel$epi$prev_f_15to24[13 * 365,1], # 2002, females 15-24
+            evomodel$epi$prev_m_15to49[13 * 365,1], # 2002, males 15-49
+            evomodel$epi$prev_f_15to49[13 * 365,1]) # 2002, females 15-49
+  
+  out3 <- c(evomodel$epi$prev_m_15to24[16 * 365,1], # 2005, males 15-24
+            evomodel$epi$prev_f_15to24[16 * 365,1], # 2005, females 15-24
+            evomodel$epi$prev_m_15to49[16 * 365,1], # 2005, males 15-49
+            evomodel$epi$prev_f_15to49[16 * 365,1]) # 2005, females 15-49
+  
+  out4 <- evomodel$epi$prev_15to24[19 * 365,1] # 2008, 15-24
+  
+  out5 <- c(evomodel$epi$prev_m_15to24[23 * 365,1], # 2012, males 15-24
+            evomodel$epi$prev_f_15to24[23 * 365,1], # 2012, females 15-24
+            evomodel$epi$prev_m_15to49[23 * 365,1], # 2012, males 15-49
+            evomodel$epi$prev_f_15to49[23 * 365,1]) # 2012, females 15-49
+  
+  out <- c(out1, out2, out3, out4, out5)
+  
+  return(out)
 }
 
 ## Specify priors for per-act infectivity and relationship duration
@@ -153,7 +140,6 @@ priors  <- list(c("unif", 0.0005005, 0.005), # trans_lambda
                 c("unif", 0.07, 0.20),           # male_conc
                 c("unif", 254, 1971))            # rel_dur
 
-
 ## Specify prevalence targets for ABC fitting procedure
 sa.prev <- c(.002, .005, .010, .019, .031, .048, .067, .088, .108, .126, .141, .153, .156, .162, .169, .188, # Ages 15-49, 1990-2001, 2002, 2005, 2008, 2012
              0.061, 0.120, 0.128, 0.177, # 2002: males, 15-24; females, 15-24; males, 15-49; females, 15-49
@@ -164,45 +150,59 @@ sa.prev <- c(.002, .005, .010, .019, .031, .048, .067, .088, .108, .126, .141, .
 
 
 runtime= system.time({
-abc_out_original_small2 <- ABC_sequential(method = "Lenormand",
-                    model = get_params,
-                    prior = priors,
-                    nb_simul = 100,
-                    summary_stat_target = sa.prev,
-                    p_acc_min = 0.01,
-                    n_cluster = 40,
-                    use_seed = TRUE)
-
-save(abc_out_original_small2, file = "abc_out_original_small2.RData")
-
+  abc_out <- ABC_sequential(method = "Lenormand",
+                                     model = get_params,
+                                     prior = priors,
+                                     nb_simul = 100,
+                                     summary_stat_target = sa.prev,
+                                     p_acc_min = 0.01,
+                                     n_cluster = 16,
+                                     use_seed = TRUE)
+  
+  save(abc_out, file = "abc_out.RData")
+  
 })
 print(runtime)
 
-##########
 
-#
-#plotting
-if(F){
-vars=c("trans_lambda","prop_AI",'mean_prop_acts_AI',"sd_prop_acts_AI","fem_conc","male_conc","rel_dur")
 if(T){
-load("abc_out_original_small.RData")
-par(mfrow=c(4,2),mar=c(2,2,1,1),oma=c(2,2,3,1))
-for(ii in 1:7){
-  d=density(abc_out_original_small$param[,ii],weights=abc_out_original_small$weights)
-  plot(d,type="l",col="blue",lwd=2,xlab="Posterior Distribution",main="",cex.lab=1.5)
-  rr=seq(as.numeric(priors[[ii]][2]),as.numeric(priors[[ii]][3]),length=100)
-  rrl=rr[length(rr)]-rr[1]
-  x1=c(rr[1],rr[length(rr)],rr[length(rr)],rr[1])
-  y1=c(0,0,1/rrl,1/rrl)
-  polygon(x1,y1,border="grey",lwd=5)
-  title(vars[ii],line=.3)  
-}
-mtext("Posterior density (unnormalized) and prior density",outer=T,side=3,line=1)
+  pdf("ABC_parameter_estimates.pdf",width=4,height=5.5)
+  
+  
+  priors  <- list(c("unif", 0.0005005, 0.005), # trans_lambda
+                  c("unif", 0.01, 0.15),           # prop_AI 
+                  c("unif", 0.01, 0.60),           # mean_prop_acts_AI
+                  c("unif", 0.05, 0.30),           # sd_prop_acts_AI
+                  c("unif", 0.01, 0.15),           # fem_conc
+                  c("unif", 0.07, 0.20),           # male_conc
+                  c("unif", 254, 1971))            # rel_dur
+  
+  vars=c("trans_lambda","prop_AI",'mean_prop_acts_AI',"sd_prop_acts_AI","fem_conc","male_conc","rel_dur")
+  #make sure this file is in working directory, it is found in evonet/scripts on github site.
+  source('Example_abc_estimation_output.R')
+  
+  #note: warning message will be returned as output was rounded to make file smaller and
+  #rounding errors were then introduced
+  
+  par(mfrow=c(4,2),mar=c(2,2,1,1),oma=c(2,2,3,1),mgp=c(.4,.2,0),tcl=-.2)
+  for(ii in 1:7){
+    d=density(abc_out$param[,ii],weights=abc_out$weights)
+    plot(d,type="l",col="blue",lwd=2,xlab="",main="",cex.lab=1.5,ylab="")
+    rr=seq(as.numeric(priors[[ii]][2]),as.numeric(priors[[ii]][3]),length=100)
+    rrl=rr[length(rr)]-rr[1]
+    x1=c(rr[1],rr[length(rr)],rr[length(rr)],rr[1])
+    y1=c(0,0,1/rrl,1/rrl)
+    polygon(x1,y1,border="grey",lwd=2)
+    title(vars[ii],line=.3,cex=.8)  
+  }
+  mtext("Posterior and prior density",outer=T,side=3,line=1)
+  mtext("Density",outer=T,side=2,line=0)
+  mtext("Variable value",outer=T,side=1,line=0)
+  
+  dev.off()
+  shell.exec("ABC_parameter_estimates.pdf")
 }
 
-}
- 
-library(Hmisc)
-pairs(abc_out_original_small$param)
-res2 <- rcorr(as.matrix(abc_out_original_small$param))
-res2
+sum(d$y)
+sum(d$x)
+plot(d$x,d$y,type='l')

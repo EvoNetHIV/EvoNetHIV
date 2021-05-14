@@ -406,7 +406,13 @@ input_params<-function(
  #"vaccination" 
     vaccine_model           = FALSE, # midas vaccine model being used?
     evonet.initialization.timestep = 1, #used to distinguish between initial model agent setup or not
-    daily.vaccine.reversion.rate = 1/365,
+    vacc_type="standard", #default: phi=0/1, "linear": phi increases from "initial_phi_value"
+    initial_phi_value = 1, #for simple models where phi [0,1] 
+   vaccine_waning_type = "exponential", #or "daily_prob" or "cliff-edge"
+    daily.vaccine.reversion.rate = 1/365, #if   vaccine_waning_type ="daily_prob", daily prob of phi -> 0
+    vacc_exp_decline_rate = -0.002, #if  vaccine_waning_type ="exponential", daily decay rate of phi
+    vacc_cliff_edge_duration =  2*365, #if vaccine_waning_type ="exponential", when vaccine will end after first
+                                       #dose in days 
     vaccine.efficacy.by.mark = c( "sensitive" = 0.8 ),  #proportion (percentage) decrease in trans probs due to vaccine for vaccine model "1" (baseline vaccine model),
     initial.mark.distribution = c( "sensitive" = 1 ), #distribution of marks in infected population
     fraction.vaccinated = 0.60,
@@ -415,13 +421,11 @@ input_params<-function(
     vaccine.efficacy.years = 3, # not currently used (?)
     revaccination.eligibility.years = 3,
     no_marks                 = 1, # simplest,baseline model
-    initial_phi_value        =1, # simplest, baseline model 
-    vacc_type               ="standard", #baseline model phi=0/1
-                                         #"linear", phi increases from 0 to 1 linearly over specified time frame
-    vacc_phi_daily_increase  = 0, # if "vacc_type" = "linear', then this specifies daily rate of increase of phi
+    vacc_phi_daily_increase  = 1/365, # if "vacc_type" = "linear', then this specifies daily rate of increase of phi
                                   # e.g.,   vacc_phi_daily_increase= 1/365, then phi
                                   # increases from 0 to one over a year
     vacc_min_efficacy_duration  = 0, #minimum time in days vaccine is effective
+    age_nw_groups            = NA, #age-based risk groups for vaccine models,e.g., list( c(18,30),c(30,55))
     preventative_campaign    = F,
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.99,
