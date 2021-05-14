@@ -56,21 +56,49 @@ the key vaccine-specific parameters are
 -   *fraction.vaccinated*: Specifies what fraction of the total
     population will be vaccinated (and in the vaccine trial; ideally,
     should be relatively low fraction around 0.10 to 0.25  
--   *vaccine.rollout.year*: Specifies at what model year vaccination of
-    agents begins  
+-   *vaccine.rollout.year*: Specifies the beginning of model year
+    vaccination of agents begins  
 -   *vaccine.rollout.duration.years*: Specifies over how many years
     should the vaccinations occur to reach the target specified with
     parameter fraction.vaccinated  
--   *daily.vaccine.reversion.rate*: Specifies at what mean daily rate
-    the vaccine effect ends for an individual agent; e.g., a value of
-    1/365 specifies the vaccine efficacy will be expected to wane after
-    a year while a very low number (e.g., 10e-5) will indicate that the
-    vaccine essentially does not wane  
+-   *vacc\_type*: Specifies how quickly the vaccine takes effect. If the
+    default value of “standard” then vaccine have maximum efficacy
+    immediately (i.e, phi = 1). If “linear”, then the vaccine will take
+    a specified duration to reach maximum efficacy(phi=1) with a
+    constant daily increase in efficacy.
+-   *vacc\_phi\_daily\_increase*: When vacc\_type=“linear”, this sets
+    the rate of daily increase of phi from near 0 (.0001, the default
+    value of parameter *initial\_phi\_value*) to 1. If maximum vaccine
+    efficacy should be reached in 7 months after vaccination for an
+    agent, then vacc\_phi\_daily\_increase would be set to 1/210.
+-   *vacc\_min\_efficacy\_duration*: Specifies the minimum time period
+    in days after vaccination before the vaccine effects begins to wane.
+    If there is no ramp-up of vaccine efficacy (vacc\_type=“standard”),
+    then this period is simply the period after vaccination. If
+    vacc\_type=“linear”, the the duration of ramp-up needs to be
+    considered; if the vaccine should last one year before waning after
+    reaching maximum efficacy and the ramp up takes 7 months,
+    vacc\_min\_efficacy\_duration should be set to 6935 ((12+7)\*365).
+-   *vaccine\_waning\_type*: Specifies how the vaccine effects wanes
+    after the period specified by vacc\_min\_efficacy\_duration ends.
+    “daily\_prob” specifies a daily binomial probability of the vaccine
+    effect ending; “cliff\_edge” specifies the vaccine effects wanes all
+    at once when the minimum efficacy duration is reached; and
+    “exponential” specifies an exponential decay.
+-   *daily.vaccine.reversion.rate*: When
+    vaccine\_waning\_type=“daily\_prob”, this parameter specifies the
+    the daily probability of the vaccine effect ending (e..g, 1/365); a
+    very, very small value indicates essentially no waning of the
+    vaccine effect (e.g., 1e-6).
+-   *vacc\_exp\_decline\_rate*: When
+    vaccine\_waning\_type=“exponential”, this number (e.g., -0.0004),
+    specifies the daily decay rate in vaccine efficacy.
 -   *revaccination.eligibility.years*: Specifies after how many years a
     vaccinated agent is eligible for another vaccination  
 -   *prop\_vaccinated\_placebo*: Specifies what proportion of the
-    vaccinated population will receive a placebo.
-    initial\_trial\_participants: Though the vaccine trial typically
+    vaccinated population will receive a placebo if a vaccine trial is
+    simulated
+-   *initial\_trial\_participants*: Though the vaccine trial typically
     does not begin immediately in a model, to allow a “burn-in” period,
     a small number of agents at the model start are required to be
     specified as being in the trial to ensure proper network estimation.
@@ -152,6 +180,46 @@ feed into EpiModel’s network simulation include
 - *relation\_dur*: Specifies how long the average relationship between
 two agents is in days
 
+#### Risk groups based on sexual network
+
+To define risk groups based on number of sexual contacts, discrete age
+categories can be defined and these age categories can have differential
+mean degree values. The age groups can be defined with the parameter
+age\_nw\_groups.
+
+``` r
+age_nw_groups <- list( group1= c(17.0,30),group2=c(30,55)
+```
+
+This parameterization specifies two age groups. The first age group
+contains all agents &gt;17 years in age and years in age and the second
+gorup contains all agents &gt;30 and years (This assumes that the ages
+of the agents vary from 17 to 55, which can be set with the parameters
+min\_age and max\_age). For a heterosexual network with two age-based
+risk groups, an example evonet parameterization for the network
+parameters would be:
+
+``` r
+age_nw_groups <- list( c(17.0,30),c(30,55)) # (age1,age2] 
+nw_form_terms <-  "~edges + nodefactor('att1')+ offset(nodematch('sex', diff=FALSE))"
+target_stats <- c(INITIAL.POP*0.4,INITIAL.POP*0.4) 
+nw_coef_form  <- -Inf
+```
+
+where INITIAL.POP is the number of agents at the start of the model. The
+age category data (in this example the age categories would be 1 or 2)
+are stored in the “att1” attribute (a generic attribute that can be used
+for a variety of purposes) amd the nodefactor term specifies that mean
+degree will differ by att1 values. The value of target\_stats as
+specified above will result in the younger age category having roughly
+60% higher mean degree than the older group (e.g., 1.05 vs. 0.65) In
+addition to the EpiModel references already mentioned, for further
+information on network estimation with the nodefactor term see the
+section “Network model estimation and diagnostics” in [EpiModel: An R
+Package for Mathematical Modeling of Infectious Disease over
+Networks](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5931789/) by
+Jenness et al. (2018).
+
 #### Vaccine-related functions
 
 Vaccine-related functionality in two modules (a group of functions
@@ -212,10 +280,6 @@ related statistics.
 
 #### Example run script for vaccine model
 
-\[NOTE: This is not Sam’s run script as is a placeholder for now. Need
-to talk to Sam\] \[Note: explain what happens when vaccine model is true
-but trial is false\]
-
 ``` r
 library(evonet)
 
@@ -228,31 +292,46 @@ INITIAL.INFECTED <- 250
 # Default model parameters are at https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/input_params.R
 
 param_list <-  list(
-# basic model parameters
-  initial_pop = INITIAL.POP,
-  initial_infected = INITIAL.INFECTED,
-  n_steps = MODEL.YEARS*365,
-  popsumm_frequency=30,
-  nsims = 1,
-   ncores = 1,
-   plot_nw=F,
-# vaccine model parameters
-  vaccine_model = T,
-  vaccine_trial = TRUE,
-  fraction.vaccinated = 0.1,
-  vaccine.rollout.year = 2,
-  vaccine.rollout.duration.years = 1,
-  daily.vaccine.reversion.rate= 1/(100*365),
-  revaccination.eligibility.years = 3,
-  vaccine.efficacy.by.mark = list( c( "strain1" = 0.7 ) ), 
-  initial.mark.distribution = list( c( "strain1" = 1 )), 
- prop_vaccinated_placebo = 0.5, 
- initial_trial_participants = 3 * INITIAL.POP/1000,
-# network parameters
- target_stats  <-  INITIAL.POP*0.35, 
-  nw_form_terms <-  "~edges + offset(nodematch('role', diff=TRUE,  
-     levels=1:2))+offset(nodematch('trial_status', diff=TRUE,levels=2))"
-  nw_coef_form  <- c(-Inf, -Inf, -Inf))
+  # basic model parameters
+    initial_pop = INITIAL.POP,
+    initial_infected = INITIAL.INFECTED,
+    n_steps = MODEL.YEARS*365,
+    popsumm_frequency=30,
+    nsims = 1,
+    ncores = 1,
+    plot_nw=F,
+    min_age = 15, #youngest agent age
+    max_age = 55, #oldest agent age
+    model_sex = "hetero", #heterosexual model (vs "msm" model)
+    initial_agedata_male   ="south_africa_male_15_to_100_1990", #age distribution data
+    initial_agedata_female = "south_africa_female_15_to_100_1990", #age distribution data
+    asmr_data_male         <- "south_africa_male_1990", #age-specific mortality rate
+    asmr_data_female       <- "south_africa_female_1990",#age-specific mortality rate
+ # vaccine model parameters
+    vaccine_model = T,
+    vacc_type="linear", #vacc. eff (phi) increases from initial value to 1 based on "vacc_phi_daily_increase"
+    initial_phi_value= .0001,
+    vacc_phi_daily_increase = 1/(7*30), #daily phi value increment,
+                                        #pi goes from 0 to one in 7 months
+    vacc_min_efficacy_duration = 1*365, #minimum time vaccine effective after 1st dose,
+                                          # can start waning after this period
+    vaccine_waning_type = "cliff-edge", #or "daily_prob" or "exponential"
+    vacc_exp_decline_rate = -0.004,#about 5 year expoential decline from 1 to near 0
+                                   #exp(rate*(1:(5*365)))
+    fraction.vaccinated = 0.7,
+    vaccine.rollout.year = 5, #timestep = value x 365
+    vaccine.rollout.duration.years = 0, #value of "0", means all at once, values 
+                                        # >1 mean constant daily vacc. rate during that time tp reach
+                                        #fraction.vaccinated value
+    vaccine.efficacy.by.mark = list( mark1 = c( "strain1" = 0.7 )), 
+    initial.mark.distribution = list( mark1 = c( "strain1" = 1 )), 
+  # network parameters
+    #parameterization for heterosexual model with two age-based risk groups, younger group
+    # has abou 60% higher mean degreee
+    age_nw_groups <- list( c(17.0,30),c(30,55)) # (age1,age2] 
+    nw_form_terms <-  "~edges + nodefactor('att1')+ offset(nodematch('sex', diff=FALSE))"
+    target_stats <- c(INITIAL.POP*0.4,INITIAL.POP*0.4) 
+    nw_coef_form  <- -Inf)
 
 #calculate number of marks based on length of parameter vaccine.efficacy.by.mark
 param_list$no_marks <- length(param_list$vaccine.efficacy.by.mark )
