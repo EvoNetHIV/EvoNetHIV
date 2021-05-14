@@ -1,7 +1,6 @@
 library(evonet)
 library(EasyABC)
-
-options(error=recover) # go into debug mode on error
+library(devtools)
 
 
 ## Function to be passed to ABC_sequential function
@@ -179,7 +178,7 @@ if(T){
   
   vars=c("trans_lambda","prop_AI",'mean_prop_acts_AI',"sd_prop_acts_AI","fem_conc","male_conc","rel_dur")
   #make sure this file is in working directory, it is found in evonet/scripts on github site.
-  source('Example_abc_estimation_output.R')
+  source_url(url ="https://github.com/EvoNetHIV/EvoNetHIV/blob/master/scripts/Example_abc_estimation_output.R?raw=TRUE")
   
   #note: warning message will be returned as output was rounded to make file smaller and
   #rounding errors were then introduced
