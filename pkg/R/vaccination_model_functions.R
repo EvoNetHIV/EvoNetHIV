@@ -300,12 +300,18 @@ initialize_phi <- function(dat, at) {
   #  Identify eligible_patients: eligible for care, not vaccinated, not infected
   #  by default, all agents eligible for care, unless specified otw
   # never been vaccinated
+  age_vec <- get_attr(dat,item="age")
+  no_age_range <- length(which(age_vec > dat$param$vaccine_age_range[1] & age_vec < dat$param$vaccine_age_range[2]))
   eligible_indices1 <- which( isUninfectedByAgent( dat ) &
                                 is.unvaccinated.by.agent &
+                                age_vec > dat$param$vaccine_age_range[1] &
+                                age_vec < dat$param$vaccine_age_range[2] &
                                 isEligibleByAgent( dat ) );
   # previously vaccinated
   eligible_indices2 <- which( isUninfectedByAgent( dat ) &
                                 is.previously.vaccinated.by.agent &
+                                age_vec > dat$param$vaccine_age_range[1] &
+                                age_vec < dat$param$vaccine_age_range[2] &
                                 !is.too.recently.vaccinated &
                                 isEligibleByAgent( dat ) )
   
@@ -328,10 +334,10 @@ initialize_phi <- function(dat, at) {
   
   #  calculate how many agents should be newly vaccinated at this time, based on user-specified vaccination rate
   if(dat$param$vaccine.rollout.duration.years==0){
-      num.newly.vaccinated.today <- round(dat$param$fraction.vaccinated *length(dat$attr$Status))
+      num.newly.vaccinated.today <- round(dat$param$fraction.vaccinated *  no_age_range)
   }else{
      num.newly.vaccinated.today <- ( (dat$param$fraction.vaccinated * 
-                                    length(dat$attr$Status)) / (365*dat$param$vaccine.rollout.duration.years))
+                                        no_age_range) / (365*dat$param$vaccine.rollout.duration.years))
   }
   
   if( num.newly.vaccinated.today>1 & dat$param$vaccine.rollout.duration.years!=0){

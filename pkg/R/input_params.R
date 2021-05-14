@@ -426,6 +426,7 @@ input_params<-function(
                                   # increases from 0 to one over a year
     vacc_min_efficacy_duration  = 0, #minimum time in days vaccine is effective
     age_nw_groups            = NA, #age-based risk groups for vaccine models,e.g., list( c(18,30),c(30,55))
+    vaccine_age_range        = c(1,100), #age range that can be vaccinated
     preventative_campaign    = F,
     start_vacc_campaign      = 5e5,
     perc_vaccinated          = 0.99,

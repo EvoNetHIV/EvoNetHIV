@@ -24,20 +24,21 @@ parameterizations are possible.
 
 #### Parameterizations of phi, mu, sigma, and m for simple models
 
-*Phi* can have values of NA (agent never vaccinated), 1 (currently
-vaccinated), 2 (vaccinated with placebo), or 0 (formerly vaccinated).
-The value of *mu* specifies the mean vaccine efficacy (proportion
-reduction in vaccine and varies from 0.0-1.0) for a given mark of an
-infected agent. *Sigma* indicates the variability (standard deviation)
-of the mu value; in simple models, *sigma* values are set to zero and
-there is no variability in *mu* (i.e., *mu* represents a constant value
-rather than a mean of a distribution). The attribute *m* represents the
-value of the mark drawn from a distribution described by the mean value
-*mu* and *sigma*, the standard deviation of *mu*; the value of this
-draw, *m*, is then used to represent the vaccine efficacy for a given
-sex act between an infected agent and a vaccinated, uninfected agent. In
-simple models, *sigma* is set to zero and *m* thus is equal to *mu* in
-when *sigma* is set to zero.
+*Phi* can have values of NA (agent never vaccinated), &gt;0 (currently
+vaccinated with 1 representing full vaccination), 2 (vaccinated with
+placebo), or 0 (formerly vaccinated). The value of *mu* specifies the
+mean vaccine efficacy (proportion reduction in vaccine and varies from
+0.0-1.0) for a given mark of an infected agent. *Sigma* indicates the
+variability (standard deviation) of the mu value; in simple models,
+*sigma* values are set to zero and there is no variability in *mu*
+(i.e., *mu* represents a constant value rather than a mean of a
+distribution). The attribute *m* represents the value of the mark drawn
+from a distribution described by the mean value *mu* and *sigma*, the
+standard deviation of *mu*; the value of this draw, *m*, is then used to
+represent the vaccine efficacy for a given sex act between an infected
+agent and a vaccinated, uninfected agent. In simple models, *sigma* is
+set to zero and *m* thus is equal to *mu* in when *sigma* is set to
+zero.
 
 #### Vaccine Trial in EvoNet
 
@@ -302,12 +303,12 @@ param_list <-  list(
     plot_nw=F,
     min_age = 15, #youngest agent age
     max_age = 55, #oldest agent age
+    vaccine_age_range = c(15, 18), #age range that can be vaccinated
     model_sex = "hetero", #heterosexual model (vs "msm" model)
-    initial_agedata_male   ="south_africa_male_15_to_100_1990", #age distribution data
-    initial_agedata_female = "south_africa_female_15_to_100_1990", #age distribution data
-    asmr_data_male         <- "south_africa_male_1990", #age-specific mortality rate
-    asmr_data_female       <- "south_africa_female_1990",#age-specific mortality rate
- # vaccine model parameters
+    initial_agedata_male   = "south_africa_male_15_to_100_2014",
+    initial_agedata_female = "south_africa_female_15_to_100_2014",
+    asmr_data_male        =   "south_africa_male_1990",
+    asmr_data_female       = "south_africa_female_1990", # vaccine model parameters
     vaccine_model = T,
     vacc_type="linear", #vacc. eff (phi) increases from initial value to 1 based on "vacc_phi_daily_increase"
     initial_phi_value= .0001,

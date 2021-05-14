@@ -125,12 +125,12 @@ param_list <-  list(
     plot_nw=F,
     min_age = 15, #youngest agent age
     max_age = 55, #oldest agent age
+    vaccine_age_range = c(15, 18), #age range that can be vaccinated
     model_sex = "hetero", #heterosexual model (vs "msm" model)
-    initial_agedata_male   ="south_africa_male_15_to_100_1990", #age distribution data
-    initial_agedata_female = "south_africa_female_15_to_100_1990", #age distribution data
-    asmr_data_male         <- "south_africa_male_1990", #age-specific mortality rate
-    asmr_data_female       <- "south_africa_female_1990",#age-specific mortality rate
- # vaccine model parameters
+    initial_agedata_male   = "south_africa_male_15_to_100_2014",
+    initial_agedata_female = "south_africa_female_15_to_100_2014",
+    asmr_data_male        =   "south_africa_male_1990",
+    asmr_data_female       = "south_africa_female_1990", # vaccine model parameters
     vaccine_model = T,
     vacc_type="linear", #vacc. eff (phi) increases from initial value to 1 based on "vacc_phi_daily_increase"
     initial_phi_value= .0001,
