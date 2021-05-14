@@ -29,4 +29,5 @@ just focus on the results for one of them: relationship duration.
 The below figure shows the prior distribution and the posterior
 distribution for the relationship duration parameter.
 
-![](https://github.com/EvoNetHIV/EvoNetHIV/tree/master/documentation/imgs/abc_example_output.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/abc_example_output.png)
+![](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/documentation/imgs/prev_ex.png)
