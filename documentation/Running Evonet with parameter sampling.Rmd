@@ -1,0 +1,13 @@
+---
+title: "EvoNet Vaccination Models"
+output: github_document
+---
+
+In addition to having fixed parameter values for a given model, Evonet models can be run where user-specified parameter values are drawn from a user-specified distribution rather than having a fixed value across simulation runs.  While EpiModel, the package that EvoNet is based-on, has recently added similar functionality, a slightly different framework was developed for Evonet to allow for network parameters (e.g., relationship duration) to be drawn from a distribution in addition to non-network parameters.  In short, this framework allows for many different models to be run (as many as the user wants, though time is usually a limiting factor) that have different values for a givnen parameter or set of parameters, and then those different models can be combined to give a single output.
+
+A motivating example is the use of approximate Bayesian computation (ABC) to estimate model parameters. Skipping any detailed discussion of the topic, ABC is a simulation-based statistical method that produces posterior densities (probability distributions) of the parameters of interest.  An example of estimating Evonet parameters with ABC, using the package "EasyABC", is at https://github.com/EvoNetHIV/EvoNetHIV/blob/master/scripts/Example_abc_estimation.R.  This example models the South African HIV epidemic from the 1990 to 2014 and is fit to age-specific prevalence data. (This was based on Evonet work done by Dr. Kathryn Peebles).  While 7 parameters were estimated, we just focus on the results for one of them: relationship duration.
+
+The below figure shows the prior distribution and the posterior distribution for the relationship duration parameter.
+
+![](https://github.com/EvoNetHIV/EvoNetHIV-Overview/blob/master/img/abc_example_output.png)
+
