@@ -24,7 +24,7 @@ parameterizations are possible.
 
 #### Parameterizations of phi, mu, sigma, and m for simple models
 
-*Phi* can have values of NA (agent never vaccinated), &gt;0 (currently
+*Phi* can have values of NA (agent never vaccinated), \>0 (currently
 vaccinated with 1 representing full vaccination), 2 (vaccinated with
 placebo), or 0 (formerly vaccinated). The value of *mu* specifies the
 mean vaccine efficacy (proportion reduction in vaccine and varies from
@@ -50,80 +50,81 @@ vaccine has a user-specified vaccine efficacy and different viral
 strains can have different vaccine efficacies. To run a vaccine trial
 the key vaccine-specific parameters are
 
--   *vaccine\_model*: Value should be set to TRUE to designate that
+  - *vaccine\_model*: Value should be set to TRUE to designate that
     vaccine functions will be used  
--   *vaccine\_trial*: Value should be set to TRUE to designate that in
+  - *vaccine\_trial*: Value should be set to TRUE to designate that in
     addition to a vaccine model, a trial will be simulated  
--   *fraction.vaccinated*: Specifies what fraction of the total
+  - *fraction.vaccinated*: Specifies what fraction of the total
     population will be vaccinated (and in the vaccine trial; ideally,
-    should be relatively low fraction around 0.10 to 0.25  
--   *vaccine.rollout.year*: Specifies the beginning of model year
+    should be relatively low fraction around 0.10 to 0.25)  
+  - *vaccine.rollout.year*: Specifies the beginning of model year
     vaccination of agents begins  
--   *vaccine.rollout.duration.years*: Specifies over how many years
+  - *vaccine.rollout.duration.years*: Specifies over how many years
     should the vaccinations occur to reach the target specified with
-    parameter fraction.vaccinated  
--   *vacc\_type*: Specifies how quickly the vaccine takes effect. If the
+    parameter `fraction.vaccinated`  
+  - *vacc\_type*: Specifies how quickly the vaccine takes effect. If the
     default value of “standard” then vaccine have maximum efficacy
     immediately (i.e, phi = 1). If “linear”, then the vaccine will take
     a specified duration to reach maximum efficacy(phi=1) with a
-    constant daily increase in efficacy.
--   *vacc\_phi\_daily\_increase*: When vacc\_type=“linear”, this sets
+    constant daily increase in efficacy.  
+  - *vacc\_phi\_daily\_increase*: When vacc\_type=“linear”, this sets
     the rate of daily increase of phi from near 0 (.0001, the default
     value of parameter *initial\_phi\_value*) to 1. If maximum vaccine
     efficacy should be reached in 7 months after vaccination for an
-    agent, then vacc\_phi\_daily\_increase would be set to 1/210.
--   *vacc\_min\_efficacy\_duration*: Specifies the minimum time period
+    agent, then vacc\_phi\_daily\_increase would be set to 1/210.  
+  - *vacc\_min\_efficacy\_duration*: Specifies the minimum time period
     in days after vaccination before the vaccine effects begins to wane.
     If there is no ramp-up of vaccine efficacy (vacc\_type=“standard”),
     then this period is simply the period after vaccination. If
     vacc\_type=“linear”, the the duration of ramp-up needs to be
     considered; if the vaccine should last one year before waning after
     reaching maximum efficacy and the ramp up takes 7 months,
-    vacc\_min\_efficacy\_duration should be set to 6935 ((12+7)\*365).
--   *vaccine\_waning\_type*: Specifies how the vaccine effects wanes
+    vacc\_min\_efficacy\_duration should be set to 6935 ((12+7)\*365).  
+  - *vaccine\_waning\_type*: Specifies how the vaccine effects wanes
     after the period specified by vacc\_min\_efficacy\_duration ends.
-    “daily\_prob” specifies a daily binomial probability of the vaccine
-    effect ending; “cliff\_edge” specifies the vaccine effects wanes all
-    at once when the minimum efficacy duration is reached; and
-    “exponential” specifies an exponential decay.
--   *daily.vaccine.reversion.rate*: When
+    “daily\_prob” specifies a daily binomial probability of the
+    vaccine effect ending; “cliff\_edge” specifies the vaccine effects
+    wanes all at once when the minimum efficacy duration is reached; and
+    “exponential” specifies an exponential decay.  
+  - *daily.vaccine.reversion.rate*: When
     vaccine\_waning\_type=“daily\_prob”, this parameter specifies the
     the daily probability of the vaccine effect ending (e..g, 1/365); a
     very, very small value indicates essentially no waning of the
-    vaccine effect (e.g., 1e-6).
--   *vacc\_exp\_decline\_rate*: When
-    vaccine\_waning\_type=“exponential”, this number (e.g., -0.0004),
-    specifies the daily decay rate in vaccine efficacy.
--   *revaccination.eligibility.years*: Specifies after how many years a
-    vaccinated agent is eligible for another vaccination  
--   *prop\_vaccinated\_placebo*: Specifies what proportion of the
+    vaccine effect (e.g., 1e-6).  
+  - *vacc\_exp\_decline\_rate*: When
+    vaccine\_waning\_type=“exponential”, this number (e.g.,
+    -0.0004), specifies the daily decay rate in vaccine efficacy.  
+  - *revaccination.eligibility.years*: Specifies after how many years a
+    vaccinated agent is eligible for another vaccination.  
+  - *prop\_vaccinated\_placebo*: Specifies what proportion of the
     vaccinated population will receive a placebo if a vaccine trial is
-    simulated
--   *initial\_trial\_participants*: Though the vaccine trial typically
-    does not begin immediately in a model, to allow a “burn-in” period,
-    a small number of agents at the model start are required to be
-    specified as being in the trial to ensure proper network estimation.
-    When the vaccine trial starts (parameter vaccine.rollout.year),
-    trial participants are not allowed to pair-up with each other; to
-    implement this network constraint (and skipping network estimation
-    details), a small number of agents are required to be specified as
-    in a trial (about 3 agents per 1000 agents of the initial population
-    size seems adequate).
+    simulated.  
+  - *initial\_trial\_participants*: Though the vaccine trial typically
+    does not begin immediately in a trial model (`vaccine_trial` =
+    TRUE), to allow a “burn-in” period, a small number of agents at the
+    model start are required to be specified as being in the trial to
+    ensure proper network estimation. When the vaccine trial starts
+    (parameter vaccine.rollout.year), trial participants are not allowed
+    to pair-up with each other; to implement this network constraint
+    (and skipping network estimation details), a small number of agents
+    are required to be specified as in a trial (about 3 agents per 1000
+    agents of the initial population size seems adequate).
 
-The virus of an infected agent is described by its marks and the marks
-determine vaccination efficacy. While the model allows for virus marks
-to be represented in a highly flexible and potentially complex manner,
-here we present simple examples where the virus is described by only one
-or two discrete marks and the values for the marks are time-invariant.
-The two parameters to specify the virus marks for these simple examples
-are *vaccine.efficacy.by.mark* and *initial.mark.distribution*. These
-parameters are described with list structures and the length of the
-lists (the number of elements in each list) implicitly denote the number
-of marks specified. Both parameters should have lists of equal length.
-The parameter *initial.mark.distribution* specifies the proportion of
-the initial infected population that has the mark with the specified
-efficacy. Agents with secondary infections then receive the
-corresponding marks and efficacies from the infector.
+The virus of an infected agent is described by its “mark”; mark can be
+defined as the genotype-specific vaccine efficacy. While the model
+allows for virus marks to be represented in a highly flexible and
+potentially complex manner, here we present simple examples where the
+virus is described by only one or two discrete marks and the values for
+the marks are time-invariant. The two parameters to specify the virus
+marks for these simple examples are *vaccine.efficacy.by.mark* and
+*initial.mark.distribution*. These parameters are described with list
+structures and the length of the lists (the number of elements in each
+list) implicitly denote the number of marks specified. Both parameters
+should have lists of equal length. The parameter
+*initial.mark.distribution* specifies the proportion of the initial
+infected population that has the mark with the specified efficacy.
+Agents with secondary infections then receive the corresponding marks
+and efficacies from the infector.
 
 ###### One mark with single efficacy example
 
@@ -158,11 +159,11 @@ vaccine.efficacy.by.mark <- list( mark1= c( "strain1" = 0.8,"strain2"=0.2 ), mar
 
 In addition to vaccine-related parameters, there are a number of other
 important parameters required for model setup and execution.  
-- *initial\_pop*: Specifies the initial size of the population  
-- *initial\_infected*: Specifies how many agents in the initial
+\- *initial\_pop*: Specifies the initial size of the population  
+\- *initial\_infected*: Specifies how many agents in the initial
 population are infected  
-- *n\_steps*: Specifies how many daily time-steps the model will run  
-- *popsumm\_frequency*: Specifies how frequently (number of timesteps)
+\- *n\_steps*: Specifies how many daily time-steps the model will run  
+\- *popsumm\_frequency*: Specifies how frequently (number of timesteps)
 summary statistics (e.g., prevalence) are calculated. It is a minor
 parameter but can impact how fast the model runs especially for large
 population sizes; typically a value of 30 is used (i.e., monthly
@@ -175,10 +176,10 @@ Evonet is based on the EpiModel package( see
 which allows the user to specify a network epidemic model with highly
 variable network structure and connectivity. Critical parameters that
 feed into EpiModel’s network simulation include  
-- *target\_stats*: Specifies how connected the network is  
-- *nw\_form\_terms*: Specifies how the network is structured (?)  
-- *nw\_coef\_form*: (need definition)  
-- *relation\_dur*: Specifies how long the average relationship between
+\- *target\_stats*: Specifies how connected the network is  
+\- *nw\_form\_terms*: Specifies how the network is structured (?)  
+\- *nw\_coef\_form*: (need definition)  
+\- *relation\_dur*: Specifies how long the average relationship between
 two agents is in days
 
 #### Risk groups based on sexual network
@@ -193,8 +194,8 @@ age_nw_groups <- list( group1= c(17.0,30),group2=c(30,55)
 ```
 
 This parameterization specifies two age groups. The first age group
-contains all agents &gt;17 years in age and years in age and the second
-gorup contains all agents &gt;30 and years (This assumes that the ages
+contains all agents \>17 years in age and 30 years in age and the second
+gorup contains all agents \>30 and 55 years (This assumes that the ages
 of the agents vary from 17 to 55, which can be set with the parameters
 min\_age and max\_age). For a heterosexual network with two age-based
 risk groups, an example evonet parameterization for the network

@@ -6,70 +6,66 @@ output: github_document
 ### Vaccine modeling in EvoNet
 EvoNet (https://github.com/EvoNetHIV/EvoNetHIV) is an agent-based network epidemic model based on the EpiModel package (see https://github.com/statnet/EpiModel and http://www.epimodel.org/) where attributes (e.g., sex, age, viral load, number of partners, MSM sexual role, etc.) of the agents in the population determine the epidemic dynamics in addition to the specified sexual network structure (e.g., more highly connected sexual networks result in more severe epidemics).  
 
-In addition to the core agents attributes expected in an agent-based epidemic model (age, sex, infection status, viral load, testing and treatment status, etc.), vaccine dynamics are specified by the attributes *phi*, *mu*, *sigma*, and *m*.  Flexible list structures are used to hold the parameterizations for these attributes and thus, the parameterizations can be of any arbitrary structure and complexity.   In this description these attributes have very simple parameterizations consisting of one or two numeric values but much more complicated parameterizations are possible.   
-
-
+In addition to the core agents attributes expected in an agent-based epidemic model (age, sex, infection status, viral load, testing and treatment status, etc.), vaccine dynamics are specified by the attributes *phi*, *mu*, *sigma*, and *m*. Flexible list structures are used to hold the parameterizations for these attributes and thus, the parameterizations can be of any arbitrary structure and complexity. In this description these attributes have very simple parameterizations consisting of one or two numeric values but much more complicated parameterizations are possible.   
 
 #### Parameterizations of phi, mu, sigma, and m for simple models
-*Phi* can have values of NA (agent never vaccinated), >0 (currently vaccinated with 1 representing full vaccination), 2 (vaccinated with placebo), or 0 (formerly vaccinated). The value of *mu* specifies the mean vaccine efficacy (proportion reduction in vaccine and varies from 0.0-1.0) for a given mark of an infected agent.  *Sigma* indicates the variability (standard deviation) of the mu value; in simple models, *sigma* values are set to zero and there is no variability in *mu* (i.e., *mu* represents a constant value rather than a mean of a distribution). The attribute *m* represents the value of the mark drawn from a distribution described by the mean value *mu* and *sigma*, the standard deviation of *mu*; the value of this draw, *m*, is then used to represent the vaccine efficacy for a given sex act between an infected agent and a vaccinated, uninfected agent.  In simple models, *sigma* is set to zero and *m* thus is equal to *mu* in when *sigma* is set to zero.
+*Phi* can have values of NA (agent never vaccinated), >0 (currently vaccinated with 1 representing full vaccination), 2 (vaccinated with placebo), or 0 (formerly vaccinated). The value of *mu* specifies the mean vaccine efficacy (proportion reduction in vaccine and varies from 0.0-1.0) for a given mark of an infected agent. *Sigma* indicates the variability (standard deviation) of the mu value; in simple models, *sigma* values are set to zero and there is no variability in *mu* (i.e., *mu* represents a constant value rather than a mean of a distribution). The attribute *m* represents the value of the mark drawn from a distribution described by the mean value *mu* and *sigma*, the standard deviation of *mu*; the value of this draw, *m*, is then used to represent the vaccine efficacy for a given sex act between an infected agent and a vaccinated, uninfected agent. In simple models, *sigma* is set to zero and *m* thus is equal to *mu* in when *sigma* is set to zero.  
 
 #### Vaccine Trial in EvoNet
 
 ##### Relevant parameters 
-A vaccine trial can be simulated in evonet where at a specified timestep agents become vaccinated and either receive a vaccine or placebo.  The vaccine has a user-specified vaccine efficacy and different viral strains can have different vaccine efficacies. To run a vaccine trial the key vaccine-specific parameters are
+A vaccine trial can be simulated in evonet where at a specified timestep agents become vaccinated and either receive a vaccine or placebo. The vaccine has a user-specified vaccine efficacy and different viral strains can have different vaccine efficacies. To run a vaccine trial the key vaccine-specific parameters are  
 
 -  *vaccine_model*: Value should be set to TRUE to designate that vaccine functions will be used  
--   *vaccine_trial*: Value should be set to TRUE to designate that in addition to a vaccine model, a trial will    be simulated  
--  *fraction.vaccinated*: Specifies what fraction of the total population will be vaccinated (and in the vaccine trial; ideally, should be relatively low fraction around 0.10 to 0.25  
+-   *vaccine_trial*: Value should be set to TRUE to designate that in addition to a vaccine model, a trial will be simulated  
+-  *fraction.vaccinated*: Specifies what fraction of the total population will be vaccinated (and in the vaccine trial; ideally, should be relatively low fraction around 0.10 to 0.25)  
 -   *vaccine.rollout.year*: Specifies the beginning of model year vaccination of agents begins  
--  *vaccine.rollout.duration.years*: Specifies over how many years should the vaccinations occur to reach the target specified with parameter fraction.vaccinated  
--  *vacc_type*: Specifies how quickly the vaccine takes effect. If the default value of "standard" then vaccine have maximum efficacy immediately (i.e, phi = 1). If "linear", then the vaccine will take a specified duration to reach maximum efficacy(phi=1) with a constant daily increase in efficacy.
--  *vacc_phi_daily_increase*: When  vacc_type="linear", this sets the rate of daily increase of phi from near 0 (.0001, the default value of parameter *initial_phi_value*) to 1.  If maximum vaccine efficacy should be reached in 7 months after vaccination for an agent, then vacc_phi_daily_increase would be set to 1/210.
--  *vacc_min_efficacy_duration*: Specifies the minimum time period in days after vaccination before the vaccine effects begins to wane.  If there is no ramp-up of vaccine efficacy (vacc_type="standard"), then this period is simply the period after vaccination.  If vacc_type="linear", the the duration of ramp-up needs to be considered; if the vaccine should last one year before waning after reaching maximum efficacy and the ramp up takes 7 months, vacc_min_efficacy_duration should be set to 6935 ((12+7)*365). 
--  *vaccine_waning_type*: Specifies how the vaccine effects wanes after the period specified by vacc_min_efficacy_duration ends. "daily_prob" specifies a daily binomial probability of the vaccine effect ending; "cliff_edge" specifies the vaccine effects wanes all at once when the minimum efficacy duration is reached; and "exponential" specifies an exponential decay.
--  *daily.vaccine.reversion.rate*: When vaccine_waning_type="daily_prob", this parameter specifies the the daily probability of the vaccine effect ending (e..g, 1/365); a very, very small value indicates essentially no waning of the vaccine effect (e.g., 1e-6).
--  *vacc_exp_decline_rate*: When vaccine_waning_type="exponential", this number (e.g., -0.0004), specifies the daily decay rate in vaccine efficacy.
--  *revaccination.eligibility.years*:  Specifies after how many years a vaccinated agent is eligible for another vaccination  
--  *prop_vaccinated_placebo*: Specifies what proportion of the vaccinated population will receive a placebo if a vaccine trial is simulated
--  *initial_trial_participants*: Though the vaccine trial typically does not begin immediately in a model, to allow a “burn-in” period, a small number of agents at the model start are required to be specified as being in the trial to ensure proper network estimation.  When the vaccine trial starts (parameter vaccine.rollout.year), trial participants are not allowed to pair-up with each other; to implement this network constraint (and skipping network estimation details), a small number of agents are required to be specified as in a trial (about 3 agents per 1000 agents of the initial population size seems adequate).  
+-  *vaccine.rollout.duration.years*: Specifies over how many years should the vaccinations occur to reach the target specified with parameter `fraction.vaccinated`  
+-  *vacc_type*: Specifies how quickly the vaccine takes effect. If the default value of "standard" then vaccine have maximum efficacy immediately (i.e, phi = 1). If "linear", then the vaccine will take a specified duration to reach maximum efficacy(phi=1) with a constant daily increase in efficacy.  
+-  *vacc_phi_daily_increase*: When  vacc_type="linear", this sets the rate of daily increase of phi from near 0 (.0001, the default value of parameter *initial_phi_value*) to 1. If maximum vaccine efficacy should be reached in 7 months after vaccination for an agent, then vacc_phi_daily_increase would be set to 1/210.  
+-  *vacc_min_efficacy_duration*: Specifies the minimum time period in days after vaccination before the vaccine effects begins to wane. If there is no ramp-up of vaccine efficacy (vacc_type="standard"), then this period is simply the period after vaccination.  If vacc_type="linear", the the duration of ramp-up needs to be considered; if the vaccine should last one year before waning after reaching maximum efficacy and the ramp up takes 7 months, vacc_min_efficacy_duration should be set to 6935 ((12+7)*365).  
+-  *vaccine_waning_type*: Specifies how the vaccine effects wanes after the period specified by vacc_min_efficacy_duration ends. "daily_prob" specifies a daily binomial probability of the vaccine effect ending; "cliff_edge" specifies the vaccine effects wanes all at once when the minimum efficacy duration is reached; and "exponential" specifies an exponential decay.  
+-  *daily.vaccine.reversion.rate*: When vaccine_waning_type="daily_prob", this parameter specifies the the daily probability of the vaccine effect ending (e..g, 1/365); a very, very small value indicates essentially no waning of the vaccine effect (e.g., 1e-6).  
+-  *vacc_exp_decline_rate*: When vaccine_waning_type="exponential", this number (e.g., -0.0004), specifies the daily decay rate in vaccine efficacy.  
+-  *revaccination.eligibility.years*: Specifies after how many years a vaccinated agent is eligible for another vaccination.    
+-  *prop_vaccinated_placebo*: Specifies what proportion of the vaccinated population will receive a placebo if a vaccine trial is simulated.  
+-  *initial_trial_participants*: Though the vaccine trial typically does not begin immediately in a trial model (`vaccine_trial` = TRUE), to allow a “burn-in” period, a small number of agents at the model start are required to be specified as being in the trial to ensure proper network estimation.  When the vaccine trial starts (parameter vaccine.rollout.year), trial participants are not allowed to pair-up with each other; to implement this network constraint (and skipping network estimation details), a small number of agents are required to be specified as in a trial (about 3 agents per 1000 agents of the initial population size seems adequate).    
 
-The virus of an infected agent is described by its marks and the marks determine vaccination efficacy.  While the model allows for virus marks to be represented in a highly flexible and potentially complex manner,  here we present simple examples where the virus is described by only one or two discrete marks and the values for the marks are time-invariant.  The two parameters to specify the virus marks for these simple examples are *vaccine.efficacy.by.mark* and *initial.mark.distribution*.  These parameters are described with list structures and the length of the lists (the number of elements in each list) implicitly denote the number of marks specified.  Both parameters should have lists of equal length. The parameter *initial.mark.distribution* specifies the proportion of the initial infected population that has the mark with the specified efficacy.  Agents with secondary infections then receive the corresponding marks and efficacies from the infector.
+The virus of an infected agent is described by its "mark"; mark can be defined as the genotype-specific vaccine efficacy. While the model allows for virus marks to be represented in a highly flexible and potentially complex manner, here we present simple examples where the virus is described by only one or two discrete marks and the values for the marks are time-invariant. The two parameters to specify the virus marks for these simple examples are *vaccine.efficacy.by.mark* and *initial.mark.distribution*. These parameters are described with list structures and the length of the lists (the number of elements in each list) implicitly denote the number of marks specified.  Both parameters should have lists of equal length. The parameter *initial.mark.distribution* specifies the proportion of the initial infected population that has the mark with the specified efficacy. Agents with secondary infections then receive the corresponding marks and efficacies from the infector.  
 
 ###### One mark with single efficacy example
 ```{r, eval=F}  
 vaccine.efficacy.by.mark <- list( mark1 = c(strain1" = 0.7 ))
 initial.mark.distribution <- list( mark1 = c("strain1" = 1 ))  
 ```
-This parameterization specifies that all infected agents will have a virus described by a single mark with a vaccine efficacy of 0.7 (transmission probability is reduced by 70%).
+This parameterization specifies that all infected agents will have a virus described by a single mark with a vaccine efficacy of 0.7 (transmission probability is reduced by 70%).  
 
 ###### One mark with two efficacies per mark example
 ```{r, eval=F}
 vaccine.efficacy.by.mark <- list( mark1 = c( "strain1" = 1.0,"strain2"=0.0 ) )
- initial.mark.distribution <- list(  mark1 =  c( "strain1" = 0.7,"strain2"=0.3 ))
+initial.mark.distribution <- list(  mark1 =  c( "strain1" = 0.7,"strain2"=0.3 ))
 ```
 This parameterization specifies that all infected have agents will have virus described by a single mark with two variants with different efficacies.  
 
 ###### Two marks with two efficacies per mark example
 ```{r, eval=F}
-vaccine.efficacy.by.mark <- list( mark1= c( "strain1" = 0.8,"strain2"=0.2 ), mark2= c( "strain1" = 0.11,"strain2"=0.01 ))
- initial.mark.distribution <- list( mark1=  c( "strain1" = 0.5,"strain2"=0.5 ), mark2= ( "strain1" = 0.5,"strain2"=0.5 ))
+vaccine.efficacy.by.mark <- list( mark1= c( "strain1" = 0.8,"strain2"=0.2 ), mark2= c( "strain1" = 0.11,"strain2"=0.01 ))  
+initial.mark.distribution <- list( mark1=  c( "strain1" = 0.5,"strain2"=0.5 ), mark2= ( "strain1" = 0.5,"strain2"=0.5 ))
 ```
-
 
 #### Other basic EvoNet parameters
 In addition to vaccine-related parameters, there are a number of other important parameters required for model setup and execution.  
--  *initial_pop*: Specifies the initial size of the population  
+-  *initial_pop*: Specifies the initial size of the population   
 -  *initial_infected*: Specifies how many agents in the initial population are infected  
--  *n_steps*: Specifies how many daily time-steps the model will run  
+-  *n_steps*: Specifies how many daily time-steps the model will run   
 -  *popsumm_frequency*: Specifies how frequently (number of timesteps) summary statistics (e.g., prevalence) are calculated. It is a minor parameter but can impact how fast the model runs especially for large population sizes; typically a value of 30 is used (i.e., monthly values).  
-
 
 #### EpiModel and network parameters
 Evonet is based on the EpiModel package( see https://github.com/statnet/EpiModel and http://www.epimodel.org/)  which allows the user to specify a network epidemic model with highly variable network structure and connectivity. Critical parameters that feed into EpiModel’s network simulation include  
 -  *target_stats*: Specifies how connected the network is  
--  *nw_form_terms*: Specifies how the network is structured (?)  
--  *nw_coef_form*: (need definition)  
--  *relation_dur*: Specifies how long the average relationship between two agents is in days  
+-  *nw_form_terms*: Nnetwork formation terms; specifies how the network is structured  
+-  *nw_coef_form*: Network coefficients for formation terms 
+-  *relation_dur*: Specifies how long the average relationship between two agents, in days  
 
 #### Risk groups based on sexual network
 To define risk groups based on number of sexual contacts, discrete age categories can be defined and these age categories can have differential mean degree values.  The age groups can be defined with the parameter age_nw_groups.
@@ -87,20 +83,19 @@ nw_coef_form  <- -Inf
 where INITIAL.POP is the number of agents at the start of the model. The age category data (in this example the age categories would be 1 or 2) are stored in the "att1" attribute (a generic attribute that can be used for a variety of purposes) amd the nodefactor term specifies that mean degree will differ by att1 values.  The value of target_stats as specified above will result in the younger age category having roughly 60% higher mean degree than the older group (e.g., 1.05 vs. 0.65) In addition to the EpiModel references already mentioned, for further information on network estimation with the nodefactor term see the section "Network model estimation and diagnostics" in [EpiModel: An R Package for Mathematical Modeling of Infectious Disease over Networks](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5931789/) by Jenness et al.  (2018). 
 
 #### Vaccine-related functions
-Vaccine-related functionality in two modules (a group of functions related to a specific model process): the *vaccine_dynamics* module ([github link](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/vaccine_dynamics.R)) and the [*transmission module*](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/transmission.R).  The vaccine dynamics module initializes and updates values of the agent attributes *phi*, *mu*, and *sigma*.  The *transmission* module contains the function [*transmission_vaccine*](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/transmission_vaccine.R) which adjusts the HIV transmission probabilities of sex acts between discordonant couples due to vaccine effects. Vaccine-related functions are defined in the file [vaccination_model_functions](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/vaccination_model_functions.R).
+Vaccine-related functionality in two modules (a group of functions related to a specific model process): the *vaccine_dynamics* module ([github link](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/vaccine_dynamics.R)) and the [*transmission module*](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/transmission.R). The vaccine dynamics module initializes and updates values of the agent attributes *phi*, *mu*, and *sigma*.  The *transmission* module contains the function [*transmission_vaccine*](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/transmission_vaccine.R) which adjusts the HIV transmission probabilities of sex acts between discordonant couples due to vaccine effects. Vaccine-related functions are defined in the file [vaccination_model_functions](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/vaccination_model_functions.R).  
 
 #### Other basic model processes
-In addition to vaccine related dynamics, typical individual and population level processes are modeled: aging, testing, treatment (unless specified by the parameter “start_treatment_campaign, treatment does not occur automatically), deaths (natural or HIV/AIDS related), aging out of model (model typically tracks agents from ages 18-55 and aging out is included in the death module), relationship formation and daily sex acts determination,  and risk of infection based on relevant covariates (age, sex of infected/susceptible agent, viral load, condom use, etc.).  For vaccine-related research, these functions will likely often be of little interest.
+In addition to vaccine related dynamics, typical individual and population level processes are modeled: aging, testing, treatment (unless specified by the parameter “start_treatment_campaign, treatment does not occur automatically), deaths (natural or HIV/AIDS related), aging out of model (model typically tracks agents from ages 18-55 and aging out is included in the death module), relationship formation and daily sex acts determination,  and risk of infection based on relevant covariates (age, sex of infected/susceptible agent, viral load, condom use, etc.).  For vaccine-related research, these functions will likely often be of little interest.  
 
 #### MSM vs Heterosexual models
-The default model is a MSM model though heterosexual models are also easily specified.  A feature of MSM models is that agents are specified sexual roles (versatile, insertive, receptive) which influences network structure (e.g., insertive agents can not form relationships with other insertive agents).   In heterosexual models, agents can only pair up with opposite-sex partners.
+The default model is a MSM model though heterosexual models are also easily specified.  A feature of MSM models is that agents are specified sexual roles (versatile, insertive, receptive) which influences network structure (e.g., insertive agents can not form relationships with other insertive agents).   In heterosexual models, agents can only pair up with opposite-sex partners.  
 
 #### Model execution
-The order of steps to run the model is i) specify relevant model parameters; ii) estimate initial network; iii) run model with given parameters and initial network; and iv) plot results and perform post-model processing.
-
+The order of steps to run the model is i) specify relevant model parameters; ii) estimate initial network; iii) run model with given parameters and initial network; and iv) plot results and perform post-model processing.  
 
 #### Output
-The evoplot function produces over 30 diagnostic plots related to epidemic and network dynamics  (prevalence, number of new infections,  mean SPVL per incident, mean degree of network, etc.).  They are used to evaluate model performance and are not meant for publication quality figures.  These plots are both printed to the screen and printed to a pdf (saved in working director) with the evoplot function.  Publication and presentation quality figures can be created using output from the “epi” output list. The “epi” list contains timeseries of epidemic and network related statistics.
+The evoplot function produces over 30 diagnostic plots related to epidemic and network dynamics  (prevalence, number of new infections,  mean SPVL per incident, mean degree of network, etc.).  They are used to evaluate model performance and are not meant for publication quality figures.  These plots are both printed to the screen and printed to a pdf (saved in working director) with the evoplot function.  Publication and presentation quality figures can be created using output from the “epi” output list. The “epi” list contains timeseries of epidemic and network related statistics.  
 
 #### Example run script for vaccine model
 ```{r, eval=F}  
@@ -150,7 +145,7 @@ param_list <-  list(
     initial.mark.distribution = list( mark1 = c( "strain1" = 1 )), 
   # network parameters
     #parameterization for heterosexual model with two age-based risk groups, younger group
-    # has abou 60% higher mean degreee
+    # has about 60% higher mean degreee
     age_nw_groups <- list( c(17.0,30),c(30,55)) # (age1,age2] 
     nw_form_terms <-  "~edges + nodefactor('att1')+ offset(nodematch('sex', diff=FALSE))"
     target_stats <- c(INITIAL.POP*0.4,INITIAL.POP*0.4) 
