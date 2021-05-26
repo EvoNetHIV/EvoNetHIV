@@ -82,6 +82,56 @@ nw_coef_form  <- -Inf
 ```
 where INITIAL.POP is the number of agents at the start of the model. The age category data (in this example the age categories would be 1 or 2) are stored in the "att1" attribute (a generic attribute that can be used for a variety of purposes) amd the nodefactor term specifies that mean degree will differ by att1 values.  The value of target_stats as specified above will result in the younger age category having roughly 60% higher mean degree than the older group (e.g., 1.05 vs. 0.65) In addition to the EpiModel references already mentioned, for further information on network estimation with the nodefactor term see the section "Network model estimation and diagnostics" in [EpiModel: An R Package for Mathematical Modeling of Infectious Disease over Networks](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5931789/) by Jenness et al.  (2018). 
 
+#### Alternative risk group formulation that assumes that the high-risk group has shorter relationship durations
+The risk group model in the section above assumes that the high-risk group has a higher mean degree (more contacts per person at any given time).  An alternative method is to assume that people in the high risk group have faster relationship turnover. The code below implements a model in which there are two risk groups, one with short relationship durations, one with long relationship durations.  In this model, most individual enter the population with a tendency to have short relationship durations.  As they age, they have a small per day probability of aging into the long duration group.  This code also assumes that people tend to form relationships with people who are about the same age, and that men tend to partner with younger women.
+
+```{r, eval=F}
+md= 0.75 # mean degree
+male_female_age_diff = 4 # 4 means that women partner with men who are, on average, 4 years older than them
+abs_diff_age = 4   # Difference in age AFTER accounting for the male-female age difference
+```
+evoparams$generic_nodal_att_no_categories = 2 # Two groups
+evoparams$generic_nodal_att_values        = 1:2  # 1 = short-term, 2 = long-term relationship
+D1 = 2*365     # Duration preference for people in group 1-1 pairs (short-term relationships)
+D2 = 10*365    # Duration preference for people in group 2-2 pairs (long-term relationships)
+f1_0 = 0.9         # Proportion of newly entering agents (usually at age 16) that have a preference/tendency for short-term relationships
+f2_0 = 0.1         # Proportion of newly entering agents (usually at age 16) that have a preference/tendency for long-term relationships
+p_long <- 0.00011  # Per day probability of an switching from short-to long-term preference (0.00011 amounts to ~4% probability/year)
+f1 = 0.40          # Initial percentage of agents with a tendency to form short-term relationships.  This value was determined empirically!
+f2 = 1 - f1        # Initial percentage of agents with a tendency to form long-term relationships
+
+evoparams$generic_nodal_att_values_props  = c(f1, f2) # Proportion of agents belong to groups 1 and 2 at time 0
+evoparams$generic_nodal_att_values_props_births = c(f1_0, f2_0) # Probabilty of newly introduced agents will belong to groups 1 and 2
+evoparams$generic_nodal_att_trans_mat   <- matrix(
+  c( 1- p_long, p_long,
+     0,          1),
+  nrow=2,byrow=T,dimnames=list(c("G1","G2"))
+)
+
+evoparams$nw_form_terms <- "~edges + nodemix('att1', base=1) + absdiffby('age','sex',4)  +offset(nodematch('sex', diff=FALSE))"
+tot_edges = md * evoparams$initial_pop / 2   # Would add up to 150 for n=1000 and md=0.35
+abs_diff_age_param <- tot_edges * abs_diff_age
+
+```{r, eval=F}
+Matrix formula for determining edge counts assuming all risk groups have the same instaneous mean degree (where E = total edges)
+         G1           G2
+  G1   E*f1*f1    2*E*f1*f2
+  G2                E*f2*f2
+```
+evoparams$target_stats <- c(tot_edges, 2*tot_edges*f1*f2, tot_edges*f2*f2,   abs_diff_age_param)  # Implements idea above.  
+evoparams$nw_coef_form <- -Inf
+evoparams$dissolution <- "~offset(edges)"
+
+```{r, eval=F}
+Matrix of durations assuming a geometric mean for relationship duration
+         G1       G2
+  G1     D1    (D1*D2)^0.5
+  G2              D2
+```
+evoparams$relation_dur=c(D1, sqrt(D1*D2), D2)
+
+
+
 #### Vaccine-related functions
 Vaccine-related functionality in two modules (a group of functions related to a specific model process): the *vaccine_dynamics* module ([github link](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/vaccine_dynamics.R)) and the [*transmission module*](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/transmission.R). The vaccine dynamics module initializes and updates values of the agent attributes *phi*, *mu*, and *sigma*.  The *transmission* module contains the function [*transmission_vaccine*](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/transmission_vaccine.R) which adjusts the HIV transmission probabilities of sex acts between discordonant couples due to vaccine effects. Vaccine-related functions are defined in the file [vaccination_model_functions](https://github.com/EvoNetHIV/EvoNetHIV/blob/master/pkg/R/vaccination_model_functions.R).  
 
