@@ -129,19 +129,20 @@ and efficacies from the infector.
 ###### One mark with single efficacy example
 
 ``` r
-vaccine.efficacy.by.mark <- list( mark1 = c(strain1" = 0.7 ))
+vaccine.efficacy.by.mark <- list( mark1 = c("strain1" = 0.7 ))
 initial.mark.distribution <- list( mark1 = c("strain1" = 1 ))  
 ```
 
 This parameterization specifies that all infected agents will have a
 virus described by a single mark with a vaccine efficacy of 0.7
-(transmission probability is reduced by 70%).
+(transmission probability is reduced by
+70%).
 
 ###### One mark with two efficacies per mark example
 
 ``` r
 vaccine.efficacy.by.mark <- list( mark1 = c( "strain1" = 1.0,"strain2"=0.0 ) )
- initial.mark.distribution <- list(  mark1 =  c( "strain1" = 0.7,"strain2"=0.3 ))
+initial.mark.distribution <- list(  mark1 =  c( "strain1" = 0.7,"strain2"=0.3 ))
 ```
 
 This parameterization specifies that all infected have agents will have
@@ -151,8 +152,8 @@ efficacies.
 ###### Two marks with two efficacies per mark example
 
 ``` r
-vaccine.efficacy.by.mark <- list( mark1= c( "strain1" = 0.8,"strain2"=0.2 ), mark2= c( "strain1" = 0.11,"strain2"=0.01 ))
- initial.mark.distribution <- list( mark1=  c( "strain1" = 0.5,"strain2"=0.5 ), mark2= ( "strain1" = 0.5,"strain2"=0.5 ))
+vaccine.efficacy.by.mark <- list( mark1= c( "strain1" = 0.8,"strain2"=0.2 ), mark2= c( "strain1" = 0.11,"strain2"=0.01 ))  
+initial.mark.distribution <- list( mark1=  c( "strain1" = 0.5,"strain2"=0.5 ), mark2= ( "strain1" = 0.5,"strain2"=0.5 ))
 ```
 
 #### Other basic EvoNet parameters
@@ -177,10 +178,11 @@ which allows the user to specify a network epidemic model with highly
 variable network structure and connectivity. Critical parameters that
 feed into EpiModel’s network simulation include  
 \- *target\_stats*: Specifies how connected the network is  
-\- *nw\_form\_terms*: Specifies how the network is structured (?)  
-\- *nw\_coef\_form*: (need definition)  
-\- *relation\_dur*: Specifies how long the average relationship between
-two agents is in days
+\- *nw\_form\_terms*: Nnetwork formation terms; specifies how the
+network is structured  
+\- *nw\_coef\_form*: Network coefficients for formation terms -
+*relation\_dur*: Specifies how long the average relationship between two
+agents, in days
 
 #### Risk groups based on sexual network
 
@@ -220,7 +222,68 @@ information on network estimation with the nodefactor term see the
 section “Network model estimation and diagnostics” in [EpiModel: An R
 Package for Mathematical Modeling of Infectious Disease over
 Networks](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5931789/) by
-Jenness et al. (2018).
+Jenness et al.
+(2018).
+
+#### Alternative risk group formulation that assumes that the high-risk group has shorter relationship durations
+
+The risk group model in the section above assumes that the high-risk
+group has a higher mean degree (more contacts per person at any given
+time). An alternative method is to assume that people in the high risk
+group have faster relationship turnover. The code below implements a
+model in which there are two risk groups, one with short relationship
+durations, one with long relationship durations. In this model, most
+individuals enter the population with a tendency to have short
+relationship durations. As they age, they have a small per day
+probability of aging into the long duration group. This code also
+assumes that people tend to form relationships with people who are about
+the same age, and that men tend to partner with younger women.
+
+``` r
+md= 0.75 # mean degree
+male_female_age_diff = 4 # 4 means that women partner with men who are, on average, 4 years older than them
+abs_diff_age = 4   # Difference in age AFTER accounting for the male-female age difference
+
+evoparams$generic_nodal_att_no_categories = 2 # Two groups
+evoparams$generic_nodal_att_values        = 1:2  # 1 = short-term, 2 = long-term relationship
+D1 = 2*365     # Duration preference for people in group 1-1 pairs (short-term relationships)
+D2 = 10*365    # Duration preference for people in group 2-2 pairs (long-term relationships)
+f1_0 = 0.9         # Proportion of newly entering agents (usually at age 16) that have a preference/tendency for short-term relationships
+f2_0 = 0.1         # Proportion of newly entering agents (usually at age 16) that have a preference/tendency for long-term relationships
+p_long <- 0.00011  # Per day probability of an switching from short-to long-term preference (0.00011 amounts to ~4% probability/year)
+f1 = 0.40          # Initial percentage of agents with a tendency to form short-term relationships.  This value was determined empirically!
+f2 = 1 - f1        # Initial percentage of agents with a tendency to form long-term relationships
+
+evoparams$generic_nodal_att_values_props  = c(f1, f2) # Proportion of agents belong to groups 1 and 2 at time 0
+evoparams$generic_nodal_att_values_props_births = c(f1_0, f2_0) # Probabilty of newly introduced agents will belong to groups 1 and 2
+evoparams$generic_nodal_att_trans_mat   <- matrix(
+  c( 1- p_long, p_long,
+     0,          1),
+  nrow=2,byrow=T,dimnames=list(c("G1","G2"))
+)
+
+evoparams$nw_form_terms <- "~edges + nodemix('att1', base=1) + absdiffby('age','sex',4)  +offset(nodematch('sex', diff=FALSE))"
+tot_edges = md * evoparams$initial_pop / 2   # Would add up to 150 for n=1000 and md=0.35
+abs_diff_age_param <- tot_edges * abs_diff_age
+```
+
+Matrix for determining edge counts assuming all risk groups have the
+same instaneous mean degree (where E = total edges) G1 G2 G1 E*f1*f1
+2*E*f1*f2 G2
+E*f2\*f2
+
+``` r
+evoparams$target_stats <- c(tot_edges, 2*tot_edges*f1*f2, tot_edges*f2*f2,   abs_diff_age_param)  # Implements idea above.  
+evoparams$nw_coef_form <- -Inf
+evoparams$dissolution <- "~offset(edges)"
+```
+
+Matrix of durations assuming a geometric mean for relationship duration
+G1 G2 G1 D1 (D1\*D2)^0.5 G2 D2
+
+``` r
+evoparams$relation_dur=c(D1, sqrt(D1*D2), D2)
+```
 
 #### Vaccine-related functions
 
@@ -329,7 +392,7 @@ param_list <-  list(
     initial.mark.distribution = list( mark1 = c( "strain1" = 1 )), 
   # network parameters
     #parameterization for heterosexual model with two age-based risk groups, younger group
-    # has abou 60% higher mean degreee
+    # has about 60% higher mean degreee
     age_nw_groups <- list( c(17.0,30),c(30,55)) # (age1,age2] 
     nw_form_terms <-  "~edges + nodefactor('att1')+ offset(nodematch('sex', diff=FALSE))"
     target_stats <- c(INITIAL.POP*0.4,INITIAL.POP*0.4) 
