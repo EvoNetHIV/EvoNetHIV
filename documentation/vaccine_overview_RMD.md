@@ -267,10 +267,7 @@ tot_edges = md * evoparams$initial_pop / 2   # Would add up to 150 for n=1000 an
 abs_diff_age_param <- tot_edges * abs_diff_age
 ```
 
-Matrix for determining edge counts assuming all risk groups have the
-same instaneous mean degree (where E = total edges) G1 G2 G1 E*f1*f1
-2*E*f1*f2 G2
-E*f2\*f2
+Matrix for determining edge counts (1-1 edges assumed from total), followed by age-homophily term
 
 ``` r
 evoparams$target_stats <- c(tot_edges, 2*tot_edges*f1*f2, tot_edges*f2*f2,   abs_diff_age_param)  # Implements idea above.  
@@ -278,8 +275,7 @@ evoparams$nw_coef_form <- -Inf
 evoparams$dissolution <- "~offset(edges)"
 ```
 
-Matrix of durations assuming a geometric mean for relationship duration
-G1 G2 G1 D1 (D1\*D2)^0.5 G2 D2
+Matrix of durations assuming a geometric mean for 1-2 pairs
 
 ``` r
 evoparams$relation_dur=c(D1, sqrt(D1*D2), D2)
