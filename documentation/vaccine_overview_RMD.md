@@ -265,19 +265,14 @@ evoparams$generic_nodal_att_trans_mat   <- matrix(
 evoparams$nw_form_terms <- "~edges + nodemix('att1', base=1) + absdiffby('age','sex',4)  +offset(nodematch('sex', diff=FALSE))"
 tot_edges = md * evoparams$initial_pop / 2   # Would add up to 150 for n=1000 and md=0.35
 abs_diff_age_param <- tot_edges * abs_diff_age
-```
 
-Matrix for determining edge counts (1-1 edges assumed from total), followed by age-homophily term
+# Matrix for determining edge counts (1-1 edges assumed from total), followed by age-homophily term
 
-``` r
 evoparams$target_stats <- c(tot_edges, 2*tot_edges*f1*f2, tot_edges*f2*f2,   abs_diff_age_param)  # Implements idea above.  
 evoparams$nw_coef_form <- -Inf
 evoparams$dissolution <- "~offset(edges)"
-```
 
-Matrix of durations assuming a geometric mean for 1-2 pairs
-
-``` r
+# Matrix of relationship durations (assumes a geometric mean for 1-2 pairs)
 evoparams$relation_dur=c(D1, sqrt(D1*D2), D2)
 ```
 
