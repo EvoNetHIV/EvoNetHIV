@@ -35,7 +35,7 @@ The virus of an infected agent is described by its "mark"; mark can be defined a
 
 ###### One mark with single efficacy example
 ```{r, eval=F}  
-vaccine.efficacy.by.mark <- list( mark1 = c(strain1" = 0.7 ))
+vaccine.efficacy.by.mark <- list( mark1 = c("strain1" = 0.7 ))
 initial.mark.distribution <- list( mark1 = c("strain1" = 1 ))  
 ```
 This parameterization specifies that all infected agents will have a virus described by a single mark with a vaccine efficacy of 0.7 (transmission probability is reduced by 70%).  
