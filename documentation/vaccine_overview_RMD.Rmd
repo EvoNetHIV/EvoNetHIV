@@ -68,7 +68,11 @@ Evonet is based on the EpiModel package( see https://github.com/statnet/EpiModel
 -  *relation_dur*: Specifies how long the average relationship between two agents, in days  
 
 #### Risk groups based on sexual network
+<<<<<<< HEAD
 To define risk groups based on number of sexual contacts, discrete age categories can be defined and these age categories can have differential mean degree values. The age groups can be defined with the parameter age_nw_groups.
+=======
+To define risk groups based on number of sexual contacts, discrete age categories can be defined and these age categories can have differential mean degree values.  The age groups can be defined with the parameter age_nw_groups.
+>>>>>>> 61ab3dd6a590375a19b9cdd2928d03bfae868e81
 ```{r, eval=F} 
 age_nw_groups <- list( group1= c(17.0,30),group2=c(30,55)
 ```
@@ -89,13 +93,21 @@ Vaccine-related functionality in two modules (a group of functions related to a 
 In addition to vaccine related dynamics, typical individual and population level processes are modeled: aging, testing, treatment (unless specified by the parameter “start_treatment_campaign, treatment does not occur automatically), deaths (natural or HIV/AIDS related), aging out of model (model typically tracks agents from ages 18-55 and aging out is included in the death module), relationship formation and daily sex acts determination,  and risk of infection based on relevant covariates (age, sex of infected/susceptible agent, viral load, condom use, etc.).  For vaccine-related research, these functions will likely often be of little interest.  
 
 #### MSM vs Heterosexual models
+<<<<<<< HEAD
 The default model is a MSM model though heterosexual models are also easily specified.  A feature of MSM models is that agents are specified sexual roles (versatile, insertive, receptive) which influences network structure (e.g., insertive agents can not form relationships with other insertive agents). In heterosexual models, agents can only pair up with opposite-sex partners.  
+=======
+The default model is a MSM model though heterosexual models are also easily specified.  A feature of MSM models is that agents are specified sexual roles (versatile, insertive, receptive) which influences network structure (e.g., insertive agents can not form relationships with other insertive agents).   In heterosexual models, agents can only pair up with opposite-sex partners.  
+>>>>>>> 61ab3dd6a590375a19b9cdd2928d03bfae868e81
 
 #### Model execution
 The order of steps to run the model is i) specify relevant model parameters; ii) estimate initial network; iii) run model with given parameters and initial network; and iv) plot results and perform post-model processing.  
 
 #### Output
+<<<<<<< HEAD
 The evoplot function produces over 30 diagnostic plots related to epidemic and network dynamics  (prevalence, number of new infections,  mean SPVL per incident, mean degree of network, etc.). They are used to evaluate model performance and are not meant for publication quality figures. These plots are both printed to the screen and printed to a pdf (saved in working director) with the evoplot function. Publication and presentation quality figures can be created using output from the “epi” output list. The “epi” list contains timeseries of epidemic and network related statistics.  
+=======
+The evoplot function produces over 30 diagnostic plots related to epidemic and network dynamics  (prevalence, number of new infections,  mean SPVL per incident, mean degree of network, etc.).  They are used to evaluate model performance and are not meant for publication quality figures.  These plots are both printed to the screen and printed to a pdf (saved in working director) with the evoplot function.  Publication and presentation quality figures can be created using output from the “epi” output list. The “epi” list contains timeseries of epidemic and network related statistics.  
+>>>>>>> 61ab3dd6a590375a19b9cdd2928d03bfae868e81
 
 #### Example run script for vaccine model
 ```{r, eval=F}  
@@ -103,7 +115,11 @@ library(evonet)
 
 #Core model parameters
 INITIAL.POP <- 10000
+<<<<<<< HEAD
 MODEL.YEARS <- 10
+=======
+MODEL.YEARS <- 7
+>>>>>>> 61ab3dd6a590375a19b9cdd2928d03bfae868e81
 INITIAL.INFECTED <- 250
 
 #A list that specifies changes of default parameters to user-specified values
@@ -143,6 +159,7 @@ param_list <-  list(
                                         #fraction.vaccinated value
     vaccine.efficacy.by.mark = list( mark1 = c( "strain1" = 0.7 )), 
     initial.mark.distribution = list( mark1 = c( "strain1" = 1 )), 
+<<<<<<< HEAD
  
     # network parameters
     #parameterization for heterosexual model with two age-based risk groups, younger group
@@ -150,13 +167,25 @@ param_list <-  list(
     age_nw_groups <- list(c(17.0,30), c(30,55)),   # (age1,age2] 
     nw_form_terms <-  "~edges + nodefactor('att1')+ offset(nodematch('sex', diff=FALSE))"
     target_stats <- c(INITIAL.POP*0.4, INITIAL.POP*0.4), 
+=======
+  # network parameters
+    #parameterization for heterosexual model with two age-based risk groups, younger group
+    # has about 60% higher mean degreee
+    age_nw_groups <- list( c(17.0,30),c(30,55)) # (age1,age2] 
+    nw_form_terms <-  "~edges + nodefactor('att1')+ offset(nodematch('sex', diff=FALSE))"
+    target_stats <- c(INITIAL.POP*0.4,INITIAL.POP*0.4) 
+>>>>>>> 61ab3dd6a590375a19b9cdd2928d03bfae868e81
     nw_coef_form  <- -Inf)
 
 #calculate number of marks based on length of parameter vaccine.efficacy.by.mark
 param_list$no_marks <- length(param_list$vaccine.efficacy.by.mark )
 
 #---- create EpiModel parameter list with updated values
+<<<<<<< HEAD
 evoparams <- do.call(evonet_setup, param_list)
+=======
+evoparams <- do.call(evonet_setup,param_list)
+>>>>>>> 61ab3dd6a590375a19b9cdd2928d03bfae868e81
 
 #---- network setup 
 nw <- nw_setup(evoparams)
