@@ -39,7 +39,7 @@ input_params<-function(
     print_frequency = 10, # Set to 10 to print to output screen every 10 days. Default should be 1.
     network_print_frequency = 100,
   #runtime plotting options  
-    plot_nw      = TRUE,
+    plot_nw      = FALSE,
     plot_mean_degree_by_age = FALSE, # Set to true to see plots of mean degree broken out by age.
   #output options  
     save_network  = FALSE,
