@@ -18,6 +18,7 @@ input_parameters_agent_attributes <-function(){
   list( popVariables= c(
     
     "id",
+    "unique_id",
     
 #--  Virulence model parameters ------------------------------ #
 
