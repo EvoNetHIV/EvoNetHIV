@@ -3,6 +3,7 @@
 # first close all open R or RStudio instances and open new one
 if(!require("devtools")){
     install.packages("devtools")
+    require(devtools)
 }
 
 install_github("EvoNetHIV/EvoNet",subdir="pkg", dependencies=T)
