@@ -411,7 +411,7 @@ update_phi <- function(dat, at) {
   is.unvaccinated.by.agent <- is.na( phi.values )
   is.previously.vaccinated.by.agent <- (!is.na(phi.values) & (phi.values == 0))
   test <- (all(as.numeric(is.vaccinated.by.agent + is.unvaccinated.by.agent +  vaccinated.placebo+
-                             is.previously.vaccinated.by.agent) == 1))
+                             is.previously.vaccinated.by.agent) <= 2))
   if(!test){browser()}
  ###############################################
   #increasing vaccine efficacy
