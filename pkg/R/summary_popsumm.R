@@ -414,7 +414,7 @@ summary_popsumm<-function(dat,at){
   if(dat$param$vaccine_model){
     
     vacc_status <- unlist(lapply(dat$attr$phi,function(x) x[1]))
-    no_vaccinated  <- length(which(vacc_status>0 & vacc_status< 1))
+    no_vaccinated  <- length(which(vacc_status == 1))
     dat$epi$no_vaccinated[at] <- no_vaccinated 
     #vaccine trial (component of "new vaccine model)
     if(dat$param$vaccine_trial){
