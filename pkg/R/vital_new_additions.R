@@ -306,7 +306,27 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
         }
     
     input_list$sqrt_age[index] <- sqrt(input_list$age[index])
-    # end of ages for new additions --------------------------   
+    # end of ages for new additions -------------------------- 
+      
+      
+    # Assign age groups (loosely based on agent ages)                       
+    input_list$age_for_age_group_calcs[index] <- round( input_list$age[index] + (1/365 - 2/365)*runif(length(index)) ,5 )  
+                           
+    under_age_15 <- index[input_list$age_for_age_group_calcs[index]  < 15 ]
+    ages_15_20   <- index[input_list$age_for_age_group_calcs[index]  >= 15 & input_list$age_for_age_group_calcs[index] < 20]
+    ages_20_27   <- index[input_list$age_for_age_group_calcs[index]  >= 20 & input_list$age_for_age_group_calcs[index] < 27]
+    ages_27_36   <- index[input_list$age_for_age_group_calcs[index]  >= 27 & input_list$age_for_age_group_calcs[index] < 36]
+    ages_36_47   <- index[input_list$age_for_age_group_calcs[index]  >= 36 & input_list$age_for_age_group_calcs[index] < 47]
+    ages_47_60   <- index[input_list$age_for_age_group_calcs[index]  >= 47 & input_list$age_for_age_group_calcs[index] < 60]
+    over_age_60  <- index[input_list$age_for_age_group_calcs[index]  >= 60]
+  
+    input_list$age_group[under_age_15] = 0 # Call this 0 b/c this group is assumed never to have sex
+    input_list$age_group[ages_15_20]   = 1 # These will increase as the agents age.
+    input_list$age_group[ages_20_27]   = 2
+    input_list$age_group[ages_27_36]   = 3
+    input_list$age_group[ages_36_47]   = 4
+    input_list$age_group[ages_47_60]   = 5
+    input_list$age_group[over_age_60]  = 6     
     
     #if mean degree by age (risk groups) for GF model
     if(length(dat$param$age_nw_groups)>1){
@@ -362,27 +382,7 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
   # must be at end of function).
   input_list$ai_prob[index] <- 0
   input_list$ai_prob[index_female] <- rbinom(length(index_female), 1, dat$param$prop_AI)
-  input_list$ai_prob[index_female] <- assign_ai_prop(dat, input_list$ai_prob[index_female])
-            
-  # Assign age groups based on agent's ages                       
-  # Step 1 : Get jittered version of age so that age categories overlap a bit
-  input_list$age_for_age_group_calcs[index] <- round( input_list$age[index] + (1/365 - 2/365)*runif(length(index)) ,5 )  
-                           
-  under_age_15 <- index[input_list$age_for_age_group_calcs[index]  < 15 ]
-  ages_15_20   <- index[input_list$age_for_age_group_calcs[index]  >= 15 & input_list$age_for_age_group_calcs[index] < 20]
-  ages_20_27   <- index[input_list$age_for_age_group_calcs[index]  >= 20 & input_list$age_for_age_group_calcs[index] < 27]
-  ages_27_36   <- index[input_list$age_for_age_group_calcs[index]  >= 27 & input_list$age_for_age_group_calcs[index] < 36]
-  ages_36_47   <- index[input_list$age_for_age_group_calcs[index]  >= 36 & input_list$age_for_age_group_calcs[index] < 47]
-  ages_47_60   <- index[input_list$age_for_age_group_calcs[index]  >= 47 & input_list$age_for_age_group_calcs[index] < 60]
-  over_age_60  <- index[input_list$age_for_age_group_calcs[index]  >= 60]
-  
-  input_list$age_group[under_age_15] = 0 # Call this 0 b/c this group is assumed never to have sex
-  input_list$age_group[ages_15_20]   = 1 # These will increase as agent's age.
-  input_list$age_group[ages_20_27]   = 2
-  input_list$age_group[ages_27_36]   = 3
-  input_list$age_group[ages_36_47]   = 4
-  input_list$age_group[ages_47_60]   = 5
-  input_list$age_group[over_age_60]  = 6                                         
+  input_list$ai_prob[index_female] <- assign_ai_prop(dat, input_list$ai_prob[index_female])                                   
                            
   #######################################
   return(input_list)
