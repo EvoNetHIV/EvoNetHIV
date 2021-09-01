@@ -68,13 +68,13 @@ if (1==1) {
   age_for_age_group_calcs <- round( age_vec + 2.0 - 4.0*runif(length(age_vec)) ,5 )  # Allow for some spread
   age_for_age_group_calcs[index_male] <- age_for_age_group_calcs[index_male] - 3
   
-  under_age_15 <- index[age_for_age_group_calcs  < 15 ]
-  ages_15_20   <- index[age_for_age_group_calcs  >= 15 & age_for_age_group_calcs[index] < 20]
-  ages_20_27   <- index[age_for_age_group_calcs  >= 20 & age_for_age_group_calcs[index] < 27]
-  ages_27_36   <- index[age_for_age_group_calcs  >= 27 & age_for_age_group_calcs[index] < 36]
-  ages_36_47   <- index[age_for_age_group_calcs  >= 36 & age_for_age_group_calcs[index] < 47]
-  ages_47_60   <- index[age_for_age_group_calcs  >= 47 & age_for_age_group_calcs[index] < 60]
-  over_age_60  <- index[age_for_age_group_calcs  >= 60]
+  under_age_15 <- which(age_for_age_group_calcs  < 15)
+  ages_15_20   <- which(age_for_age_group_calcs  >= 15 & age_for_age_group_calcs < 20)
+  ages_20_27   <- which(age_for_age_group_calcs  >= 20 & age_for_age_group_calcs < 27)
+  ages_27_36   <- which(age_for_age_group_calcs  >= 27 & age_for_age_group_calcs < 36)
+  ages_36_47   <- which(age_for_age_group_calcs  >= 36 & age_for_age_group_calcs < 47)
+  ages_47_60   <- which(age_for_age_group_calcs  >= 47 & age_for_age_group_calcs < 60)
+  over_age_60  <- which(age_for_age_group_calcs  >= 60)
   
   age_group_vec[under_age_15] = 0 # Call this 0 b/c this group is assumed never to have sex
   age_group_vec[ages_15_20]   = 1 # These will increase as the agents age.
