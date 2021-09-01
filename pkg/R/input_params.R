@@ -293,6 +293,8 @@ input_params<-function(
     asmr_data_female          = "south_africa_female",
     initial_agedata_male      = "usa_men_18_to_100", #other options:"south_africa_male_16_to_100_2014", "stable_age_no_hiv_dist"
     initial_agedata_female    = "south_africa_female_16_to_100_2014", #other options: "stable_age_no_hiv_dist"
+    age_group_model           = FALSE, # Set to true to add alternative age-based homophily terms
+	
   # "deaths(...) -> vital_death_aids() or vital_death_aged_out or vital_death_non_aids  
     aids_death_model         = "cd4",        # c("Gamma_Death","daily_prob","cd4")
     death_rate_constant      = 0.000003,   	 # 0.000003 is from CASCADE
