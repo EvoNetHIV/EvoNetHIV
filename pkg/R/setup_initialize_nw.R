@@ -58,6 +58,37 @@ if(any(is.na(age_vec))){browser()}
 
 network::set.vertex.attribute(x=nw, attr="age", value=age_vec)
 network::set.vertex.attribute(x=nw, attr="sqrt_age", value=sqrt(age_vec))
+
+
+#if (params$age_homo_terms) {
+if (1==1) {
+    # Assign age groups (loosely based on agent ages)
+  age_group_vec=rep(NA_real_,params$initial_pop)
+  
+  age_for_age_group_calcs <- round( age_vec + 2.0 - 4.0*runif(length(age_vec)) ,5 )  # Allow for some spread
+  age_for_age_group_calcs[index_male] <- age_for_age_group_calcs[index_male] - 3
+  
+  under_age_15 <- index[age_for_age_group_calcs  < 15 ]
+  ages_15_20   <- index[age_for_age_group_calcs  >= 15 & age_for_age_group_calcs[index] < 20]
+  ages_20_27   <- index[age_for_age_group_calcs  >= 20 & age_for_age_group_calcs[index] < 27]
+  ages_27_36   <- index[age_for_age_group_calcs  >= 27 & age_for_age_group_calcs[index] < 36]
+  ages_36_47   <- index[age_for_age_group_calcs  >= 36 & age_for_age_group_calcs[index] < 47]
+  ages_47_60   <- index[age_for_age_group_calcs  >= 47 & age_for_age_group_calcs[index] < 60]
+  over_age_60  <- index[age_for_age_group_calcs  >= 60]
+  
+  age_group_vec[under_age_15] = 0 # Call this 0 b/c this group is assumed never to have sex
+  age_group_vec[ages_15_20]   = 1 # These will increase as the agents age.
+  age_group_vec[ages_20_27]   = 2
+  age_group_vec[ages_27_36]   = 3
+  age_group_vec[ages_36_47]   = 4
+  age_group_vec[ages_47_60]   = 5
+  age_group_vec[over_age_60]  = 6
+  if(any(is.na(age_group_vec))){browser()}
+  
+  network::set.vertex.attribute(x=nw, attr="age_group", value=sqrt(age_group_vec))
+}  
+  
+  
 #--------------------------------
 if(params$vaccine_trial){
   index <- sample(1:params$initial_pop,params$initial_trial_participants,replace=F)
