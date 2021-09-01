@@ -376,13 +376,13 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
   ages_47_60   <- index[input_list$age_for_age_group_calcs[index]  >= 47 & input_list$age_for_age_group_calcs[index] < 60]
   over_age_60  <- index[input_list$age_for_age_group_calcs[index]  >= 60]
   
-  input_list$age_group[under_age_15] = "0" # Call this 0 b/c this group is assumed never to have sex
-  input_list$age_group[ages_15_20]   = "1" # These will increase as agent's age.
-  input_list$age_group[ages_20_27]   = "2"
-  input_list$age_group[ages_27_36]   = "3"
-  input_list$age_group[ages_36_47]   = "4"
-  input_list$age_group[ages_47_60]   = "5"
-  input_list$age_group[over_age_60]  = "6"                                         
+  input_list$age_group[under_age_15] = 0 # Call this 0 b/c this group is assumed never to have sex
+  input_list$age_group[ages_15_20]   = 1 # These will increase as agent's age.
+  input_list$age_group[ages_20_27]   = 2
+  input_list$age_group[ages_27_36]   = 3
+  input_list$age_group[ages_36_47]   = 4
+  input_list$age_group[ages_47_60]   = 5
+  input_list$age_group[over_age_60]  = 6                                         
                            
   #######################################
   return(input_list)
