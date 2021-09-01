@@ -366,7 +366,7 @@ new_additions <- function(input_list=NULL,dat,index,evo_index,type=c("births","i
             
   # Assign age groups based on agent's ages                       
   # Step 1 : Get jittered version of age so that age categories overlap a bit
-  input_list$age_for_age_group_calcs[index] <- round( dat$attr$age[index] + (1/365 - 2/365)*runif(length(index)) ,5 )  
+  input_list$age_for_age_group_calcs[index] <- round( input_list$age[index] + (1/365 - 2/365)*runif(length(index)) ,5 )  
                            
   under_age_15 <- index[input_list$age_for_age_group_calcs[index]  < 15 ]
   ages_15_20   <- index[input_list$age_for_age_group_calcs[index]  >= 15 & input_list$age_for_age_group_calcs[index] < 20]
