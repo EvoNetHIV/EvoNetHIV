@@ -61,7 +61,7 @@ network::set.vertex.attribute(x=nw, attr="sqrt_age", value=sqrt(age_vec))
 
 
 #if (params$age_homo_terms) {
-if (0==1) {  Disable for now
+if (0==1) {  # Disable for now
     # Assign age groups (loosely based on agent ages)
   age_group_vec=rep(NA_real_,params$initial_pop)
   
