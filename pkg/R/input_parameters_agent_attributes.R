@@ -74,7 +74,6 @@ input_parameters_agent_attributes <-function(){
     "individual_condom_prob",          "susceptibility",
     "vaccinated",                      "vacc_init_time",           
     "age","sqrt_age",                   "arrival_time",
-    "age_for_age_group_calcs",         "age_group",
     "last_neg_test",                   "diag_status",
     "diag_time",                       "disclosure_status",
     "eligible_ART",                   "eligible_vl_test" ,                                   
