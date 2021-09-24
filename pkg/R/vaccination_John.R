@@ -1,4 +1,4 @@
-vaccination <- function(dat, at) {
+vaccination_John <- function(dat, at) {
   
   #if vaccine trial, choose agents and give them value "1", on vaccine trial
   if( (dat$param$start_vacc_campaign[1]-at) == dat$param$trial_status_time_switch &    dat$param$vaccine_trial ) {
