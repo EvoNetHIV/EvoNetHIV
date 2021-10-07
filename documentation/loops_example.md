@@ -23,8 +23,6 @@ modules <- c(
   "viral_update",
   "coital_acts",
   "transmission",
-  "deaths",
-  "births",
   "summary_module")
 ```
 
