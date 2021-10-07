@@ -48,7 +48,7 @@ evoparams$intial_pop # size of initial population
 ``` r
 param_list=list(
   initial_pop = 400,
-  initial_infected = 40,
+  initial_infected = 40
 )
 
 evoparams <- do.call(evonet_setup,param_list)
@@ -78,7 +78,7 @@ While EvoNet has about several dozen parameters (excluding parameters related to
 
 -   **initial\_pop**: the number of agents in the initial populations. For runs on a local desktop or laptop, maximum size should be 3000-4000 due to performance issue. The larger the number of agents, the slower the model runs. Prototyping models with smaller initial population sizes, and then running larger models with calibrated/refined models is recommended. Depending on model dynamics, the population will either grow or decay from this initial size. (default value: 100)
 -   **initial\_infected**: The numbe of infected agents at the model start; determines the initial prevalence level (can not be greater than “initial\_pop”). (default value: 20)
--   \*\*n\_steps: The length of the model run in days; typically specified as multiples of 365; e.g., a 10 year run can be specified as n\_steps=10*365. (default value: 365*3)
+-   \*\*n\_steps: The length of the model run in days; typically specified as multiples of 365; e.g., a 10 year run can be specified as n\_steps=10 * 365. (default value: 365 * 3)
 -   **nsims**: The number of replicates for each set of parameters implemented. EvoNet has a moderate level of stochasticity; thus, the same parameters can return different results for each model run. By increasing nsims, the mean values of each model replicate can be used as the final output for analysis and as the number of replicates increases, the mean results for each model run will be increasingly similar. Typically, 5 or more replicates will produce similar mean results for each set of parameters. The downside of increasing values of nsims is that model runtime increases linearly (unless a parallel computing framework is implemented, discussed in Section xx.) (default value: 1)
 -   **fast\_edgelist**: This implements a recently developed TERGM estimation/simulation algorithm that dramatically decreases model runtime. Except for advanced users who have developed customized network estimation terms, this should be set to TRUE. (default value: FALSE).
 -   **model\_sex**: Whether a model is MSM or heterosexual (“hetero”). (default value: “msm”).
