@@ -15,7 +15,8 @@ nsims=3,
 popsumm_frequency =30,
  n_steps           = 365*30,
  initial_pop       = 300,
- initial_infected  = 30)
+ initial_infected  = 30,
+ nw_form_terms = "~edges + concurrent + offset(nodematch('role', diff=TRUE, keep=1:2))")
 
 #Use default modules
 modules <- c(
@@ -25,8 +26,8 @@ modules <- c(
   "viral_update",
   "coital_acts",
   "transmission",
-  "deaths",
-  "births",
+  "evo_arrivals",
+  "evo_departures",
   "summary_module")
 ```
 
